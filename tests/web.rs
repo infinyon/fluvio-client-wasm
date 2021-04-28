@@ -6,8 +6,14 @@ extern crate wasm_bindgen_test;
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
+use fluvio_client_wasm::{
+    Fluvio,
+    FluvioError,
+};
+use log::*;
 
 #[wasm_bindgen_test]
-fn pass() {
-    assert_eq!(1 + 1, 2);
+async fn base_test() {
+    debug!("RUNNING BASE_TEST!");
+    let fluvio = Fluvio::connect().await.unwrap();
 }

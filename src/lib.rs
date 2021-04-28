@@ -2,50 +2,58 @@ mod utils;
 
 use wasm_bindgen::prelude::*;
 
-
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-#[wasm_bindgen]
-extern {
-    fn alert(s: &str);
-}
-
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, fluvio-client-wasm!");
-}
-
 use fluvio::{
-    Fluvio as FluvioNative,
-    FluvioError as FluvioNativeError,
+    Fluvio as NativeFluvio,
+    FluvioError as NativeFluvioError,
+    TopicProducer as NativeTopicProducer,
+    config::FluvioConfig,
 };
 
+#[wasm_bindgen]
+#[derive(Debug)]
+pub struct FluvioError {
+    inner: NativeFluvioError,
+}
+impl From<NativeFluvioError> for FluvioError {
+    fn from(inner: NativeFluvioError) -> Self {
+        Self { inner }
+    }
+}
 
 #[wasm_bindgen]
-pub struct FluvioError {
-    inner: FluvioNativeError,
+pub struct TopicProducer {
+    _inner: NativeTopicProducer,
 }
-impl From<FluvioNativeError> for FluvioError {
-    fn from(inner: FluvioNativeError) -> Self {
-        Self {
-            inner
-        }
+impl From<NativeTopicProducer> for TopicProducer {
+    fn from(_inner: NativeTopicProducer) -> Self {
+        Self { _inner }
     }
 }
 
 #[wasm_bindgen]
 pub struct Fluvio {
-    inner: FluvioNative,
+    _inner: NativeFluvio,
 }
 
 #[wasm_bindgen]
 impl Fluvio {
     pub async fn connect() -> Result<Fluvio, FluvioError> {
         utils::set_panic_hook();
-        Ok(Self {inner: FluvioNative::connect().await?})
+        let config = FluvioConfig::new("ws://localhost:8080");
+        let _inner = NativeFluvio::connect_with_config(&config).await?;
+        Ok(Self {
+            _inner
+        })
     }
+    /*
+    pub async fn topic_producer(&self, topic: String) -> Result<TopicProducer, FluvioError> {
+        Ok(self.inner.topic_producer(topic).await?.into())
+    }
+    */
 }

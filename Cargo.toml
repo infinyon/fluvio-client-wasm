@@ -14,6 +14,9 @@ default = ["console_error_panic_hook"]
 wasm-bindgen = "0.2.63"
 wasm-bindgen-futures = "0.4.23"
 fluvio = { path = "../fluvio/src/client" }
+console_log = { version = "0.2", features = ["color"] }
+log = "0.4"
+
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
