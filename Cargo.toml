@@ -39,5 +39,5 @@ wasm-bindgen-test = "0.3.13"
 opt-level = "s"
 
 [patch.crates-io]
-fluvio-future = { path = "../future-aio" }
-#fluvio-future = { git = "https://github.com/simlay/future-aio", branch = "wasm32-support"}
+#fluvio-future = { path = "../future-aio" }
+fluvio-future = { git = "https://github.com/simlay/future-aio", branch = "wasm32-support"}
