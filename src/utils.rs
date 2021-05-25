@@ -5,8 +5,11 @@ pub fn set_panic_hook() {
     //
     // For more details see
     // https://github.com/rustwasm/console_error_panic_hook#readme
-    #[cfg(feature = "console_error_panic_hook")]
+    //#[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
+    tracing_wasm::set_as_global_default();
     use log::Level;
-    console_log::init_with_level(Level::Trace).expect("error initializing log");
+    console_log::init_with_level(Level::Info).expect("error initializing log");
+    /*
+    */
 }
