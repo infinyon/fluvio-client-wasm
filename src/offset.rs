@@ -1,4 +1,3 @@
-
 use fluvio::Offset as NativeOffset;
 use wasm_bindgen::prelude::*;
 
@@ -27,7 +26,6 @@ impl Offset {
     }
     */
 }
-
 
 impl From<NativeOffset> for Offset {
     fn from(inner: NativeOffset) -> Self {

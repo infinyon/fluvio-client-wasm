@@ -1,17 +1,7 @@
-
 use wasm_bindgen::prelude::*;
 
-use fluvio::{
-    config::FluvioConfig, Fluvio as NativeFluvio,
-};
-use crate::{
-    FluvioWebsocketConnector,
-    TopicProducer,
-    PartitionConsumer,
-    FluvioAdmin,
-    FluvioError,
-};
-
+use crate::{FluvioAdmin, FluvioError, FluvioWebsocketConnector, PartitionConsumer, TopicProducer};
+use fluvio::{config::FluvioConfig, Fluvio as NativeFluvio};
 
 #[wasm_bindgen]
 pub struct Fluvio {
@@ -40,11 +30,11 @@ impl Fluvio {
         let inner = NativeFluvio::connect_with_connector(
             Box::new(FluvioWebsocketConnector::new()),
             &config,
-        ).await?;
+        )
+        .await?;
         Ok(Self { inner })
     }
     pub async fn adimn(self) -> FluvioAdmin {
         self.inner.admin().await.into()
     }
 }
-

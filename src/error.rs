@@ -1,4 +1,3 @@
-
 use fluvio::FluvioError as NativeFluvioError;
 use wasm_bindgen::prelude::*;
 
@@ -20,4 +19,3 @@ impl From<String> for FluvioError {
         }
     }
 }
-

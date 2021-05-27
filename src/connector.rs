@@ -1,16 +1,9 @@
-
 use async_trait::async_trait;
+use fluvio_future::net::{
+    BoxReadConnection, BoxWriteConnection, ConnectionFd, DomainConnector, TcpDomainConnector,
+};
 use fluvio_ws_stream_wasm::WsMeta;
 use std::io::Error as IoError;
-use fluvio_future::{
-    net::{
-        BoxReadConnection,
-        BoxWriteConnection,
-        DomainConnector,
-        TcpDomainConnector,
-        ConnectionFd,
-    },
-};
 #[derive(Clone, Default)]
 pub struct FluvioWebsocketConnector {}
 impl FluvioWebsocketConnector {
@@ -24,7 +17,6 @@ impl TcpDomainConnector for FluvioWebsocketConnector {
         &self,
         addr: &str,
     ) -> Result<(BoxWriteConnection, BoxReadConnection, ConnectionFd), IoError> {
-
         let addr = if addr == "localhost:9010" {
             "ws://localhost:3001"
         } else {
@@ -36,9 +28,9 @@ impl TcpDomainConnector for FluvioWebsocketConnector {
             .map_err(|e| IoError::new(std::io::ErrorKind::Other, e))?;
         let wsstream_clone = wsstream.clone();
         Ok((
-                Box::new(wsstream.into_io()),
-                Box::new(wsstream_clone.into_io()),
-                String::from(addr),
+            Box::new(wsstream.into_io()),
+            Box::new(wsstream_clone.into_io()),
+            String::from(addr),
         ))
     }
 

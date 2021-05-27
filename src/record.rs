@@ -1,4 +1,3 @@
-
 use fluvio::consumer::Record as NativeRecord;
 use wasm_bindgen::prelude::*;
 
@@ -29,7 +28,6 @@ impl Record {
         self.inner.offset()
     }
 }
-
 
 impl From<NativeRecord> for Record {
     fn from(inner: NativeRecord) -> Self {
