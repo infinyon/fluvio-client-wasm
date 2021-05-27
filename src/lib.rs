@@ -1,6 +1,5 @@
 mod utils;
 
-use log::*;
 use tokio_stream::StreamExt;
 use wasm_bindgen::prelude::*;
 
@@ -60,8 +59,8 @@ impl Offset {
         NativeOffset::end().into()
     }
     /*
-    pub fn absolute(index: i64) -> Result<Offset, FluvioError>{
-        NativeOffset::absolute(index).map(NativeOffset::from).map_err(FluvioError::from)
+    pub fn absolute(index: i64) -> Result<Self, FluvioError>{
+        NativeOffset::absolute(index).map(Offset::from).map_err(|e| FluvioError::from(e))
     }
     */
 }
@@ -72,7 +71,7 @@ pub struct TopicProducer {
 }
 #[wasm_bindgen]
 impl TopicProducer {
-    fn send(&self, key: String, value: String) -> Promise {
+    pub fn send(&self, key: String, value: String) -> Promise {
         let rc = self.inner.clone();
         future_to_promise(async move {
             rc.send(key, value).await
@@ -97,8 +96,19 @@ impl Record {
     pub fn value(&self) -> Vec<u8> {
         self.inner.value().to_vec()
     }
+    pub fn valueString(&self) -> Option<String> {
+        String::from_utf8(self.inner.value().to_vec()).ok()
+    }
+
     pub fn key(&self) -> Option<Vec<u8>> {
         self.inner.key().map(|v| v.to_vec())
+    }
+    pub fn keyString(&self) -> Option<String> {
+        if let Some(key) = self.key() {
+            String::from_utf8(key.to_vec()).ok()
+        } else {
+            None
+        }
     }
     pub fn offset(&self) -> i64 {
         self.inner.offset()
@@ -119,21 +129,6 @@ pub struct PartitionConsumer {
 
 #[wasm_bindgen]
 impl PartitionConsumer {
-    pub async fn stream_bad(self, offset: Offset) -> Result<(), FluvioError> {
-        debug!("Starting stream");
-        let mut stream = self.inner.stream(offset.inner).await?;
-        let mut count = 0;
-        debug!("Got a stream");
-        while let Some(Ok(record)) = stream.next().await {
-            let record = String::from_utf8_lossy(record.value());
-            info!("count: {:?} - record: {:#?}", count, record);
-            if count > 1000 {
-                break;
-            }
-            count += 1;
-        }
-        Ok(())
-    }
     pub async fn stream(self, offset: Offset) -> Result<PartitionConsumerStream, FluvioError> {
         Ok(PartitionConsumerStream {
             inner: Rc::new(RefCell::new(Box::pin(self.inner.stream(offset.inner).await?.map(|result| {
@@ -281,24 +276,4 @@ impl PartitionConsumerStream {
     pub async fn next_val(&self) -> Option<Result<Record, FluvioError>> {
         self.inner.borrow_mut().next().await
     }
-}
-#[wasm_bindgen(start)]
-pub async fn main_js() -> Result<(), FluvioError> {
-    debug!("RUNNING BASE_TEST!");
-    let fluvio = Fluvio::connect("ws://localhost:3000".into()).await?;
-    debug!("Connection to fluvio! Getting a partition consumer");
-    let consumer = fluvio.partition_consumer("foobar".into(), 0).await?;
-    debug!("Have a partition consumer! Getting a stream!");
-
-    let stream = consumer.stream(Offset::beginning()).await?;
-    while let Some(Ok(record)) = stream.next_val().await {
-        let value = record.value();
-        let record = String::from_utf8_lossy(&value);
-        info!("record: {:#?}", record);
-    }
-    /*
-    debug!("Connected to fluvio!");
-    //let _producer = fluvio.topic_producer("foobar".into()).await;
-    */
-    Ok(())
 }

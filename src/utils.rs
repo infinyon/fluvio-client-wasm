@@ -7,9 +7,10 @@ pub fn set_panic_hook() {
     // https://github.com/rustwasm/console_error_panic_hook#readme
     //#[cfg(feature = "console_error_panic_hook")]
     console_error_panic_hook::set_once();
+    /*
+     * TODO: Fix this when running wasm-pack test
     tracing_wasm::set_as_global_default();
     use log::Level;
-    console_log::init_with_level(Level::Info).expect("error initializing log");
-    /*
+    console_log::init_with_level(Level::Debug).expect("error initializing log");
     */
 }
