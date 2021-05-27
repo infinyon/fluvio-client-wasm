@@ -8,7 +8,7 @@ mod producer;
 mod record;
 mod utils;
 
-use crate::fluvio::Fluvio;
+pub use crate::fluvio::Fluvio;
 pub use admin::FluvioAdmin;
 use connector::FluvioWebsocketConnector;
 pub use consumer::{PartitionConsumer, PartitionConsumerStream};
