@@ -3,6 +3,7 @@ name = "fluvio-client-wasm"
 version = "0.0.1"
 authors = ["Sebastian Imlay <sebastian.imlay@gmail.com>"]
 edition = "2018"
+resolver = "2"
 
 [lib]
 crate-type = ["cdylib", "rlib"]
@@ -12,14 +13,14 @@ default = []
 
 [dependencies]
 wasm-bindgen = "0.2.63"
-wasm-bindgen-futures = {version = "0.4.23", features = ["futures-core-03-stream"] }
-fluvio = { path = "../fluvio/src/client" }
+wasm-bindgen-futures = { version = "0.4.23", features = ["futures-core-03-stream"] }
+fluvio = { git = "https://github.com/infinyon/fluvio", rev = "12e0b3d80835bff586edd4919e681e3d3faba3b2" }
 console_log = { version = "0.2", features = ["color"] }
 js-sys = "0.3.51"
 web-sys = {version = "0.3.51" }
 tokio-stream = "0.1.5"
 tracing = "0.1.26"
-fluvio-future = "0.3.3"
+fluvio-future = { version = "0.3.3", features = ["net"] }
 fluvio_ws_stream_wasm = "0.7.0"
 async-trait = { version = "0.1.40"}
 tracing-wasm = "0.2.0"
