@@ -6,23 +6,12 @@ extern crate wasm_bindgen_test;
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
-use fluvio_client_wasm::{
-    Fluvio,
-    FluvioError,
-    Offset,
-    Record,
-};
-use tracing::*;
-use wasm_bindgen::convert::{
-    FromWasmAbi,
-    IntoWasmAbi,
-};
-use wasm_bindgen::{
-    JsCast,
-    JsValue,
-};
-use js_sys::Reflect;
+use fluvio_client_wasm::{Fluvio, FluvioError, Offset, Record};
 use js_sys::Function;
+use js_sys::Reflect;
+use tracing::*;
+use wasm_bindgen::convert::{FromWasmAbi, IntoWasmAbi};
+use wasm_bindgen::{JsCast, JsValue};
 
 #[wasm_bindgen_test]
 async fn base_test() {
@@ -32,12 +21,13 @@ async fn base_test() {
     let topic = "my-integration-test".to_string();
     let fluvio = Fluvio::connect(url.clone()).await;
     assert!(fluvio.is_ok());
-    let fluvio= fluvio.unwrap();
+    let fluvio = fluvio.unwrap();
 
     let producer = fluvio.topic_producer(topic.clone()).await;
     assert!(producer.is_ok());
     let producer = producer.unwrap();
-    let _ = wasm_bindgen_futures::JsFuture::from(producer.send("".into(), "value - 0".into())).await;
+    let _ =
+        wasm_bindgen_futures::JsFuture::from(producer.send("".into(), "value - 0".into())).await;
 
     let fluvio = Fluvio::connect(url).await;
     assert!(fluvio.is_ok());
