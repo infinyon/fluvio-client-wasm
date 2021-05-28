@@ -2,10 +2,14 @@
   "author": "Infinyon Contributors <team@infiyon.com>",
   "name": "fluvio-client-wasm",
   "version": "0.1.0",
+  "main": "dist/fluvio_client.js",
+  "files": [
+     "dist/"
+  ],
   "scripts": {
     "build": "rimraf dist && rollup --config",
     "start": "rollup -c rollup.config.js --watch",
-    "prepare": "rollup --config",
+    "prepack": "rollup --config",
     "test": "cargo test && wasm-pack test --headless"
   },
   "devDependencies": {
