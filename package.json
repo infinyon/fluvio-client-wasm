@@ -2,9 +2,9 @@
   "author": "Infinyon Contributors <team@infiyon.com>",
   "name": "fluvio-client-wasm",
   "version": "0.1.0",
-  "main": "dist/fluvio_client.js",
+  "main": "dist/fluvio-client.js",
   "files": [
-     "dist/"
+    "dist/"
   ],
   "scripts": {
     "build": "rimraf dist && rollup --config",
@@ -13,11 +13,14 @@
     "test": "cargo test && wasm-pack test --headless"
   },
   "devDependencies": {
+    "@rollup/plugin-typescript": "^8.2.1",
     "@wasm-tool/rollup-plugin-rust": "^1.0.6",
     "@wasm-tool/wasm-pack-plugin": "^1.1.0",
     "copy-webpack-plugin": "^5.0.3",
     "rimraf": "^3.0.0",
     "rollup": "^2.50.2",
+    "tslib": "^2.2.0",
+    "typescript": "^3.9.0",
     "webpack": "^4.42.0",
     "webpack-cli": "^3.3.3",
     "webpack-dev-server": "^3.7.1"
