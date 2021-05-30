@@ -4,11 +4,17 @@ use fluvio_future::net::{
 };
 use fluvio_ws_stream_wasm::WsMeta;
 use std::io::Error as IoError;
-#[derive(Clone, Default)]
-pub struct FluvioWebsocketConnector {}
+#[derive(Clone)]
+pub struct FluvioWebsocketConnector {
+    base_addr: String,
+    token: String
+}
 impl FluvioWebsocketConnector {
-    pub fn new() -> Self {
-        Self {}
+    pub fn new(base_addr: String, token: String) -> Self {
+        Self {
+            base_addr,
+            token,
+        }
     }
 }
 #[async_trait(?Send)]
@@ -17,13 +23,17 @@ impl TcpDomainConnector for FluvioWebsocketConnector {
         &self,
         addr: &str,
     ) -> Result<(BoxWriteConnection, BoxReadConnection, ConnectionFd), IoError> {
-        let addr = if addr == "localhost:9010" {
-            "ws://localhost:3001"
+        log::debug!("Connecting to {:?}", addr);
+        let addr = if addr.ends_with("9005") {
+            format!("{}{}", self.base_addr, "9005")
+        } else if addr.ends_with("9003") {
+            format!("{}{}", self.base_addr, "9003")
         } else {
-            addr
-        };
+            addr.to_string()
+        }.to_string();
+        log::debug!("Connecting to {:?}", addr);
 
-        let (mut _ws, wsstream) = WsMeta::connect(addr, None)
+        let (mut _ws, wsstream) = WsMeta::connect(addr.clone(), Some(vec![self.token.as_str()]))
             .await
             .map_err(|e| IoError::new(std::io::ErrorKind::Other, e))?;
         let wsstream_clone = wsstream.clone();
