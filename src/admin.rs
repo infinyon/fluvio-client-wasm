@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::rc::Rc;
 
 use crate::FluvioError;
+use fluvio::metadata::partition::PartitionSpec;
 use fluvio::metadata::topic::TopicSpec;
 use fluvio::FluvioAdmin as NativeFluvioAdmin;
 use js_sys::Array;
@@ -32,6 +33,26 @@ impl FluvioAdmin {
                 })
                 .map_err(|e| FluvioError::from(e).into());
             topic_list
+        })
+    }
+
+    pub fn list_partition(&mut self) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            let partition_list = rc
+                .borrow_mut()
+                .list::<PartitionSpec, _>(vec![])
+                .await
+                .map(|partition_list| {
+                    JsValue::from(
+                        partition_list
+                            .into_iter()
+                            .map(|partition| JsValue::from(partition.name))
+                            .collect::<Array>(),
+                    )
+                })
+                .map_err(|e| FluvioError::from(e).into());
+            partition_list
         })
     }
 }
