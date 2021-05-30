@@ -9,6 +9,7 @@
   "scripts": {
     "build": "rimraf dist && rollup --config",
     "start": "rollup -c rollup.config.js --watch",
+    "webpack-dev": "rimraf dist pkg && webpack-dev-server --open -d",
     "prepack": "rollup --config",
     "test": "cargo test && wasm-pack test --headless"
   },

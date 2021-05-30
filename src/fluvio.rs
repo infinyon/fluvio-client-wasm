@@ -24,11 +24,15 @@ impl Fluvio {
             .await?
             .into())
     }
-    pub async fn connect(addr: String) -> Result<Fluvio, FluvioError> {
+
+    pub async fn connect(base_addr: String, port: String, creds: String) -> Result<Fluvio, FluvioError> {
         crate::utils::set_panic_hook();
-        let config = FluvioConfig::new(addr);
+
+        let addr = format!("{}{}", base_addr, port);
+        let config = FluvioConfig::new(addr.clone());
+
         let inner = NativeFluvio::connect_with_connector(
-            Box::new(FluvioWebsocketConnector::new()),
+            Box::new(FluvioWebsocketConnector::new(base_addr, creds)),
             &config,
         )
         .await?;
