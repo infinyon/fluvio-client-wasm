@@ -1,6 +1,7 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
+use crate::topic::TopicMetadata;
 use crate::FluvioError;
 use fluvio::metadata::partition::PartitionSpec;
 use fluvio::metadata::topic::TopicSpec;
@@ -27,7 +28,7 @@ impl FluvioAdmin {
                     JsValue::from(
                         topic_list
                             .into_iter()
-                            .map(|topic| JsValue::from(topic.name))
+                            .map(|topic| JsValue::from(TopicMetadata::from(topic)))
                             .collect::<Array>(),
                     )
                 })
