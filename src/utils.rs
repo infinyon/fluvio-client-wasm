@@ -1,3 +1,7 @@
+use std::sync::Once;
+
+static START: Once = Once::new();
+
 pub fn set_panic_hook() {
     // When the `console_error_panic_hook` feature is enabled, we can call the
     // `set_panic_hook` function at least once during initialization, and then
@@ -6,11 +10,10 @@ pub fn set_panic_hook() {
     // For more details see
     // https://github.com/rustwasm/console_error_panic_hook#readme
     //#[cfg(feature = "console_error_panic_hook")]
-    console_error_panic_hook::set_once();
-    /*
-     * TODO: Fix this when running wasm-pack test
-    tracing_wasm::set_as_global_default();
-    use log::Level;
-    console_log::init_with_level(Level::Debug).expect("error initializing log");
-    */
+    START.call_once(|| {
+        console_error_panic_hook::set_once();
+        tracing_wasm::set_as_global_default();
+        use log::Level;
+        console_log::init_with_level(Level::Debug).expect("error initializing log");
+    });
 }
