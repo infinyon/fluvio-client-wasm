@@ -34,7 +34,7 @@ impl Fluvio {
         .await?;
         Ok(Self { inner })
     }
-    pub async fn adimn(self) -> FluvioAdmin {
+    pub async fn admin(self) -> FluvioAdmin {
         self.inner.admin().await.into()
     }
 }

@@ -6,6 +6,7 @@ mod fluvio;
 mod offset;
 mod producer;
 mod record;
+mod topic;
 mod utils;
 
 pub use crate::fluvio::Fluvio;
