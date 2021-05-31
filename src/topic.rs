@@ -12,16 +12,20 @@ pub struct TopicMetadata {
 
 #[wasm_bindgen]
 impl TopicMetadata {
-    pub fn name(&self) -> String {
+
+    #[wasm_bindgen(method, getter)]
+        pub fn name(&self) -> String {
         self.inner.name.clone()
     }
 
-    pub fn replication_factor(&self) -> Option<i32> {
-        self.inner.spec.replication_factor()
-    }
-
+    #[wasm_bindgen(method, getter)]
     pub fn partitions(&self) -> i32 {
         self.inner.spec.partitions()
+    }
+
+    #[wasm_bindgen(method, getter = replicationFactor)]
+    pub fn replication_factor(&self) -> Option<i32> {
+        self.inner.spec.replication_factor()
     }
 }
 
