@@ -13,6 +13,7 @@ use fluvio::metadata::topic::TopicSpec;
 use fluvio::metadata::objects::Metadata;
 use fluvio::metadata::store::MetadataStoreObject;
 use crate::topic::TopicMetadata;
+use crate::partition::PartitionMetadata;
 use crate::FluvioError;
 
 #[wasm_bindgen]
@@ -79,6 +80,24 @@ impl FluvioAdmin {
             inner: Rc::new(RefCell::new(Box::pin(stream))),
         }
     }
+
+    pub fn watch_partitions(&mut self) -> AsyncPartitionStream {
+        use tokio_stream::StreamExt;
+        let stream = self.inner.borrow_mut().watch_partitions().map(|it| {
+            let (add, del) = it.parts();
+            let convert = |meta: MetadataStoreObject<PartitionSpec, _>| PartitionMetadata::from(Metadata {
+                name: meta.key.to_string(),
+                spec: meta.spec,
+                status: meta.status,
+            });
+            let added: Vec<_> = add.into_iter().map(convert).collect();
+            let deleted: Vec<_> = del.into_iter().map(convert).collect();
+            (added, deleted)
+        });
+        AsyncPartitionStream {
+            inner: Rc::new(RefCell::new(Box::pin(stream))),
+        }
+    }
 }
 
 impl From<NativeFluvioAdmin> for FluvioAdmin {
@@ -124,5 +143,5 @@ macro_rules! impl_stream {
 }
 
 impl_stream!(AsyncTopicStream, TopicWatchUpdates, TopicMetadata);
-// impl_stream!(AsyncPartitionStream, PartitionWatchUpdates, PartitionMetadata);
+impl_stream!(AsyncPartitionStream, PartitionWatchUpdates, PartitionMetadata);
 // impl_stream!(AsyncSpuStream, SpuWatchUpdates, SpuMetadata);
