@@ -54,7 +54,7 @@ impl FluvioAdmin {
                     JsValue::from(
                         partition_list
                             .into_iter()
-                            .map(|partition| JsValue::from(partition.name))
+                            .map(|partition| JsValue::from(PartitionMetadata::from(partition)))
                             .collect::<Array>(),
                     )
                 })
