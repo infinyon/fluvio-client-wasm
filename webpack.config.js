@@ -26,9 +26,6 @@ module.exports = {
       crateDirectory: __dirname,
       //forceMode: "development",
       watchDirectories: [
-        path.resolve(__dirname, "../fluvio/src/client/"),
-        path.resolve(__dirname, "../fluvio/src/socket"),
-        //path.resolve(__dirname, "../fluvio/"),
       ],
     }),
   ]
