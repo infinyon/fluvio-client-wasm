@@ -8,12 +8,15 @@ pub struct Offset {
 
 #[wasm_bindgen]
 impl Offset {
+    #[wasm_bindgen(js_name = fromBeginning)]
     pub fn from_beginning(offset: u32) -> Self {
         NativeOffset::from_beginning(offset).into()
     }
     pub fn beginning() -> Self {
         NativeOffset::beginning().into()
     }
+
+    #[wasm_bindgen(js_name = fromEnd)]
     pub fn from_end(offset: u32) -> Self {
         NativeOffset::from_end(offset).into()
     }

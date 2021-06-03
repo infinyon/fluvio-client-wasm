@@ -15,6 +15,7 @@ pub struct Fluvio {
 
 #[wasm_bindgen]
 impl Fluvio {
+    #[wasm_bindgen(js_name = topicProducer)]
     pub fn topic_producer(&self, topic: String) -> Promise {
         let rc = self.inner.clone();
 
