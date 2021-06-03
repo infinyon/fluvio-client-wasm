@@ -12,9 +12,8 @@ pub struct TopicMetadata {
 
 #[wasm_bindgen]
 impl TopicMetadata {
-
     #[wasm_bindgen(method, getter)]
-        pub fn name(&self) -> String {
+    pub fn name(&self) -> String {
         self.inner.name.clone()
     }
 
