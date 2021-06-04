@@ -17,7 +17,8 @@ pub struct FluvioAdmin {
 }
 #[wasm_bindgen]
 impl FluvioAdmin {
-    pub fn list_topic(&mut self) -> Promise {
+    #[wasm_bindgen(js_name = listTopics)]
+    pub fn list_topics(&mut self) -> Promise {
         let rc = self.inner.clone();
         future_to_promise(async move {
             let topic_list = rc
@@ -37,7 +38,8 @@ impl FluvioAdmin {
         })
     }
 
-    pub fn list_partition(&mut self) -> Promise {
+    #[wasm_bindgen(js_name = listPartitions)]
+    pub fn list_partitions(&mut self) -> Promise {
         let rc = self.inner.clone();
         future_to_promise(async move {
             let partition_list = rc
