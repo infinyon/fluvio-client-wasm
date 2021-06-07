@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use wasm_bindgen::prelude::*;
 
 use fluvio::metadata::objects::Metadata;
@@ -7,7 +5,7 @@ use fluvio::metadata::topic::TopicSpec;
 
 #[wasm_bindgen]
 pub struct TopicMetadata {
-    inner: Rc<Metadata<TopicSpec>>,
+    inner: Metadata<TopicSpec>,
 }
 
 #[wasm_bindgen]
@@ -30,8 +28,6 @@ impl TopicMetadata {
 
 impl From<Metadata<TopicSpec>> for TopicMetadata {
     fn from(inner: Metadata<TopicSpec>) -> Self {
-        Self {
-            inner: Rc::new(inner),
-        }
+        Self { inner }
     }
 }
