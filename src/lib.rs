@@ -4,6 +4,7 @@ mod consumer;
 mod error;
 mod fluvio;
 mod offset;
+mod partition;
 mod producer;
 mod record;
 mod topic;
