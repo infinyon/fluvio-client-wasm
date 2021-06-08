@@ -46,11 +46,11 @@ impl Fluvio {
     pub async fn connect(addr: String) -> Result<Fluvio, FluvioError> {
         crate::utils::set_panic_hook();
 
-        let config = FluvioConfig::new(addr);
+        let config = FluvioConfig::new(addr.clone());
 
         let inner = Rc::new(
             NativeFluvio::connect_with_connector(
-                Box::new(FluvioWebsocketConnector::new()),
+                Box::new(FluvioWebsocketConnector::new(addr, None)),
                 &config,
             )
             .await?,
