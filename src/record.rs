@@ -27,8 +27,8 @@ impl Record {
             None
         }
     }
-    pub fn offset(&self) -> i64 {
-        self.inner.offset()
+    pub fn offset(&self) -> u32 {
+        self.inner.offset() as u32
     }
 }
 
