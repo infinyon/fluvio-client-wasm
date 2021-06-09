@@ -44,7 +44,7 @@ impl Fluvio {
     }
 
     pub async fn connect(addr: String) -> Result<Fluvio, FluvioError> {
-        crate::utils::set_panic_hook();
+        Self::setup_debugging(false);
 
         let config = FluvioConfig::new(addr.clone());
 
@@ -64,5 +64,19 @@ impl Fluvio {
 
             Ok(admin)
         })
+    }
+
+    #[wasm_bindgen(js_name = setupDebugging)]
+    pub fn setup_debugging(verbose_debugging: bool) {
+        console_error_panic_hook::set_once();
+        if verbose_debugging {
+            use std::sync::Once;
+            static START: Once = Once::new();
+            START.call_once(|| {
+                tracing_wasm::set_as_global_default();
+                use log::Level;
+                console_log::init_with_level(Level::Debug).expect("error initializing log");
+            });
+        }
     }
 }
