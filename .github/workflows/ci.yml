@@ -32,5 +32,11 @@ jobs:
           components: clippy
           target: wasm32-unknown-unknown
 
-      - name: Cargo check
-        run: cargo check --all-targets
+      - name: Cargo check on wasm
+        run: cargo check --all-targets --target wasm32-unknown-unknown
+
+      - name: Cargo fmt
+        run: cargo fmt -- --check
+
+      - name: Cargo check on websocket proxy
+        run: cargo check --manifest-path ./fluvio-websocket-proxy/Cargo.toml

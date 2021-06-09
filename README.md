@@ -10,10 +10,9 @@ This project is currently setup to be used via rollup.
 ## Development
 
 Setup fluvio with a `--local` cluster installation locally then run the
-following in different terminals:
+following:
 
-* `make setup-websocat-sc`
-* `make setup-websocat-spu`
+* `make fluvio-websocket-proxy`
 
 ### Hot Reloading
 To use hotreloading for the contents of
