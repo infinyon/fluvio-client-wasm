@@ -29,7 +29,7 @@ async fn ws_handler(req: Request<()>, mut stream: WebSocketConnection) -> TideRe
 
     // It would be cool if this looked at the domain
     let endpoint = if let Some(_domain) = domain {
-        "127.0.0.1:9010" // SC
+        "127.0.0.1:9010" // SPU
     } else {
         "127.0.0.1:9003" // SC
     };
