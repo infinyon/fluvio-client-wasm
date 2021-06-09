@@ -11,10 +11,7 @@ pub struct FluvioWebsocketConnector {
 }
 impl FluvioWebsocketConnector {
     pub fn new(url: String, domain: Option<String>) -> Self {
-        Self {
-            url,
-            domain,
-        }
+        Self { url, domain }
     }
 }
 #[async_trait(?Send)]
@@ -28,7 +25,12 @@ impl TcpDomainConnector for FluvioWebsocketConnector {
         } else {
             self.url.clone()
         };
-        tracing::debug!("CONNECTING TO url: {:?}, passed in addr was {:?}, domain - {:?}", url, addr, self.domain);
+        tracing::debug!(
+            "CONNECTING TO url: {:?}, passed in addr was {:?}, domain - {:?}",
+            url,
+            addr,
+            self.domain
+        );
 
         let (mut _ws, wsstream) = WsMeta::connect(url.clone(), None)
             .await
