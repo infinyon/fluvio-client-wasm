@@ -28,7 +28,7 @@ impl TcpDomainConnector for FluvioWebsocketConnector {
         } else {
             self.url.clone()
         };
-        tracing::debug!("CONNECTING TO url: {:?}, passed in addr was {:?}", url, addr);
+        tracing::debug!("CONNECTING TO url: {:?}, passed in addr was {:?}, domain - {:?}", url, addr, self.domain);
 
         let (mut _ws, wsstream) = WsMeta::connect(url.clone(), None)
             .await
