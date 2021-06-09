@@ -8,7 +8,6 @@ mod partition;
 mod producer;
 mod record;
 mod topic;
-mod utils;
 
 pub use crate::fluvio::Fluvio;
 pub use admin::FluvioAdmin;
