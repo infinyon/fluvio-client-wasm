@@ -9,7 +9,7 @@ resolver = "2"
 crate-type = ["cdylib", "rlib"]
 
 [features]
-default = []
+default = ["unstable"]
 unstable = []
 
 [dependencies]
