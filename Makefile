@@ -12,8 +12,8 @@ build-dev:
 test: install-wasm-pack
 	wasm-pack test --firefox --headless
 
-fluvio-websocket-proxy:
-	cargo run -- ./fluvio-websocket-proxy/Cargo.toml
+run-fluvio-websocket-proxy:
+	cargo run --manifest-path ./fluvio-websocket-proxy/Cargo.toml
 
 webpack-dev:
 	npm install
