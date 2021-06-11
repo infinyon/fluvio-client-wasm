@@ -143,8 +143,11 @@ mod unstable {
                             .next()
                             .await
                             .ok_or_else(|| {
-                                FluvioError::from(format!("{} watch stream closed", stringify!($spec)))
-                                    .into()
+                                FluvioError::from(format!(
+                                    "{} watch stream closed",
+                                    stringify!($spec)
+                                ))
+                                .into()
                             })
                             .map(|(added, deleted)| JsValue::from($update { added, deleted }))
                     })
@@ -154,6 +157,10 @@ mod unstable {
     }
 
     impl_stream!(AsyncTopicStream, TopicWatchUpdates, TopicMetadata);
-    impl_stream!(AsyncPartitionStream, PartitionWatchUpdates, PartitionMetadata);
+    impl_stream!(
+        AsyncPartitionStream,
+        PartitionWatchUpdates,
+        PartitionMetadata
+    );
     // impl_stream!(AsyncSpuStream, SpuWatchUpdates, SpuMetadata);
 }
