@@ -12,6 +12,9 @@ use js_sys::Promise;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::future_to_promise;
 
+#[cfg(feature = "unstable")]
+use fluvio::metadata::{objects::Metadata, store::MetadataStoreObject};
+
 #[wasm_bindgen]
 pub struct FluvioAdmin {
     inner: Rc<RefCell<NativeFluvioAdmin>>,
@@ -59,6 +62,48 @@ impl FluvioAdmin {
             partition_list
         })
     }
+
+    #[wasm_bindgen(js_name = watchTopics)]
+    pub fn watch_topics(&mut self) -> AsyncTopicStream {
+        use tokio_stream::StreamExt;
+        let stream = self.inner.borrow_mut().watch_topics().map(|it| {
+            let (add, del) = it.parts();
+            let convert = |meta: MetadataStoreObject<_, _>| {
+                TopicMetadata::from(Metadata {
+                    name: meta.key,
+                    spec: meta.spec,
+                    status: meta.status,
+                })
+            };
+            let added: Vec<_> = add.into_iter().map(convert).collect();
+            let deleted: Vec<_> = del.into_iter().map(convert).collect();
+            (added, deleted)
+        });
+        AsyncTopicStream {
+            inner: Rc::new(RefCell::new(Box::pin(stream))),
+        }
+    }
+
+    #[wasm_bindgen(js_name = watchPartitions)]
+    pub fn watch_partitions(&mut self) -> AsyncPartitionStream {
+        use tokio_stream::StreamExt;
+        let stream = self.inner.borrow_mut().watch_partitions().map(|it| {
+            let (add, del) = it.parts();
+            let convert = |meta: MetadataStoreObject<PartitionSpec, _>| {
+                PartitionMetadata::from(Metadata {
+                    name: meta.key.to_string(),
+                    spec: meta.spec,
+                    status: meta.status,
+                })
+            };
+            let added: Vec<_> = add.into_iter().map(convert).collect();
+            let deleted: Vec<_> = del.into_iter().map(convert).collect();
+            (added, deleted)
+        });
+        AsyncPartitionStream {
+            inner: Rc::new(RefCell::new(Box::pin(stream))),
+        }
+    }
 }
 
 impl From<NativeFluvioAdmin> for FluvioAdmin {
@@ -68,3 +113,50 @@ impl From<NativeFluvioAdmin> for FluvioAdmin {
         }
     }
 }
+
+macro_rules! impl_stream {
+    ($stream:ident, $update:ident, $spec:ty) => {
+        #[wasm_bindgen]
+        pub struct $update {
+            #[allow(dead_code)]
+            added: Vec<$spec>,
+            #[allow(dead_code)]
+            deleted: Vec<$spec>,
+        }
+
+        #[wasm_bindgen]
+        pub struct $stream {
+            inner: Rc<
+                RefCell<
+                    std::pin::Pin<Box<dyn tokio_stream::Stream<Item = (Vec<$spec>, Vec<$spec>)>>>,
+                >,
+            >,
+        }
+
+        #[wasm_bindgen]
+        impl $stream {
+            pub fn next(&mut self) -> Promise {
+                use tokio_stream::StreamExt;
+
+                let rc = self.inner.clone();
+                future_to_promise(async move {
+                    rc.borrow_mut()
+                        .next()
+                        .await
+                        .ok_or_else(|| {
+                            FluvioError::from(format!("{} watch stream closed", stringify!($spec)))
+                                .into()
+                        })
+                        .map(|(added, deleted)| JsValue::from($update { added, deleted }))
+                })
+            }
+        }
+    };
+}
+
+impl_stream!(AsyncTopicStream, TopicWatchUpdates, TopicMetadata);
+impl_stream!(
+    AsyncPartitionStream,
+    PartitionWatchUpdates,
+    PartitionMetadata
+);
