@@ -12,7 +12,7 @@ This project is currently setup to be used via rollup.
 Setup fluvio with a `--local` cluster installation locally then run the
 following:
 
-* `make fluvio-websocket-proxy`
+* `make run-fluvio-websocket-proxy`
 
 ### Hot Reloading
 To use hotreloading for the contents of
