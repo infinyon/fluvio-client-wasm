@@ -2,8 +2,14 @@ import("../pkg").then(async fluvioWasm => {
   var Fluvio = fluvioWasm.Fluvio;
   var Offset = fluvioWasm.Offset;
   while (true) {
+    let topic = createUUID();
     try {
       const fluvio = await Fluvio.connect("ws://localhost:3000")
+      const admin = await fluvio.admin();
+      console.log(`Creating topic ${topic}`);
+      await admin.createTopic(topic);
+      console.log(`Created topic ${topic}`);
+
       const producer = await fluvio.topicProducer("foobar");
       await producer.send("", `count`);
 
@@ -38,6 +44,7 @@ import("../pkg").then(async fluvioWasm => {
       }
       let after = new Date();
       console.log(`The recieved ${count} in took ${after - before} ms`);
+      await admin.deleteTopic(topic);
     } catch (e) {
       console.error(e);
       console.error(e.message);
@@ -50,4 +57,10 @@ import("../pkg").then(async fluvioWasm => {
 
 const sleep = (milliseconds) => {
   return new Promise(resolve => setTimeout(resolve, milliseconds))
+}
+function createUUID() {
+   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+   });
 }

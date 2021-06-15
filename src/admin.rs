@@ -41,6 +41,35 @@ impl FluvioAdmin {
             topic_list
         })
     }
+    #[wasm_bindgen(js_name = createTopic)]
+    pub fn create_topic(&mut self, topic_name: String) -> Promise {
+        use fluvio::metadata::topic::TopicReplicaParam;
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            rc.borrow_mut()
+                .create(
+                    topic_name.clone(),
+                    false,
+                    TopicSpec::Computed(TopicReplicaParam::new(1, 1, false)),
+                )
+                .await
+                .map(|_| JsValue::from(topic_name))
+                .map_err(|e| FluvioError::from(e).into())
+        })
+    }
+
+    #[wasm_bindgen(js_name = deleteTopic)]
+    /// @returns { Pormise<null> }
+    pub fn delete_topic(&mut self, topic_name: String) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            rc.borrow_mut()
+                .delete::<TopicSpec, String>(topic_name)
+                .await
+                .map(|_| JsValue::NULL)
+                .map_err(|e| FluvioError::from(e).into())
+        })
+    }
 
     #[wasm_bindgen(js_name = listPartitions)]
     pub fn list_partitions(&mut self) -> Promise {
