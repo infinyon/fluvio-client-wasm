@@ -35,14 +35,16 @@ import("../pkg").then(async ({Fluvio, Offset, ConsumerConfig}) => {
   // Set up Consumer using a SmartStream filter.
   // This filter keeps only Records whose value contains an 'a'.
   const consumer = await fluvio.partitionConsumer(TOPIC, 0);
-  const config = new ConsumerConfig();
+
   const {filter} = await import("./smartstream.js");
-  config.wasmFilterBase64 = filter;
+  const config = new ConsumerConfig({
+    smartstreamFilter: filter,
+  });
   let stream = await consumer.streamWithConfig(Offset.beginning(), config)
 
   let count = 0;
   let before = new Date();
-  while (count < 10000) {
+  while (count < 10) {
 
     // Every other iteration, send a record with 'a'
     if (count % 2 === 0) {
