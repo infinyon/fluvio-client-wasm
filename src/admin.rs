@@ -59,7 +59,6 @@ impl FluvioAdmin {
     }
 
     #[wasm_bindgen(js_name = deleteTopic)]
-    /// @returns { Pormise<null> }
     pub fn delete_topic(&mut self, topic_name: String) -> Promise {
         let rc = self.inner.clone();
         future_to_promise(async move {
