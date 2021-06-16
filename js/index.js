@@ -10,10 +10,10 @@ import("../pkg").then(async fluvioWasm => {
       await admin.createTopic(topic);
       console.log(`Created topic ${topic}`);
 
-      const producer = await fluvio.topicProducer("foobar");
+      const producer = await fluvio.topicProducer(topic);
       await producer.send("", `count`);
 
-      const consumer = await fluvio.partitionConsumer("foobar", 0);
+      const consumer = await fluvio.partitionConsumer(topic, 0);
       let stream = await consumer.stream(Offset.fromEnd(1))
       const userAgent = navigator.userAgent;
 
