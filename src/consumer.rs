@@ -41,8 +41,8 @@ pub struct PartitionConsumer {
 
 #[wasm_bindgen]
 impl PartitionConsumer {
-    pub async fn stream(self, offset: Offset) -> Result<PartitionConsumerStream, FluvioError> {
-        Ok(PartitionConsumerStream {
+    pub async fn stream(self, offset: Offset) -> Result<JsValue, FluvioError> {
+        let stream = PartitionConsumerStream {
             inner: Rc::new(RefCell::new(Box::pin(
                 self.inner.stream(offset.inner).await?.map(|result| {
                     result
@@ -50,11 +50,19 @@ impl PartitionConsumer {
                         .map_err(FluvioError::from)
                 }),
             ))),
-        })
+        };
+        let stream_value = JsValue::from(stream);
+        let async_iterator = build_asynciterator(stream_value);
+        Ok(async_iterator)
     }
 }
 impl From<NativePartitionConsumer> for PartitionConsumer {
     fn from(inner: NativePartitionConsumer) -> Self {
         Self { inner }
     }
+}
+
+#[wasm_bindgen(module = "/src/asynciterator.js")]
+extern "C" {
+    fn build_asynciterator(stream: JsValue) -> JsValue;
 }
