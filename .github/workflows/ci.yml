@@ -42,4 +42,4 @@ jobs:
         run: cargo clippy
 
       - name: Cargo check on websocket proxy
-        run: cargo check --manifest-path ./fluvio-websocket-proxy/Cargo.toml
+        run: make check-fluvio-websocket-proxy

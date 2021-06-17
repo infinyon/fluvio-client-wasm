@@ -15,6 +15,9 @@ test: install-wasm-pack
 run-fluvio-websocket-proxy:
 	RUST_LOG=debug cargo run --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(shell rustup show | grep 'Default host' | sed 's/Default host: //g')
 
+check-fluvio-websocket-proxy:
+	RUST_LOG=debug cargo check --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(shell rustup show | grep 'Default host' | sed 's/Default host: //g')
+
 webpack-dev:
 	npm install
 	npm run webpack-dev
