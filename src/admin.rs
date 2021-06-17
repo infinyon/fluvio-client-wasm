@@ -42,7 +42,7 @@ impl FluvioAdmin {
         })
     }
     #[wasm_bindgen(js_name = createTopic)]
-    pub fn create_topic(&mut self, topic_name: String) -> Promise {
+    pub fn create_topic(&mut self, topic_name: String, partition: i32) -> Promise {
         use fluvio::metadata::topic::TopicReplicaParam;
         let rc = self.inner.clone();
         future_to_promise(async move {
@@ -50,7 +50,7 @@ impl FluvioAdmin {
                 .create(
                     topic_name.clone(),
                     false,
-                    TopicSpec::Computed(TopicReplicaParam::new(1, 1, false)),
+                    TopicSpec::Computed(TopicReplicaParam::new(partition, 1, false)),
                 )
                 .await
                 .map(|_| JsValue::from(topic_name))
