@@ -9,6 +9,8 @@ mod producer;
 mod record;
 mod topic;
 
+mod tests;
+
 pub use crate::fluvio::Fluvio;
 pub use admin::FluvioAdmin;
 use connector::FluvioWebsocketConnector;
