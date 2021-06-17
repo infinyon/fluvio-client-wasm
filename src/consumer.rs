@@ -12,6 +12,7 @@ use crate::{FluvioError, Offset, Record};
 
 #[wasm_bindgen]
 pub struct PartitionConsumerStream {
+    #[allow(clippy::type_complexity)]
     inner: Rc<RefCell<Pin<Box<dyn Stream<Item = Result<Record, FluvioError>>>>>>,
 }
 

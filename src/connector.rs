@@ -39,7 +39,7 @@ impl TcpDomainConnector for FluvioWebsocketConnector {
         Ok((
             Box::new(wsstream.into_io()),
             Box::new(wsstream_clone.into_io()),
-            String::from(url),
+            url,
         ))
     }
 

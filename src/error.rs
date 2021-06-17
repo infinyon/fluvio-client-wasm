@@ -26,7 +26,7 @@ impl FluvioError {
     }
     #[wasm_bindgen(getter)]
     pub fn name(&self) -> String {
-        format!("FluvioError")
+        "FluvioError".to_string()
     }
     #[wasm_bindgen(getter)]
     pub fn stack(&self) -> String {

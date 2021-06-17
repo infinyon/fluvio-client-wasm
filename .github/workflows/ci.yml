@@ -38,5 +38,8 @@ jobs:
       - name: Cargo fmt
         run: cargo fmt -- --check
 
+      - name: Cargo clippy
+        run: cargo clippy
+
       - name: Cargo check on websocket proxy
         run: cargo check --manifest-path ./fluvio-websocket-proxy/Cargo.toml
