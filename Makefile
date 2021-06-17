@@ -13,7 +13,10 @@ test: install-wasm-pack
 	wasm-pack test --firefox --headless
 
 run-fluvio-websocket-proxy:
-	cargo run --manifest-path ./fluvio-websocket-proxy/Cargo.toml
+	RUST_LOG=debug cargo run --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(shell rustup show | grep 'Default host' | sed 's/Default host: //g')
+
+check-fluvio-websocket-proxy:
+	RUST_LOG=debug cargo check --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(shell rustup show | grep 'Default host' | sed 's/Default host: //g')
 
 webpack-dev:
 	npm install
