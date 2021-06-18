@@ -26,6 +26,7 @@ fluvio_ws_stream_wasm = "0.7.0"
 async-trait = { version = "0.1.40"}
 tracing-wasm = "0.2.0"
 log = "0.4"
+base64 = "0.13.0"
 
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
