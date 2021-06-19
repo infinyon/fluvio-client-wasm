@@ -17,7 +17,7 @@ use fluvio::metadata::{objects::Metadata, store::MetadataStoreObject};
 
 #[wasm_bindgen]
 pub struct FluvioAdmin {
-    inner: Rc<RefCell<NativeFluvioAdmin>>,
+    inner: Rc<NativeFluvioAdmin>,
 }
 #[wasm_bindgen]
 impl FluvioAdmin {
@@ -26,7 +26,6 @@ impl FluvioAdmin {
         let rc = self.inner.clone();
         future_to_promise(async move {
             let topic_list = rc
-                .borrow_mut()
                 .list::<TopicSpec, _>(vec![])
                 .await
                 .map(|topic_list| {
@@ -46,15 +45,14 @@ impl FluvioAdmin {
         use fluvio::metadata::topic::TopicReplicaParam;
         let rc = self.inner.clone();
         future_to_promise(async move {
-            rc.borrow_mut()
-                .create(
-                    topic_name.clone(),
-                    false,
-                    TopicSpec::Computed(TopicReplicaParam::new(partition, 1, false)),
-                )
-                .await
-                .map(|_| JsValue::from(topic_name))
-                .map_err(|e| FluvioError::from(e).into())
+            rc.create(
+                topic_name.clone(),
+                false,
+                TopicSpec::Computed(TopicReplicaParam::new(partition, 1, false)),
+            )
+            .await
+            .map(|_| JsValue::from(topic_name))
+            .map_err(|e| FluvioError::from(e).into())
         })
     }
 
@@ -62,8 +60,7 @@ impl FluvioAdmin {
     pub fn delete_topic(&mut self, topic_name: String) -> Promise {
         let rc = self.inner.clone();
         future_to_promise(async move {
-            rc.borrow_mut()
-                .delete::<TopicSpec, String>(topic_name)
+            rc.delete::<TopicSpec, String>(topic_name)
                 .await
                 .map(|_| JsValue::NULL)
                 .map_err(|e| FluvioError::from(e).into())
@@ -75,7 +72,6 @@ impl FluvioAdmin {
         let rc = self.inner.clone();
         future_to_promise(async move {
             let partition_list = rc
-                .borrow_mut()
                 .list::<PartitionSpec, _>(vec![])
                 .await
                 .map(|partition_list| {
@@ -94,7 +90,7 @@ impl FluvioAdmin {
     #[wasm_bindgen(js_name = watchTopics)]
     pub fn watch_topics(&mut self) -> AsyncTopicStream {
         use tokio_stream::StreamExt;
-        let stream = self.inner.borrow_mut().watch_topics().map(|it| {
+        let stream = self.inner.watch_topics().map(|it| {
             let (add, del) = it.parts();
             let convert = |meta: MetadataStoreObject<_, _>| {
                 TopicMetadata::from(Metadata {
@@ -115,7 +111,7 @@ impl FluvioAdmin {
     #[wasm_bindgen(js_name = watchPartitions)]
     pub fn watch_partitions(&mut self) -> AsyncPartitionStream {
         use tokio_stream::StreamExt;
-        let stream = self.inner.borrow_mut().watch_partitions().map(|it| {
+        let stream = self.inner.watch_partitions().map(|it| {
             let (add, del) = it.parts();
             let convert = |meta: MetadataStoreObject<PartitionSpec, _>| {
                 PartitionMetadata::from(Metadata {
@@ -137,7 +133,7 @@ impl FluvioAdmin {
 impl From<NativeFluvioAdmin> for FluvioAdmin {
     fn from(inner: NativeFluvioAdmin) -> Self {
         Self {
-            inner: Rc::new(RefCell::new(inner)),
+            inner: Rc::new(inner),
         }
     }
 }
