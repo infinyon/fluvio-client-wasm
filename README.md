@@ -22,4 +22,5 @@ To use hotreloading for the contents of
 Now go edit `js/index.js` to try your work.
 
 ### Rust Tests
-* `make test` will run the rust tests in a headless browser.
+* `make run-fluvio-websocket-proxy` in one terminal.
+* `make test`  will run the rust tests in a headless browser.

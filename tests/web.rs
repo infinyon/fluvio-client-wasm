@@ -3,6 +3,7 @@
 #![cfg(target_arch = "wasm32")]
 
 extern crate wasm_bindgen_test;
+use fluvio_client_wasm::FluvioAdmin;
 use fluvio_client_wasm::PartitionConsumer;
 use fluvio_client_wasm::TopicProducer;
 use wasm_bindgen_test::*;
@@ -20,10 +21,15 @@ async fn base_test() {
     debug!("RUNNING BASE_TEST!");
 
     let url = "ws://localhost:3000".to_string();
-    let topic = "my-integration-test".to_string();
     let fluvio = Fluvio::connect(url.clone()).await;
     assert!(fluvio.is_ok());
     let fluvio = fluvio.unwrap();
+    let admin = wasm_bindgen_futures::JsFuture::from(fluvio.admin()).await;
+    assert!(admin.is_ok());
+    let admin = admin.unwrap();
+    let admin: FluvioAdmin = generic_of_jsval(admin, "FluvioAdmin").unwrap();
+    let topic = "my-integration-test".to_string();
+    let _ = wasm_bindgen_futures::JsFuture::from(admin.create_topic(topic.clone(), 0)).await;
 
     let producer = wasm_bindgen_futures::JsFuture::from(fluvio.topic_producer(topic.clone())).await;
     assert!(producer.is_ok());
