@@ -1,11 +1,5 @@
-
-export const simple = async (fluvio, offset) => {
-  const topic = "simple-js-test";
-  const admin = await fluvio.admin();
-  try {
-    await admin.createTopic(topic, 1);
-  } catch(e) {
-  }
+const topic = createUUID();
+export const test = async (fluvio, offset) => {
 
   const producer = await fluvio.topicProducer(topic);
   await producer.send("", `count`);
@@ -27,5 +21,19 @@ export const simple = async (fluvio, offset) => {
       throw `Records do not match! ${in_record} != ${out_record}`;
     }
   }
+}
+export const setup = async (fluvio) => {
+  const admin = await fluvio.admin();
+  await admin.createTopic(topic, 1);
+}
+export const teardown = async (fluvio) => {
+  const admin = await fluvio.admin();
   await admin.deleteTopic(topic);
+}
+
+function createUUID() {
+   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+   });
 }

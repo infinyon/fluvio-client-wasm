@@ -29,7 +29,7 @@ async fn base_test() {
     let admin = admin.unwrap();
     let admin: FluvioAdmin = generic_of_jsval(admin, "FluvioAdmin").unwrap();
     let topic = "my-integration-test".to_string();
-    let _ = wasm_bindgen_futures::JsFuture::from(admin.create_topic(topic.clone(), 0)).await;
+    let _ = wasm_bindgen_futures::JsFuture::from(admin.create_topic(topic.clone(), 1)).await;
 
     let producer = wasm_bindgen_futures::JsFuture::from(fluvio.topic_producer(topic.clone())).await;
     assert!(producer.is_ok());
@@ -42,7 +42,7 @@ async fn base_test() {
     assert!(fluvio.is_ok());
     let fluvio = fluvio.unwrap();
 
-    let consumer = wasm_bindgen_futures::JsFuture::from(fluvio.partition_consumer(topic, 0)).await;
+    let consumer = wasm_bindgen_futures::JsFuture::from(fluvio.partition_consumer(topic.clone(), 0)).await;
     assert!(consumer.is_ok());
     let consumer = consumer.unwrap();
     let consumer: PartitionConsumer = generic_of_jsval(consumer, "PartitionConsumer").unwrap();
@@ -72,6 +72,7 @@ async fn base_test() {
 
         assert_eq!(ret_value, Some(value));
     }
+    let _ = wasm_bindgen_futures::JsFuture::from(admin.delete_topic(topic)).await;
 }
 
 pub fn generic_of_jsval<T: FromWasmAbi<Abi = u32>>(

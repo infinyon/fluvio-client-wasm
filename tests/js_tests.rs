@@ -6,17 +6,34 @@ use wasm_bindgen::JsValue;
 
 pub use fluvio_client_wasm::*;
 
-#[wasm_bindgen_test]
-async fn simple() {
+async fn get_fluvio() -> Fluvio {
     let fluvio = Fluvio::connect("ws://localhost:3000".into()).await;
     assert!(fluvio.is_ok());
-    let fluvio = fluvio.unwrap();
-    let ret = simple_js(fluvio, Offset::from_end(1)).await;
+    fluvio.unwrap()
+}
+
+#[wasm_bindgen_test]
+async fn simple() {
+    let ret = simple::setup(get_fluvio().await).await;
+    assert_eq!(ret.err(), None);
+    let ret = simple::test(get_fluvio().await, Offset::from_end(1)).await;
+    assert_eq!(ret.err(), None);
+    let ret = simple::teardown(get_fluvio().await).await;
     assert_eq!(ret.err(), None);
 }
 
-#[wasm_bindgen(module = "/tests/js/simple.js")]
-extern "C" {
-    #[wasm_bindgen(catch, js_name = simple)]
-    async fn simple_js(fluvio: Fluvio, offset: Offset) -> Result<JsValue, JsValue>;
+mod simple {
+    use super::*;
+    #[wasm_bindgen(module = "/tests/js/simple.js")]
+    extern "C" {
+
+        #[wasm_bindgen(catch)]
+        pub async fn setup(fluvio: Fluvio) -> Result<JsValue, JsValue>;
+
+        #[wasm_bindgen(catch)]
+        pub async fn test(fluvio: Fluvio, offset: Offset) -> Result<JsValue, JsValue>;
+
+        #[wasm_bindgen(catch)]
+        pub async fn teardown(fluvio: Fluvio) -> Result<JsValue, JsValue>;
+    }
 }
