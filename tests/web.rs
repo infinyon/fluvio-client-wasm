@@ -42,7 +42,8 @@ async fn base_test() {
     assert!(fluvio.is_ok());
     let fluvio = fluvio.unwrap();
 
-    let consumer = wasm_bindgen_futures::JsFuture::from(fluvio.partition_consumer(topic.clone(), 0)).await;
+    let consumer =
+        wasm_bindgen_futures::JsFuture::from(fluvio.partition_consumer(topic.clone(), 0)).await;
     assert!(consumer.is_ok());
     let consumer = consumer.unwrap();
     let consumer: PartitionConsumer = generic_of_jsval(consumer, "PartitionConsumer").unwrap();
