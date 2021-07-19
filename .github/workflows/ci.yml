@@ -39,7 +39,7 @@ jobs:
         run: cargo fmt -- --check
 
       - name: Cargo clippy
-        run: cargo clippy
+        run: cargo clippy -- -D warnings
 
       - name: Cargo check on websocket proxy
         run: make check-fluvio-websocket-proxy
