@@ -14,7 +14,7 @@
     "test": "cargo test && wasm-pack test --headless"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.2.1",
+    "@rollup/plugin-typescript": "^8.2.3",
     "@wasm-tool/rollup-plugin-rust": "^1.0.7",
     "@wasm-tool/wasm-pack-plugin": "^1.1.0",
     "copy-webpack-plugin": "^9.0.1",
