@@ -19,7 +19,7 @@
     "@wasm-tool/wasm-pack-plugin": "^1.1.0",
     "copy-webpack-plugin": "^9.0.1",
     "rimraf": "^3.0.0",
-    "rollup": "^2.53.2",
+    "rollup": "^2.54.0",
     "rollup-plugin-dts": "3",
     "tslib": "^2.2.0",
     "typescript": "4",
