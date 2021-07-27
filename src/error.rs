@@ -22,7 +22,7 @@ extern "C" {
 impl FluvioError {
     #[wasm_bindgen(getter)]
     pub fn message(&self) -> String {
-        format!("{:?}", self.inner)
+        format!("{}", self.inner)
     }
     #[wasm_bindgen(getter)]
     pub fn name(&self) -> String {
