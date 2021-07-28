@@ -53,17 +53,16 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
     type Error = String;
 
     fn try_from(value: ConsumerConfig) -> Result<Self, Self::Error> {
-        let mut config = NativeConsumerConfig::default();
+        let mut builder = NativeConsumerConfig::builder();
         if let Some(max_bytes) = value.max_bytes {
-            config = config.with_max_bytes(max_bytes);
+            builder.max_bytes(max_bytes);
         }
         if let Some(wasm_base64) = value.smartstream_filter {
             let wasm = base64::decode(wasm_base64)
                 .map_err(|e| format!("Failed to decode SmartStream as a base64 string: {:?}", e))?;
-            config = config.with_wasm_filter(wasm);
+            builder.wasm_filter(wasm);
         }
-
-        Ok(config)
+        Ok(builder.build().map_err(|e| format!("{}", e))?)
     }
 }
 
