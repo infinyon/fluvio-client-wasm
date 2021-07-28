@@ -62,7 +62,7 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                 .map_err(|e| format!("Failed to decode SmartStream as a base64 string: {:?}", e))?;
             builder.wasm_filter(wasm);
         }
-        Ok(builder.build().map_err(|e| format!("{}", e))?)
+        builder.build().map_err(|e| format!("{}", e))
     }
 }
 
