@@ -57,7 +57,6 @@ jobs:
         with:
           toolchain: stable
           override: true
-          components: clippy
           target: wasm32-unknown-unknown
       - uses: actions/setup-node@v2
         with:
