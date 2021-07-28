@@ -44,7 +44,7 @@ jobs:
         run: make check-fluvio-websocket-proxy
 
   check_yarn:
-    name: Check fmt and clippy
+    name: Check yarn install and build
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
