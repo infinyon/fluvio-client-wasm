@@ -49,7 +49,7 @@ impl TcpDomainConnector for FluvioWebsocketConnector {
 
     fn domain(&self) -> &str {
         if let Some(domain) = &self.domain {
-            &domain
+            domain
         } else {
             ""
         }
