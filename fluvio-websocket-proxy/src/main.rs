@@ -4,10 +4,15 @@ use tide_websockets::{Message, WebSocket};
 use fluvio_future::net::{DefaultDomainConnector, TcpDomainConnector};
 use tide::{Request, Result as TideResult};
 use tide_websockets::WebSocketConnection;
+use fluvio::config::ConfigFile;
 
 #[async_std::main]
-async fn main() -> Result<(), std::io::Error> {
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
+    let config_file = ConfigFile::default_config()?;
+    let config = config_file.config();
+    let cluster = config.current_cluster()?;
+
     let mut app = tide::new();
     app.at("/")
         .with(WebSocket::new(ws_handler))
