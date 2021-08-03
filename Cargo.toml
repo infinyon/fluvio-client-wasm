@@ -13,7 +13,7 @@ default = ["unstable"]
 unstable = []
 
 [dependencies]
-wasm-bindgen = "0.2.63"
+wasm-bindgen = "0.2.75"
 wasm-bindgen-futures = { version = "0.4.23", features = ["futures-core-03-stream"] }
 fluvio = { git = "https://github.com/infinyon/fluvio", branch = "master", features = ["unstable"] }
 console_log = { version = "0.2", features = ["color"] }
