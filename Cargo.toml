@@ -21,7 +21,7 @@ js-sys = "0.3.51"
 web-sys = {version = "0.3.51" }
 tokio-stream = "0.1.7"
 tracing = "0.1.26"
-fluvio-future = { version = "0.3.5", features = ["net"] }
+fluvio-future = { version = "0.3.8", features = ["net"] }
 fluvio_ws_stream_wasm = "0.7.0"
 async-trait = { version = "0.1.51"}
 tracing-wasm = "0.2.0"
