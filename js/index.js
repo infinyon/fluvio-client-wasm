@@ -1,6 +1,7 @@
 import("../pkg").then(async fluvioWasm => {
   var Fluvio = fluvioWasm.Fluvio;
   var Offset = fluvioWasm.Offset;
+  const userAgent = navigator.userAgent;
   while (true) {
     let topic = createUUID();
     try {
@@ -15,7 +16,6 @@ import("../pkg").then(async fluvioWasm => {
 
       const consumer = await fluvio.partitionConsumer(topic, 0);
       let stream = await consumer.stream(Offset.fromEnd(1))
-      const userAgent = navigator.userAgent;
 
       let count = 0;
       let before = new Date();
@@ -26,18 +26,12 @@ import("../pkg").then(async fluvioWasm => {
           let next = await stream.next();
           let text = `${next.valueString()}`;
           console.log(text);
-          document.body.innerHTML =
-            `<div>${text}</div>` +
-            document.body.innerHTML;
+          addTextToBody(text);
           count++;
         } catch (e) {
-          console.error(e);
           console.error(e.message);
-          console.error(e.stack);
-          let text = `${e} - ${userAgent}`;
-          document.body.innerHTML =
-            `<div>${text}</div>` +
-            document.body.innerHTML;
+          let text = `${e.message} - ${userAgent}`;
+          addTextToBody(text);
           break;
         }
         await sleep(50);
@@ -46,14 +40,22 @@ import("../pkg").then(async fluvioWasm => {
       console.log(`The recieved ${count} in took ${after - before} ms`);
       await admin.deleteTopic(topic);
     } catch (e) {
-      console.error(e);
+      //console.error(e);
       console.error(e.message);
-      console.error(e.stack);
-      break;
+      let text = `${e.message} - ${userAgent}`;
+      addTextToBody(text);
+      //console.error(e.stack);
+      //break;
     }
-    await sleep(5000);
+    await sleep(1000);
   }
 });
+
+function addTextToBody(text) {
+  document.body.innerHTML =
+    `<div>${text}</div>` +
+    document.body.innerHTML;
+}
 
 const sleep = (milliseconds) => {
   return new Promise(resolve => setTimeout(resolve, milliseconds))

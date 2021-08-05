@@ -10,7 +10,7 @@ build-dev:
 	wasm-pack build --dev
 
 test: install-wasm-pack
-	wasm-pack test --firefox --headless
+	wasm-pack test --firefox --headless -- -j 1
 
 run-fluvio-websocket-proxy:
 	RUST_LOG=debug cargo run --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(shell rustup show | grep 'Default host' | sed 's/Default host: //g')
