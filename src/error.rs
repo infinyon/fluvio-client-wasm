@@ -18,16 +18,19 @@ extern "C" {
     #[wasm_bindgen(structural, method, getter)]
     fn stack(error: &Error) -> String;
 }
+
 #[wasm_bindgen]
 impl FluvioError {
     #[wasm_bindgen(getter)]
     pub fn message(&self) -> String {
         format!("{:?}", self.inner)
     }
+
     #[wasm_bindgen(getter)]
     pub fn name(&self) -> String {
         "FluvioError".to_string()
     }
+
     #[wasm_bindgen(getter)]
     pub fn stack(&self) -> String {
         let e = Error::new();

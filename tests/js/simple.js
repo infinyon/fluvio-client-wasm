@@ -25,6 +25,10 @@ export const test = async (fluvio, offset) => {
 export const setup = async (fluvio) => {
   const admin = await fluvio.admin();
   await admin.createTopic(topic, 1);
+  let base_url = "http://localhost:3000";
+  await fetch(`${base_url}/on`, {
+    method: 'GET',
+  });
 }
 export const teardown = async (fluvio) => {
   const admin = await fluvio.admin();
