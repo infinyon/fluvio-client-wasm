@@ -188,7 +188,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@wasm-tool/wasm-pack-plugin@npm:^1.1.0":
+"@wasm-tool/wasm-pack-plugin@npm:^1.5.0":
   version: 1.5.0
   resolution: "@wasm-tool/wasm-pack-plugin@npm:1.5.0"
   dependencies:
@@ -1809,7 +1809,7 @@ __metadata:
   dependencies:
     "@rollup/plugin-typescript": ^8.2.1
     "@wasm-tool/rollup-plugin-rust": ^1.0.7
-    "@wasm-tool/wasm-pack-plugin": ^1.1.0
+    "@wasm-tool/wasm-pack-plugin": ^1.5.0
     copy-webpack-plugin: ^9.0.1
     rimraf: ^3.0.0
     rollup: ^2.53.2
