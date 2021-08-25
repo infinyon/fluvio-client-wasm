@@ -36,9 +36,10 @@ import("../pkg").then(async ({Fluvio, Offset, ConsumerConfig}) => {
   // This filter keeps only Records whose value contains an 'a'.
   const consumer = await fluvio.partitionConsumer(TOPIC, 0);
 
-  const {filter} = await import("./smartstream.js");
+  const {smartstream} = await import("./smartstream.js");
   const config = new ConsumerConfig({
-    smartstreamFilter: filter,
+    smartstreamType: "filter",
+    smartstream,
   });
   let stream = await consumer.streamWithConfig(Offset.beginning(), config)
 

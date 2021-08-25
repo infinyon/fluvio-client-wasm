@@ -13,28 +13,69 @@ use wasm_bindgen_futures::future_to_promise;
 use crate::{FluvioError, Offset, Record};
 use std::convert::{TryFrom, TryInto};
 
+#[wasm_bindgen(typescript_custom_section)]
+const CONSUMER_CONFIG_TYPE: &str = r#"
+type ISmartStreamFilter = {
+    smartstreamType: "filter",
+    smartstream: string,
+}
+type ISmartStreamMap = {
+    smartstreamType: "map",
+    smartstream: string,
+}
+type ISmartStreamAggregate = {
+    smartstreamType: "aggregate",
+    smartstream: string,
+    accumulator: string | undefined,
+}
+type ISmartStream = ISmartStreamFilter | ISmartStreamMap | ISmartStreamAggregate;
+type IConsumerConfig = ISmartStream & {
+    max_bytes: number | undefined,
+}
+"#;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(typescript_type = "ISmartStream")]
+    pub type ISmartStream;
+    #[wasm_bindgen(typescript_type = "IConsumerConfig")]
+    pub type IConsumerConfig;
+}
+
 #[wasm_bindgen]
 pub struct ConsumerConfig {
     max_bytes: Option<i32>,
-    smartstream_filter: Option<String>,
+    smartstream_type: Option<String>,
+    smartstream_base64: Option<String>,
+    smartstream_accumulator: Option<String>,
 }
 
 #[wasm_bindgen]
 impl ConsumerConfig {
     #[wasm_bindgen(constructor)]
-    pub fn new(js: JsValue) -> Self {
+    pub fn new(js: IConsumerConfig) -> Self {
         let max_bytes = js_sys::Reflect::get(&js, &"maxBytes".into())
             .ok()
             .and_then(|it| it.as_f64())
             .map(|it| it.round() as i32);
 
-        let smartstream_filter = js_sys::Reflect::get(&js, &"smartstreamFilter".into())
+        let smartstream_type = js_sys::Reflect::get(&js, &"smartstreamType".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        let smartstream = js_sys::Reflect::get(&js, &"smartstream".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        let smartstream_accumulator = js_sys::Reflect::get(&js, &"accumulator".into())
             .ok()
             .and_then(|it| it.as_string());
 
         Self {
             max_bytes,
-            smartstream_filter,
+            smartstream_base64: smartstream,
+            smartstream_type,
+            smartstream_accumulator,
         }
     }
 
@@ -43,24 +84,51 @@ impl ConsumerConfig {
         self.max_bytes = Some(max_bytes);
     }
 
-    #[wasm_bindgen(setter, js_name = "smartstreamFilter")]
-    pub fn set_smartstream_filter(&mut self, string: String) {
-        self.smartstream_filter = Some(string);
+    #[wasm_bindgen(js_name = "setSmartstream")]
+    pub fn set_smartstream(&mut self, js: ISmartStream) {
+        self.smartstream_type = js_sys::Reflect::get(&js, &"smartstreamType".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        self.smartstream_base64 = js_sys::Reflect::get(&js, &"smartstream".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        self.smartstream_accumulator = js_sys::Reflect::get(&js, &"accumulator".into())
+            .ok()
+            .and_then(|it| it.as_string());
     }
 }
 
 impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
     type Error = String;
 
-    fn try_from(value: ConsumerConfig) -> Result<Self, Self::Error> {
+    fn try_from(value: ConsumerConfig) -> Result<Self, String> {
         let mut builder = NativeConsumerConfig::builder();
         if let Some(max_bytes) = value.max_bytes {
             builder.max_bytes(max_bytes);
         }
-        if let Some(wasm_base64) = value.smartstream_filter {
+
+        if let Some(wasm_base64) = value.smartstream_base64 {
             let wasm = base64::decode(wasm_base64)
                 .map_err(|e| format!("Failed to decode SmartStream as a base64 string: {:?}", e))?;
-            builder.wasm_filter(wasm);
+            match value.smartstream_type.as_deref() {
+                Some("filter") => {
+                    builder.wasm_filter(wasm);
+                }
+                Some("map") => {
+                    builder.wasm_map(wasm);
+                }
+                Some("aggregate") => {
+                    builder.wasm_aggregate(wasm, Vec::new());
+                }
+                _ => {
+                    return Err(
+                        "smartstreamType is required and must be 'filter', 'map', or 'aggregate'"
+                            .to_string(),
+                    )
+                }
+            }
         }
         builder.build().map_err(|e| format!("{}", e))
     }
