@@ -1,7 +1,7 @@
 use fluvio::{
     ConsumerConfig as NativeConsumerConfig, PartitionConsumer as NativePartitionConsumer,
 };
-use js_sys::Promise;
+use js_sys::{Promise, Reflect};
 use std::cell::RefCell;
 use std::pin::Pin;
 use std::rc::Rc;
@@ -15,104 +15,64 @@ use std::convert::{TryFrom, TryInto};
 
 #[wasm_bindgen(typescript_custom_section)]
 const CONSUMER_CONFIG_TYPE: &str = r#"
-type ISmartStreamFilter = {
+type SmartStreamFilter = {
     smartstreamType: "filter",
     smartstream: string,
 }
-type ISmartStreamMap = {
+type SmartStreamMap = {
     smartstreamType: "map",
     smartstream: string,
 }
-type ISmartStreamAggregate = {
+type SmartStreamAggregate = {
     smartstreamType: "aggregate",
     smartstream: string,
     accumulator: string | undefined,
 }
-type ISmartStream = ISmartStreamFilter | ISmartStreamMap | ISmartStreamAggregate;
-type IConsumerConfig = ISmartStream & {
+type SmartStream = SmartStreamFilter | SmartStreamMap | SmartStreamAggregate | {};
+type ConsumerConfig = SmartStream & {
     max_bytes: number | undefined,
 }
 "#;
 
 #[wasm_bindgen]
 extern "C" {
-    #[wasm_bindgen(typescript_type = "ISmartStream")]
-    pub type ISmartStream;
-    #[wasm_bindgen(typescript_type = "IConsumerConfig")]
-    pub type IConsumerConfig;
-}
-
-#[wasm_bindgen]
-pub struct ConsumerConfig {
-    max_bytes: Option<i32>,
-    smartstream_type: Option<String>,
-    smartstream_base64: Option<String>,
-    smartstream_accumulator: Option<String>,
-}
-
-#[wasm_bindgen]
-impl ConsumerConfig {
-    #[wasm_bindgen(constructor)]
-    pub fn new(js: IConsumerConfig) -> Self {
-        let max_bytes = js_sys::Reflect::get(&js, &"maxBytes".into())
-            .ok()
-            .and_then(|it| it.as_f64())
-            .map(|it| it.round() as i32);
-
-        let smartstream_type = js_sys::Reflect::get(&js, &"smartstreamType".into())
-            .ok()
-            .and_then(|it| it.as_string());
-
-        let smartstream = js_sys::Reflect::get(&js, &"smartstream".into())
-            .ok()
-            .and_then(|it| it.as_string());
-
-        let smartstream_accumulator = js_sys::Reflect::get(&js, &"accumulator".into())
-            .ok()
-            .and_then(|it| it.as_string());
-
-        Self {
-            max_bytes,
-            smartstream_base64: smartstream,
-            smartstream_type,
-            smartstream_accumulator,
-        }
-    }
-
-    #[wasm_bindgen(setter, js_name = "maxBytes")]
-    pub fn set_max_bytes(&mut self, max_bytes: i32) {
-        self.max_bytes = Some(max_bytes);
-    }
-
-    #[wasm_bindgen(js_name = "setSmartstream")]
-    pub fn set_smartstream(&mut self, js: ISmartStream) {
-        self.smartstream_type = js_sys::Reflect::get(&js, &"smartstreamType".into())
-            .ok()
-            .and_then(|it| it.as_string());
-
-        self.smartstream_base64 = js_sys::Reflect::get(&js, &"smartstream".into())
-            .ok()
-            .and_then(|it| it.as_string());
-
-        self.smartstream_accumulator = js_sys::Reflect::get(&js, &"accumulator".into())
-            .ok()
-            .and_then(|it| it.as_string());
-    }
+    #[wasm_bindgen(typescript_type = "SmartStream")]
+    pub type SmartStream;
+    #[wasm_bindgen(typescript_type = "ConsumerConfig")]
+    pub type ConsumerConfig;
 }
 
 impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
     type Error = String;
 
-    fn try_from(value: ConsumerConfig) -> Result<Self, String> {
+    fn try_from(js: ConsumerConfig) -> Result<Self, String> {
+        let max_bytes = Reflect::get(&js, &"maxBytes".into())
+            .ok()
+            .and_then(|it| it.as_f64())
+            .map(|it| it.round() as i32);
+
+        let smartstream_type = Reflect::get(&js, &"smartstreamType".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        let smartstream_base64 = Reflect::get(&js, &"smartstream".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        let smartstream_accumulator = Reflect::get(&js, &"accumulator".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        // Builder for NativeConsumerConfig
         let mut builder = NativeConsumerConfig::builder();
-        if let Some(max_bytes) = value.max_bytes {
+        if let Some(max_bytes) = max_bytes {
             builder.max_bytes(max_bytes);
         }
 
-        if let Some(wasm_base64) = value.smartstream_base64 {
+        if let Some(wasm_base64) = smartstream_base64 {
             let wasm = base64::decode(wasm_base64)
                 .map_err(|e| format!("Failed to decode SmartStream as a base64 string: {:?}", e))?;
-            match value.smartstream_type.as_deref() {
+            match smartstream_type.as_deref() {
                 Some("filter") => {
                     builder.wasm_filter(wasm);
                 }
@@ -120,7 +80,16 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                     builder.wasm_map(wasm);
                 }
                 Some("aggregate") => {
-                    builder.wasm_aggregate(wasm, Vec::new());
+                    let accumulator = smartstream_accumulator
+                        .map(|acc| {
+                            base64::decode(acc).map_err(|e| {
+                                format!("Failed to decode Accumulator as a base64 string: {:?}", e)
+                            })
+                        })
+                        .transpose()?
+                        .unwrap_or_default();
+
+                    builder.wasm_aggregate(wasm, accumulator);
                 }
                 _ => {
                     return Err(
@@ -130,7 +99,8 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                 }
             }
         }
-        builder.build().map_err(|e| format!("{}", e))
+        let config = builder.build().map_err(|e| format!("{}", e))?;
+        Ok(config)
     }
 }
 
