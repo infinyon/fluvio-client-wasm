@@ -24,9 +24,6 @@ export const test = async (fluvio, offset) => {
     smartstreamType: "filter",
     smartstream: filterCode,
   };
-  let stream = await consumer.streamWithConfig(offset, config);
-  console.log("CREATED STREAM");
-
   const fruits = [
     "apple",
     "APPLE",
@@ -40,6 +37,10 @@ export const test = async (fluvio, offset) => {
     await producer.send("", fruit);
     console.log(`SENT ${fruit}`);
   }
+
+  console.log("CREATING STREAM");
+  let stream = await consumer.streamWithConfig(offset, config);
+  console.log("CREATED STREAM");
 
   const lowerFruits = [
     "apple",

@@ -28,8 +28,9 @@ type SmartStreamAggregate = {
     smartstream: string,
     accumulator: string | undefined,
 }
-type SmartStream = SmartStreamFilter | SmartStreamMap | SmartStreamAggregate | {};
-type ConsumerConfig = SmartStream & {
+export type SmartStreamType = "filter" | "map" | "aggregate";
+export type SmartStream = SmartStreamFilter | SmartStreamMap | SmartStreamAggregate | {};
+export type ConsumerConfig = SmartStream & {
     max_bytes: number | undefined,
 }
 "#;
@@ -100,6 +101,7 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
             }
         }
         let config = builder.build().map_err(|e| format!("{}", e))?;
+        web_sys::console::log_1(&format!("{:#?}", &config).into());
         Ok(config)
     }
 }
