@@ -101,7 +101,6 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
             }
         }
         let config = builder.build().map_err(|e| format!("{}", e))?;
-        web_sys::console::log_1(&format!("{:#?}", &config).into());
         Ok(config)
     }
 }
