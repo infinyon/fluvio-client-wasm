@@ -15,23 +15,12 @@ use std::convert::{TryFrom, TryInto};
 
 #[wasm_bindgen(typescript_custom_section)]
 const CONSUMER_CONFIG_TYPE: &str = r#"
-type SmartStreamFilter = {
-    smartstreamType: "filter",
-    smartstream: string,
-}
-type SmartStreamMap = {
-    smartstreamType: "map",
-    smartstream: string,
-}
-type SmartStreamAggregate = {
-    smartstreamType: "aggregate",
-    smartstream: string,
-    accumulator: string | undefined,
-}
 export type SmartStreamType = "filter" | "map" | "aggregate";
-export type SmartStream = SmartStreamFilter | SmartStreamMap | SmartStreamAggregate | {};
-export type ConsumerConfig = SmartStream & {
-    max_bytes: number | undefined,
+export type ConsumerConfig = {
+    max_bytes?: number,
+    smartstreamType?: SmartStreamType,
+    smartstream?: string,
+    accumulator?: string,
 }
 "#;
 
