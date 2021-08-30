@@ -1,7 +1,7 @@
 use fluvio::{
     ConsumerConfig as NativeConsumerConfig, PartitionConsumer as NativePartitionConsumer,
 };
-use js_sys::Promise;
+use js_sys::{Promise, Reflect};
 use std::cell::RefCell;
 use std::pin::Pin;
 use std::rc::Rc;
@@ -13,56 +13,84 @@ use wasm_bindgen_futures::future_to_promise;
 use crate::{FluvioError, Offset, Record};
 use std::convert::{TryFrom, TryInto};
 
-#[wasm_bindgen]
-pub struct ConsumerConfig {
-    max_bytes: Option<i32>,
-    smartstream_filter: Option<String>,
+#[wasm_bindgen(typescript_custom_section)]
+const CONSUMER_CONFIG_TYPE: &str = r#"
+export type SmartStreamType = "filter" | "map" | "aggregate";
+export type ConsumerConfig = {
+    max_bytes?: number,
+    smartstreamType?: SmartStreamType,
+    smartstream?: string,
+    accumulator?: string,
 }
+"#;
 
 #[wasm_bindgen]
-impl ConsumerConfig {
-    #[wasm_bindgen(constructor)]
-    pub fn new(js: JsValue) -> Self {
-        let max_bytes = js_sys::Reflect::get(&js, &"maxBytes".into())
-            .ok()
-            .and_then(|it| it.as_f64())
-            .map(|it| it.round() as i32);
-
-        let smartstream_filter = js_sys::Reflect::get(&js, &"smartstreamFilter".into())
-            .ok()
-            .and_then(|it| it.as_string());
-
-        Self {
-            max_bytes,
-            smartstream_filter,
-        }
-    }
-
-    #[wasm_bindgen(setter, js_name = "maxBytes")]
-    pub fn set_max_bytes(&mut self, max_bytes: i32) {
-        self.max_bytes = Some(max_bytes);
-    }
-
-    #[wasm_bindgen(setter, js_name = "smartstreamFilter")]
-    pub fn set_smartstream_filter(&mut self, string: String) {
-        self.smartstream_filter = Some(string);
-    }
+extern "C" {
+    #[wasm_bindgen(typescript_type = "SmartStream")]
+    pub type SmartStream;
+    #[wasm_bindgen(typescript_type = "ConsumerConfig")]
+    pub type ConsumerConfig;
 }
 
 impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
     type Error = String;
 
-    fn try_from(value: ConsumerConfig) -> Result<Self, Self::Error> {
+    fn try_from(js: ConsumerConfig) -> Result<Self, String> {
+        let max_bytes = Reflect::get(&js, &"maxBytes".into())
+            .ok()
+            .and_then(|it| it.as_f64())
+            .map(|it| it.round() as i32);
+
+        let smartstream_type = Reflect::get(&js, &"smartstreamType".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        let smartstream_base64 = Reflect::get(&js, &"smartstream".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        let smartstream_accumulator = Reflect::get(&js, &"accumulator".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        // Builder for NativeConsumerConfig
         let mut builder = NativeConsumerConfig::builder();
-        if let Some(max_bytes) = value.max_bytes {
+        if let Some(max_bytes) = max_bytes {
             builder.max_bytes(max_bytes);
         }
-        if let Some(wasm_base64) = value.smartstream_filter {
+
+        if let Some(wasm_base64) = smartstream_base64 {
             let wasm = base64::decode(wasm_base64)
                 .map_err(|e| format!("Failed to decode SmartStream as a base64 string: {:?}", e))?;
-            builder.wasm_filter(wasm);
+            match smartstream_type.as_deref() {
+                Some("filter") => {
+                    builder.wasm_filter(wasm);
+                }
+                Some("map") => {
+                    builder.wasm_map(wasm);
+                }
+                Some("aggregate") => {
+                    let accumulator = smartstream_accumulator
+                        .map(|acc| {
+                            base64::decode(acc).map_err(|e| {
+                                format!("Failed to decode Accumulator as a base64 string: {:?}", e)
+                            })
+                        })
+                        .transpose()?
+                        .unwrap_or_default();
+
+                    builder.wasm_aggregate(wasm, accumulator);
+                }
+                _ => {
+                    return Err(
+                        "smartstreamType is required and must be 'filter', 'map', or 'aggregate'"
+                            .to_string(),
+                    )
+                }
+            }
         }
-        builder.build().map_err(|e| format!("{}", e))
+        let config = builder.build().map_err(|e| format!("{}", e))?;
+        Ok(config)
     }
 }
 
