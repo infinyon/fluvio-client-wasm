@@ -65,3 +65,47 @@ jobs:
         run: |
           yarn install
           yarn build
+
+  smoke_test:
+    name: Run tests against local cluster
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        node: [ '16' ]
+    steps:
+      - uses: AbsaOSS/k3d-action@v1.5.0
+        name: "Create fluvio k3d Cluster"
+        with:
+          cluster-name: "fluvio"
+      - name: Sleep 20 to ensure k3d cluster is ready
+        run: sleep 20
+      - name: Install Fluvio Local Cluster
+        uses: infinyon/fluvio@master
+        with:
+          cluster-type: local
+          version: latest
+      - name: Check Fluvio Installation
+        run: |
+          fluvio version
+          fluvio topic list
+          fluvio topic create foobar
+          sleep 3
+          echo foo | fluvio produce foobar
+          fluvio consume foobar -o 0 -d
+      - uses: actions/checkout@v2
+      - name: Install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          target: wasm32-unknown-unknown
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node }}
+
+      - name: Start websocket proxy
+        run: make run-fluvio-websocket-proxy & disown
+
+      - name: Run tests
+        run: make test
