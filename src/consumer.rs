@@ -126,14 +126,21 @@ pub struct PartitionConsumer {
 
 #[wasm_bindgen]
 impl PartitionConsumer {
-    pub async fn stream(self, offset: Offset) -> Result<PartitionConsumerStream, FluvioError> {
+    pub async fn stream(
+        self,
+        offset: Offset,
+    ) -> Result<PartitionConsumerStream, wasm_bindgen::JsValue> {
         Ok(PartitionConsumerStream {
             inner: Rc::new(RefCell::new(Box::pin(
-                self.inner.stream(offset.inner).await?.map(|result| {
-                    result
-                        .map(|record| record.into())
-                        .map_err(FluvioError::from)
-                }),
+                self.inner
+                    .stream(offset.inner)
+                    .await
+                    .map_err(FluvioError::from)?
+                    .map(|result| {
+                        result
+                            .map(|record| record.into())
+                            .map_err(FluvioError::from)
+                    }),
             ))),
         })
     }
@@ -143,14 +150,15 @@ impl PartitionConsumer {
         self,
         offset: Offset,
         config: ConsumerConfig,
-    ) -> Result<PartitionConsumerStream, FluvioError> {
+    ) -> Result<PartitionConsumerStream, wasm_bindgen::JsValue> {
         let config: NativeConsumerConfig = config.try_into()?;
 
         Ok(PartitionConsumerStream {
             inner: Rc::new(RefCell::new(Box::pin(
                 self.inner
                     .stream_with_config(offset.inner, config)
-                    .await?
+                    .await
+                    .map_err(FluvioError::from)?
                     .map(|result| {
                         result
                             .map(|record| record.into())

@@ -43,7 +43,7 @@ impl Fluvio {
         })
     }
 
-    pub async fn connect(addr: String) -> Result<Fluvio, FluvioError> {
+    pub async fn connect(addr: String) -> Result<Fluvio, wasm_bindgen::JsValue> {
         Self::setup_debugging(false);
 
         let config = FluvioConfig::new(addr.clone());
@@ -53,7 +53,8 @@ impl Fluvio {
                 Box::new(FluvioWebsocketConnector::new(addr, None)),
                 &config,
             )
-            .await?,
+            .await
+            .map_err(FluvioError::from)?,
         );
         Ok(Self { inner })
     }
