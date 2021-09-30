@@ -23,8 +23,8 @@ pub use record::Record;
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 
-use wasm_bindgen::convert::FromWasmAbi;
 use js_sys::Reflect;
+use wasm_bindgen::convert::FromWasmAbi;
 use wasm_bindgen::JsValue;
 
 pub(crate) fn generic_of_jsval<T: FromWasmAbi<Abi = u32>>(
@@ -36,8 +36,8 @@ pub(crate) fn generic_of_jsval<T: FromWasmAbi<Abi = u32>>(
     if ctor_name == classname {
         let ptr = Reflect::get(&js, &JsValue::from_str("ptr"))?;
         let ptr_u32: u32 = ptr.as_f64().ok_or(JsValue::NULL)? as u32;
-        let foo = unsafe { T::from_abi(ptr_u32) };
-        Ok(foo)
+        let val = unsafe { T::from_abi(ptr_u32) };
+        Ok(val)
     } else {
         Err(JsValue::NULL)
     }
