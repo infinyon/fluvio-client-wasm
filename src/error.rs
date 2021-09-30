@@ -47,3 +47,11 @@ impl From<String> for FluvioError {
         }
     }
 }
+
+use std::convert::TryFrom;
+impl TryFrom<JsValue> for FluvioError {
+    type Error = JsValue;
+    fn try_from(value: JsValue) -> Result<Self, Self::Error> {
+        crate::generic_of_jsval(value, "FluvioError")
+    }
+}
