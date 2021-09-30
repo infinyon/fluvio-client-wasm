@@ -5,7 +5,7 @@ __metadata:
   version: 4
   cacheKey: 8
 
-"@babel/code-frame@npm:^7.12.13":
+"@babel/code-frame@npm:^7.14.5":
   version: 7.14.5
   resolution: "@babel/code-frame@npm:7.14.5"
   dependencies:
@@ -1461,10 +1461,10 @@ __metadata:
     "@wasm-tool/wasm-pack-plugin": ^1.5.0
     copy-webpack-plugin: ^9.0.1
     rimraf: ^3.0.0
-    rollup: ^2.53.2
-    rollup-plugin-dts: 3
+    rollup: ^2.57.0
+    rollup-plugin-dts: 4
     tslib: ^2.2.0
-    typescript: 4
+    typescript: ^4.4.3
     wasm-pack: ^0.10.0
     webpack: ^5.46.0
     webpack-cli: ^4.7.2
@@ -3030,19 +3030,19 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"rollup-plugin-dts@npm:3":
-  version: 3.0.2
-  resolution: "rollup-plugin-dts@npm:3.0.2"
+"rollup-plugin-dts@npm:4":
+  version: 4.0.0
+  resolution: "rollup-plugin-dts@npm:4.0.0"
   dependencies:
-    "@babel/code-frame": ^7.12.13
+    "@babel/code-frame": ^7.14.5
     magic-string: ^0.25.7
   peerDependencies:
-    rollup: ^2.48.0
-    typescript: ^4.2.4
+    rollup: ^2.56.3
+    typescript: ^4.4.2
   dependenciesMeta:
     "@babel/code-frame":
       optional: true
-  checksum: c37acf3744fd0a8b8b6fa9dd2be67b05412ad55f6133e98a1fdb5d44beda5a94a32582c622c35af70d0787713c85ecbbb2c06070845b0f93e4705c32289fc48a
+  checksum: b8c74e892d4131da769389549ea6591fd6e6fe4ee480806d01d3d8cd300b278983afa11dcfd93a7c9de5a08352a9a0d321d98e76b00b3b2fa2a3f369971629f1
   languageName: node
   linkType: hard
 
@@ -3055,7 +3055,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.53.2":
+"rollup@npm:^2.57.0":
   version: 2.57.0
   resolution: "rollup@npm:2.57.0"
   dependencies:
@@ -3560,7 +3560,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-typescript@4:
+typescript@^4.4.3:
   version: 4.4.3
   resolution: "typescript@npm:4.4.3"
   bin:
@@ -3570,7 +3570,7 @@ typescript@4:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4#~builtin<compat/typescript>":
+"typescript@patch:typescript@^4.4.3#~builtin<compat/typescript>":
   version: 4.4.3
   resolution: "typescript@patch:typescript@npm%3A4.4.3#~builtin<compat/typescript>::version=4.4.3&hash=d8b4e7"
   bin:
