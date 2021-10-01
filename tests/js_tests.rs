@@ -7,7 +7,6 @@ use wasm_bindgen::JsValue;
 
 pub use fluvio_client_wasm::FluvioError;
 
-
 #[wasm_bindgen_test]
 async fn simple() {
     #[wasm_bindgen(module = "/tests/js/simple/simple.js")]
