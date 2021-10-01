@@ -5,16 +5,8 @@ use std::convert::TryFrom;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen::JsValue;
 
-pub use fluvio_client_wasm::*;
+pub use fluvio_client_wasm::FluvioError;
 
-async fn get_fluvio() -> Fluvio {
-    let fluvio = Fluvio::connect("ws://localhost:3000".into()).await;
-    if let Err(e) = fluvio {
-        let e = FluvioError::try_from(e);
-        panic!("{:?}", e);
-    }
-    fluvio.unwrap()
-}
 
 #[wasm_bindgen_test]
 async fn simple() {
@@ -22,24 +14,24 @@ async fn simple() {
     extern "C" {
 
         #[wasm_bindgen(catch)]
-        pub async fn setup(fluvio: Fluvio) -> Result<JsValue, JsValue>;
+        pub async fn setup() -> Result<JsValue, JsValue>;
 
         #[wasm_bindgen(catch)]
-        pub async fn test(fluvio: Fluvio, offset: Offset) -> Result<JsValue, JsValue>;
+        pub async fn test() -> Result<JsValue, JsValue>;
 
         #[wasm_bindgen(catch)]
-        pub async fn teardown(fluvio: Fluvio) -> Result<JsValue, JsValue>;
+        pub async fn teardown() -> Result<JsValue, JsValue>;
     }
 
-    setup(get_fluvio().await)
+    setup()
         .await
         .map_err(FluvioError::try_from)
         .expect("Setup failed");
-    test(get_fluvio().await, Offset::from_end(1))
+    test()
         .await
         .map_err(FluvioError::try_from)
         .expect("Test failed");
-    teardown(get_fluvio().await)
+    teardown()
         .await
         .map_err(FluvioError::try_from)
         .expect("Teardown failed");
