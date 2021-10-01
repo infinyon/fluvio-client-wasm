@@ -45,24 +45,13 @@ async fn simple() {
         .expect("Teardown failed");
 }
 
-/*
 #[wasm_bindgen_test]
-async fn smartstream_filter() {
-    #[wasm_bindgen(module = "/tests/js/smartstream_filter/smartstream_filter.js")]
+async fn consumer_filter() {
+    #[wasm_bindgen(module = "/tests/js/consumer_filter/consumer_filter.js")]
     extern "C" {
-
-        #[wasm_bindgen(catch)]
-        pub async fn setup(fluvio: Fluvio) -> Result<JsValue, JsValue>;
-
         #[wasm_bindgen(catch)]
         pub async fn test(fluvio: Fluvio, offset: Offset) -> Result<JsValue, JsValue>;
-
-        #[wasm_bindgen(catch)]
-        pub async fn teardown(fluvio: Fluvio) -> Result<JsValue, JsValue>;
     }
 
-    setup(get_fluvio().await).await.map_err(FluvioError::try_from).expect("Setup failed");
-    test(get_fluvio().await, Offset::from_end(1)).await.map_err(FluvioError::try_from).expect("Test failed");
-    teardown(get_fluvio().await).await.map_err(FluvioError::try_from).expect("Teardown failed");
+    test(get_fluvio().await, Offset::beginning()).await.unwrap();
 }
-*/
