@@ -50,8 +50,25 @@ async fn consumer_filter() {
     #[wasm_bindgen(module = "/tests/js/consumer_filter/consumer_filter.js")]
     extern "C" {
         #[wasm_bindgen(catch)]
+        pub async fn setup(fluvio: Fluvio) -> Result<JsValue, JsValue>;
+
+        #[wasm_bindgen(catch)]
         pub async fn test(fluvio: Fluvio, offset: Offset) -> Result<JsValue, JsValue>;
+
+        #[wasm_bindgen(catch)]
+        pub async fn teardown(fluvio: Fluvio) -> Result<JsValue, JsValue>;
     }
 
-    test(get_fluvio().await, Offset::beginning()).await.unwrap();
+    setup(get_fluvio().await)
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Setup failed");
+    test(get_fluvio().await, Offset::beginning())
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Test failed");
+    teardown(get_fluvio().await)
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Teardown failed");
 }
