@@ -106,7 +106,7 @@ jobs:
 
       - name: Start websocket proxy
         run:
-          make build-fluvio-websocket-proxy
+          make build-fluvio-websocket-proxy &&
           make run-fluvio-websocket-proxy & disown
 
       - name: Run tests
