@@ -105,7 +105,9 @@ jobs:
           node-version: ${{ matrix.node }}
 
       - name: Start websocket proxy
-        run: make run-fluvio-websocket-proxy & disown
+        run:
+          make build-fluvio-websocket-proxy
+          make run-fluvio-websocket-proxy & disown
 
       - name: Run tests
         run: make test
