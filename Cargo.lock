@@ -453,9 +453,7 @@ dependencies = [
 
 [[package]]
 name = "fluvio"
-version = "0.9.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4f060bfc663458af31dfd0ab001364812951490a26a516e0e916121519dfbd96"
+version = "0.9.8"
 dependencies = [
  "async-channel",
  "async-lock",
@@ -513,8 +511,6 @@ dependencies = [
 [[package]]
 name = "fluvio-controlplane-metadata"
 version = "0.12.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "6ff2dce7b8031680af08f3c92fa8223e368213e35eced383a12f4ac62d0e655d"
 dependencies = [
  "async-trait",
  "fluvio-dataplane-protocol",
@@ -529,9 +525,7 @@ dependencies = [
 
 [[package]]
 name = "fluvio-dataplane-protocol"
-version = "0.7.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bb8cbcc2a0cc592f126536fd96f97fa747f6045f56b16756408cceeea0de503a"
+version = "0.7.2"
 dependencies = [
  "bytes",
  "cfg-if 1.0.0",
@@ -574,8 +568,6 @@ dependencies = [
 [[package]]
 name = "fluvio-protocol"
 version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2c82ffee969c32ce6b5a596c6c8b3a9d5412c1b9ebb355a1ded7a5efcb0d72af"
 dependencies = [
  "bytes",
  "fluvio-future",
@@ -589,8 +581,6 @@ dependencies = [
 [[package]]
 name = "fluvio-protocol-api"
 version = "0.4.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d68c561e8999df089915271ae25f5861fd9b4e571c9d8a58ef6e05bba7e157bd"
 dependencies = [
  "fluvio-protocol-core",
  "fluvio-protocol-derive",
@@ -601,8 +591,6 @@ dependencies = [
 [[package]]
 name = "fluvio-protocol-codec"
 version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a3a0fbc2ae69ba199f5b74a06de99082093c6c19a7d30cab6df33cbd9b50e82c"
 dependencies = [
  "bytes",
  "fluvio-protocol-core",
@@ -613,8 +601,6 @@ dependencies = [
 [[package]]
 name = "fluvio-protocol-core"
 version = "0.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "690ec99ef681001bd0d692b59788f21c1caacf68b6d11730424f23f567dc6779"
 dependencies = [
  "bytes",
  "log",
@@ -623,8 +609,6 @@ dependencies = [
 [[package]]
 name = "fluvio-protocol-derive"
 version = "0.3.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8da35db64755c1becbfa015259f25b3dbb69fe012645154094cbe4febe2f803d"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -635,8 +619,6 @@ dependencies = [
 [[package]]
 name = "fluvio-sc-schema"
 version = "0.10.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f3d266575533dbf90b66ae05edcba44edd9f870260cf623401501c66d44be240"
 dependencies = [
  "fluvio-controlplane-metadata",
  "fluvio-dataplane-protocol",
@@ -650,9 +632,7 @@ dependencies = [
 
 [[package]]
 name = "fluvio-socket"
-version = "0.10.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "4bd0d32c36b781d58beb33e05f914ea2fbec9cf5c12a7138fa8d68e417bb02c5"
+version = "0.10.2"
 dependencies = [
  "async-channel",
  "async-lock",
@@ -674,8 +654,6 @@ dependencies = [
 [[package]]
 name = "fluvio-spu-schema"
 version = "0.8.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98e2470bfd7a3b71aef8536a648e08a4a2769d8c2f79aafedc766bdf8c3fc86d"
 dependencies = [
  "bytes",
  "flate2",
@@ -690,8 +668,6 @@ dependencies = [
 [[package]]
 name = "fluvio-stream-model"
 version = "0.5.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f727e6d2d57ededa529d78f57cfb7df104fc957932640134b8a729c2fffff468"
 dependencies = [
  "async-rwlock",
  "event-listener",
@@ -702,8 +678,6 @@ dependencies = [
 [[package]]
 name = "fluvio-types"
 version = "0.2.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b586fdd7eb83f446294838e8a1f1021921b8d003bc5251e845f143f9a22d2f3c"
 dependencies = [
  "event-listener",
  "thiserror",
@@ -1600,6 +1574,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "632f73e236b219150ea279196e54e610f5dbafa5d61786303d4da54f84e47fce"
 dependencies = [
  "cfg-if 1.0.0",
+ "serde",
+ "serde_json",
  "wasm-bindgen-macro",
 ]
 

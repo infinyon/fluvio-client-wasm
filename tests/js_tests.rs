@@ -36,6 +36,35 @@ async fn simple() {
         .expect("Teardown failed");
 }
 
+#[wasm_bindgen_test]
+async fn connector() {
+    #[wasm_bindgen(module = "/tests/js/connector/connector.js")]
+    extern "C" {
+
+        #[wasm_bindgen(catch)]
+        pub async fn setup() -> Result<JsValue, JsValue>;
+
+        #[wasm_bindgen(catch)]
+        pub async fn test() -> Result<JsValue, JsValue>;
+
+        #[wasm_bindgen(catch)]
+        pub async fn teardown() -> Result<JsValue, JsValue>;
+    }
+
+    setup()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Setup failed");
+    test()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Test failed");
+    teardown()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Teardown failed");
+}
+
 /*
 #[wasm_bindgen_test]
 async fn smartstream_filter() {
