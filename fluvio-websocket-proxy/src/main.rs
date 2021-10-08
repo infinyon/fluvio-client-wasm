@@ -1,20 +1,14 @@
 use async_std::prelude::*;
+use fluvio::config::ConfigFile as FluvioConfigFile;
 use tide_websockets::{Message, WebSocket};
-use fluvio::config::{
-    ConfigFile as FluvioConfigFile,
-    FluvioConfig,
-};
 
 use fluvio_future::net::{DefaultDomainConnector, TcpDomainConnector};
 use tide::{Request, Result as TideResult};
 use tide_websockets::WebSocketConnection;
 
-
-
 #[async_std::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     env_logger::init();
-
 
     let mut app = tide::new();
     app.at("/")
@@ -35,20 +29,24 @@ async fn ws_handler(req: Request<()>, mut stream: WebSocketConnection) -> TideRe
     let domain = req.query::<WsQuery>().ok().map(|q| q.domain);
     let addr = req.query::<WsQuery>().ok().map(|q| q.addr);
 
-    println!("NEW WS CONNECTION GOING TO {:?}, with domain {:?}", addr, domain);
+    println!(
+        "NEW WS CONNECTION GOING TO {:?}, with domain {:?}",
+        addr, domain
+    );
     let endpoint = if let Some(addr) = addr {
         addr
     } else {
-        let config_file = FluvioConfigFile::load_default_or_new().expect("Failed to load config file");
+        let config_file =
+            FluvioConfigFile::load_default_or_new().expect("Failed to load config file");
         let fluvio_config = config_file.config();
-        let current_cluster = fluvio_config.current_cluster().expect("Failed to get current cluster");
+        let current_cluster = fluvio_config
+            .current_cluster()
+            .expect("Failed to get current cluster");
         current_cluster.endpoint.clone()
     };
 
-
     let mut buf = vec![0; 10000];
     let connector = DefaultDomainConnector::new();
-
 
     let (mut fluvio_writer, mut fluvio_reader, _fd) = connector.connect(&endpoint).await?;
     loop {
