@@ -16,23 +16,17 @@ var fluvio;
 export const setup = async () => {
   fluvio  = await Fluvio.connect("ws://localhost:3000");
   const admin = await fluvio.admin();
-  //Fluvio.setupDebugging(true);
+  console.log(`Starting connector named ${connector_name} on topic ${topic}`);
   await admin.createConnector(
     connector_name,
     connector_type,
     {
       topic,
-      count: `${max_records}`,
+      count: `${max_records}`, // These must be strings or the rust fails to convert it.
       timeout: "10",
     },
   );
-  try {
-    await admin.createTopic(topic, 1);
-  } catch(e) {
-    if(`${e.message}` != `AdminApi(Code(TopicAlreadyExists, Some("topic '${topic}' already defined")))`) {
-      throw e;
-    }
-  }
+  await admin.createTopic(topic, 1);
 }
 
 export const teardown = async () => {
@@ -44,10 +38,6 @@ export const teardown = async () => {
 export const test = async () => {
   const consumer = await fluvio.partitionConsumer(topic, 0);
   let stream = await consumer.stream(Offset.beginning()); // this is a work around as Offset is not in scope.
-
-  const admin = await fluvio.admin();
-  const connectors = await admin.listConnectors();
-
 
   let count = 0;
   const userAgent = navigator.userAgent;
