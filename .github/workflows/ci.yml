@@ -83,7 +83,7 @@ jobs:
       - name: Install Fluvio Local Cluster
         uses: infinyon/fluvio@master
         with:
-          cluster-type: local
+          cluster-type: k3d
           version: latest
       - name: Check Fluvio Installation
         run: |
