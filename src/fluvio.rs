@@ -58,6 +58,7 @@ impl Fluvio {
         );
         Ok(Self { inner })
     }
+
     pub fn admin(&self) -> Promise {
         let rc = self.inner.clone();
         future_to_promise(async move {

@@ -21,7 +21,7 @@ impl TcpDomainConnector for FluvioWebsocketConnector {
         addr: &str,
     ) -> Result<(BoxWriteConnection, BoxReadConnection, ConnectionFd), IoError> {
         let url = if let Some(ref domain) = self.domain {
-            format!("{}?domain={}", self.url, domain)
+            format!("{}?domain={}&addr={}", self.url, domain, addr)
         } else {
             self.url.clone()
         };

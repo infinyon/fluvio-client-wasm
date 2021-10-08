@@ -10,13 +10,18 @@ build-dev:
 	wasm-pack build --dev
 
 test: install-wasm-pack
-	wasm-pack test --firefox --headless
+	WASM_BINDGEN_TEST_TIMEOUT=60 wasm-pack test --firefox --headless
 
-run-fluvio-websocket-proxy:
-	RUST_LOG=debug cargo run --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(shell rustup show | grep 'Default host' | sed 's/Default host: //g')
+build-fluvio-websocket-proxy:
+	RUST_LOG=debug cargo build --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(PROXY_TARGET)
+
+run-fluvio-websocket-proxy: build-fluvio-websocket-proxy
+	RUST_LOG=debug cargo run --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(PROXY_TARGET)
+
+PROXY_TARGET=$(shell rustup show | grep 'Default host' | sed 's/Default host: //g')
 
 check-fluvio-websocket-proxy:
-	RUST_LOG=debug cargo check --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(shell rustup show | grep 'Default host' | sed 's/Default host: //g')
+	RUST_LOG=debug cargo check --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(PROXY_TARGET)
 
 webpack-dev:
 	npm install

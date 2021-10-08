@@ -1,16 +1,21 @@
 use std::cell::RefCell;
+use std::collections::BTreeMap;
 use std::rc::Rc;
 
-use crate::partition::PartitionMetadata;
-use crate::topic::TopicMetadata;
-use crate::FluvioError;
-use fluvio::metadata::partition::PartitionSpec;
-use fluvio::metadata::topic::TopicSpec;
-use fluvio::FluvioAdmin as NativeFluvioAdmin;
 use js_sys::Array;
 use js_sys::Promise;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::future_to_promise;
+
+use fluvio::metadata::connector::ManagedConnectorSpec;
+use fluvio::metadata::partition::PartitionSpec;
+use fluvio::metadata::topic::TopicReplicaParam;
+use fluvio::metadata::topic::TopicSpec;
+use fluvio::FluvioAdmin as NativeFluvioAdmin;
+
+use crate::partition::PartitionMetadata;
+use crate::topic::TopicMetadata;
+use crate::FluvioError;
 
 #[cfg(feature = "unstable")]
 use fluvio::metadata::{objects::Metadata, store::MetadataStoreObject};
@@ -42,7 +47,6 @@ impl FluvioAdmin {
     }
     #[wasm_bindgen(js_name = createTopic)]
     pub fn create_topic(&self, topic_name: String, partition: i32) -> Promise {
-        use fluvio::metadata::topic::TopicReplicaParam;
         let rc = self.inner.clone();
         future_to_promise(async move {
             rc.create(
@@ -127,6 +131,71 @@ impl FluvioAdmin {
         AsyncPartitionStream {
             inner: Rc::new(RefCell::new(Box::pin(stream))),
         }
+    }
+
+    #[wasm_bindgen(js_name = createConnector)]
+    pub fn create_connector(
+        &self,
+        name: String,
+        type_: String,
+        parameters: &JsValue,
+        secrets: &JsValue,
+    ) -> Promise {
+        let parameters: BTreeMap<String, String> = parameters.into_serde().unwrap_or_else(|e| {
+            log::error!("Failed to get parameters from js {:?}", e);
+            BTreeMap::new()
+        });
+        let secrets: BTreeMap<String, String> = secrets.into_serde().unwrap_or_else(|e| {
+            log::error!("Failed to get parameters from js {:?}", e);
+            BTreeMap::new()
+        });
+        log::debug!("PARAMETERS {:?}", parameters);
+        log::debug!("secrets {:?}", secrets);
+        let connector_spec: ManagedConnectorSpec = ManagedConnectorSpec {
+            name: name.clone(),
+            type_,
+            parameters,
+            secrets,
+            ..Default::default()
+        };
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            rc.create(name.clone(), false, connector_spec)
+                .await
+                .map(|_| JsValue::from(name))
+                .map_err(|e| FluvioError::from(e).into())
+        })
+    }
+
+    #[wasm_bindgen(js_name = listConnectors)]
+    pub fn list_connectors(&mut self) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            let topic_list = rc
+                .list::<ManagedConnectorSpec, _>(vec![])
+                .await
+                .map(|topic_list| {
+                    JsValue::from(
+                        topic_list
+                            .into_iter()
+                            .map(|connector| JsValue::from(connector.name))
+                            .collect::<Array>(),
+                    )
+                })
+                .map_err(|e| FluvioError::from(e).into());
+            topic_list
+        })
+    }
+
+    #[wasm_bindgen(js_name = deleteConnector)]
+    pub fn delete_connector(&self, connector_name: String) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            rc.delete::<ManagedConnectorSpec, String>(connector_name)
+                .await
+                .map(|_| JsValue::NULL)
+                .map_err(|e| FluvioError::from(e).into())
+        })
     }
 }
 
