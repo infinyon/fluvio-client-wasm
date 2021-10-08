@@ -67,7 +67,7 @@ jobs:
           yarn build
 
   smoke_test:
-    name: Run tests against local cluster
+    name: Run tests against fluvio cluster
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -103,10 +103,12 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
+      - name: build websocket proxy
+        run:
+          make build-fluvio-websocket-proxy
 
       - name: Start websocket proxy
         run:
-          make build-fluvio-websocket-proxy &&
           make run-fluvio-websocket-proxy & disown
 
       - name: Run tests
