@@ -1,16 +1,16 @@
 use std::cell::RefCell;
-use std::rc::Rc;
 use std::collections::BTreeMap;
+use std::rc::Rc;
 
 use js_sys::Array;
 use js_sys::Promise;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::future_to_promise;
 
-use fluvio::metadata::partition::PartitionSpec;
-use fluvio::metadata::topic::TopicSpec;
-use fluvio::metadata::topic::TopicReplicaParam;
 use fluvio::metadata::connector::ManagedConnectorSpec;
+use fluvio::metadata::partition::PartitionSpec;
+use fluvio::metadata::topic::TopicReplicaParam;
+use fluvio::metadata::topic::TopicSpec;
 use fluvio::FluvioAdmin as NativeFluvioAdmin;
 
 use crate::partition::PartitionMetadata;
@@ -134,8 +134,14 @@ impl FluvioAdmin {
     }
 
     #[wasm_bindgen(js_name = createConnector)]
-    pub fn create_connector(&self, name: String, type_: String, parameters: &JsValue, secrets: &JsValue) -> Promise {
-        let parameters : BTreeMap<String, String> = parameters.into_serde().unwrap_or_else(|e| {
+    pub fn create_connector(
+        &self,
+        name: String,
+        type_: String,
+        parameters: &JsValue,
+        secrets: &JsValue,
+    ) -> Promise {
+        let parameters: BTreeMap<String, String> = parameters.into_serde().unwrap_or_else(|e| {
             log::error!("Failed to get parameters from js {:?}", e);
             BTreeMap::new()
         });
@@ -145,7 +151,7 @@ impl FluvioAdmin {
         });
         log::debug!("PARAMETERS {:?}", parameters);
         log::debug!("secrets {:?}", secrets);
-        let connector_spec : ManagedConnectorSpec = ManagedConnectorSpec {
+        let connector_spec: ManagedConnectorSpec = ManagedConnectorSpec {
             name: name.clone(),
             type_,
             parameters,
@@ -154,14 +160,10 @@ impl FluvioAdmin {
         };
         let rc = self.inner.clone();
         future_to_promise(async move {
-            rc.create(
-                name.clone(),
-                false,
-                connector_spec,
-            )
-            .await
-            .map(|_| JsValue::from(name))
-            .map_err(|e| FluvioError::from(e).into())
+            rc.create(name.clone(), false, connector_spec)
+                .await
+                .map(|_| JsValue::from(name))
+                .map_err(|e| FluvioError::from(e).into())
         })
     }
 
