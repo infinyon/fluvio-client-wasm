@@ -28,13 +28,22 @@ async fn simple() {
     }
     web_sys::console::time_with_label("simple-suite");
     web_sys::console::time_with_label("simple-setup");
-    setup().await.map_err(FluvioError::try_from).expect("Setup failed");
+    setup()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Setup failed");
     web_sys::console::time_end_with_label("simple-setup");
     web_sys::console::time_with_label("simple-test");
-    test().await.map_err(FluvioError::try_from).expect("Test failed");
+    test()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Test failed");
     web_sys::console::time_end_with_label("simple-test");
     web_sys::console::time_with_label("simple-teardown");
-    teardown().await.map_err(FluvioError::try_from).expect("Teardown failed");
+    teardown()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Teardown failed");
     web_sys::console::time_end_with_label("simple-teardown");
     web_sys::console::time_end_with_label("simple-suite");
 }
@@ -57,13 +66,22 @@ async fn connector() {
     }
     web_sys::console::time_with_label("connector-suite");
     web_sys::console::time_with_label("connector-setup");
-    setup().await.map_err(FluvioError::try_from).expect("Setup failed");
+    setup()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Setup failed");
     web_sys::console::time_end_with_label("connector-setup");
     web_sys::console::time_with_label("connector-test");
-    test().await.map_err(FluvioError::try_from).expect("Test failed");
+    test()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Test failed");
     web_sys::console::time_end_with_label("connector-test");
     web_sys::console::time_with_label("connector-teardown");
-    teardown().await.map_err(FluvioError::try_from) .expect("Teardown failed");
+    teardown()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Teardown failed");
     web_sys::console::time_end_with_label("connector-teardown");
     web_sys::console::time_end_with_label("connector-suite");
 }
@@ -89,17 +107,27 @@ async fn aggreegate() {
 
     web_sys::console::time_with_label("smartstream-aggregate-suite");
     web_sys::console::time_with_label("smartstream-aggregate-setup");
-    setup().await.map_err(FluvioError::try_from).expect("Setup failed");
+    setup()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Setup failed");
     web_sys::console::time_end_with_label("smartstream-aggregate-setup");
     web_sys::console::time_with_label("smartstream-aggregate-test");
-    test().await.map_err(FluvioError::try_from).expect("Test failed");
+    test()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Test failed");
     web_sys::console::time_end_with_label("smartstream-aggregate-test");
     web_sys::console::time_with_label("smartstream-aggregate-teardown");
-    teardown().await.map_err(FluvioError::try_from).expect("Teardown failed");
+    teardown()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Teardown failed");
     web_sys::console::time_end_with_label("smartstream-aggregate-teardown");
     web_sys::console::time_end_with_label("smartstream-aggregate-suite");
 }
 
+/*
 #[wasm_bindgen_test]
 async fn smartstream_filter() {
     #[wasm_bindgen(module = "/tests/js/smartstream_filter/smartstream_filter.js")]
@@ -121,14 +149,23 @@ async fn smartstream_filter() {
 
     web_sys::console::time_with_label("smartstream-filter-suite");
     web_sys::console::time_with_label("smartstream-filter-setup");
-    setup().await.map_err(FluvioError::try_from).expect("Setup failed");
+    setup()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Setup failed");
     web_sys::console::time_end_with_label("smartstream-filter-setup");
     web_sys::console::time_with_label("smartstream-filter-test");
-    test().await.map_err(FluvioError::try_from).expect("Test failed");
+    test()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Test failed");
     web_sys::console::time_end_with_label("smartstream-filter-test");
     web_sys::console::time_with_label("smartstream-filter-teardown");
-    teardown().await.map_err(FluvioError::try_from).expect("Teardown failed");
+    teardown()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Teardown failed");
     web_sys::console::time_end_with_label("smartstream-filter-teardown");
     web_sys::console::time_end_with_label("smartstream-filter-suite");
 }
-
+*/
