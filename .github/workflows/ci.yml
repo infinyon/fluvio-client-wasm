@@ -112,4 +112,5 @@ jobs:
           make run-fluvio-websocket-proxy & disown
 
       - name: Run tests
-        run: make test
+        run:
+          make test

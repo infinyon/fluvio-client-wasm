@@ -1,18 +1,20 @@
 import { Offset, Fluvio } from '../../../../../wasm-bindgen-test';
+import { createUUID } from '../utils.js';
 
-const createUUID = () => {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
-};
 const topic = createUUID();
 
 var fluvio;
 export const setup = async () => {
   fluvio  = await Fluvio.connect("ws://localhost:3000");
   const admin = await fluvio.admin();
-  await admin.createTopic(topic, 1);
+  for(let i = 0; i < 3; i++) {
+    try {
+      await admin.createTopic(topic, 1);
+      break;
+    } catch (e) {
+      console.error(`${e.message}`);
+    }
+  }
 }
 export const teardown = async () => {
   const admin = await fluvio.admin();
@@ -30,7 +32,6 @@ export const test = async () => {
 
   let count = 0;
   const userAgent = navigator.userAgent;
-  let before = new Date();
   while (count < 100) {
     count++;
     let in_record = `${count}-${userAgent}`;

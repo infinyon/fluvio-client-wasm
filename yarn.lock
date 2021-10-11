@@ -1466,7 +1466,7 @@ __metadata:
     tslib: ^2.2.0
     typescript: ^4.4.3
     wasm-pack: ^0.10.0
-    webpack: ^5.58.0
+    webpack: ^5.58.1
     webpack-cli: ^4.7.2
     webpack-dev-server: ^4.3.1
   languageName: unknown
@@ -3797,7 +3797,7 @@ typescript@^4.4.3:
   languageName: node
   linkType: hard
 
-"webpack@npm:^5.58.0":
+"webpack@npm:^5.58.1":
   version: 5.58.1
   resolution: "webpack@npm:5.58.1"
   dependencies:
