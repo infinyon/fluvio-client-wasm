@@ -25,7 +25,7 @@ export const test = async () => {
 
   let count = 0;
   const userAgent = navigator.userAgent;
-  while (count < 1000) {
+  while (count < 100) {
     count++;
     let in_record = `${count}-${userAgent}`;
     await producer.send("", in_record);

@@ -112,4 +112,7 @@ jobs:
           make run-fluvio-websocket-proxy & disown
 
       - name: Run tests
-        run: make test
+        env:
+          WASM_BINDGEN_TEST_TIMEOUT=600
+        run:
+          make test

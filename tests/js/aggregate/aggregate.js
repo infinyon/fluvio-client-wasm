@@ -1,7 +1,7 @@
 
 import { Offset, Fluvio } from '../../../../../wasm-bindgen-test';
-const { aggregate } = await import("./aggregate_code.js");
 import { createUUID } from '../utils.js';
+const { aggregate } = await import("./aggregate_code.js");
 
 //const topic = "test-aggregate";
 const topic = createUUID();
