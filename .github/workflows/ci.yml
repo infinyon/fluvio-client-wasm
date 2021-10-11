@@ -113,6 +113,5 @@ jobs:
 
       - name: Run tests
         env:
-          WASM_BINDGEN_TEST_TIMEOUT: 600
         run:
           make test
