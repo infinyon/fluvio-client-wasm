@@ -47,8 +47,6 @@ async fn simple() {
     web_sys::console::time_end_with_label("simple-teardown");
     web_sys::console::time_end_with_label("simple-suite");
 }
-/*
-*/
 
 #[wasm_bindgen_test]
 async fn connector() {
@@ -125,6 +123,47 @@ async fn aggreegate() {
         .expect("Teardown failed");
     web_sys::console::time_end_with_label("smartstream-aggregate-teardown");
     web_sys::console::time_end_with_label("smartstream-aggregate-suite");
+}
+
+#[wasm_bindgen_test]
+async fn smartstream_map() {
+    #[wasm_bindgen(module = "/tests/js/smartstream_map/map.js")]
+    extern "C" {
+
+        #[wasm_bindgen(catch)]
+        pub async fn setup() -> Result<JsValue, JsValue>;
+
+        #[wasm_bindgen(catch)]
+        pub async fn test() -> Result<JsValue, JsValue>;
+
+        #[wasm_bindgen(catch)]
+        pub async fn teardown() -> Result<JsValue, JsValue>;
+    }
+    #[wasm_bindgen(module = "/tests/js/smartstream_map/map_code.js")]
+    extern "C" {
+        static mapCode: String;
+    }
+
+    web_sys::console::time_with_label("smartstream-map-suite");
+    web_sys::console::time_with_label("smartstream-map-setup");
+    setup()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Setup failed");
+    web_sys::console::time_end_with_label("smartstream-map-setup");
+    web_sys::console::time_with_label("smartstream-map-test");
+    test()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Test failed");
+    web_sys::console::time_end_with_label("smartstream-map-test");
+    web_sys::console::time_with_label("smartstream-map-teardown");
+    teardown()
+        .await
+        .map_err(FluvioError::try_from)
+        .expect("Teardown failed");
+    web_sys::console::time_end_with_label("smartstream-map-teardown");
+    web_sys::console::time_end_with_label("smartstream-map-suite");
 }
 
 /*

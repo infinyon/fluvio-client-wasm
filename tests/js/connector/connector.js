@@ -21,7 +21,14 @@ export const setup = async () => {
       timeout: "10",
     },
   );
-  await admin.createTopic(topic, 1);
+  for(let i = 0; i < 3; i++) {
+    try {
+      await admin.createTopic(topic, 1);
+      break;
+    } catch (e) {
+      console.error(`${e.message}`);
+    }
+  }
 }
 
 export const teardown = async () => {
