@@ -4,9 +4,12 @@ use js_sys::Promise;
 use wasm_bindgen::prelude::*;
 use wasm_bindgen_futures::future_to_promise;
 
-use fluvio::{config::FluvioConfig, Fluvio as NativeFluvio};
+use fluvio::{config::FluvioConfig, Fluvio as NativeFluvio, PartitionSelectionStrategy};
 
-use crate::{FluvioAdmin, FluvioError, FluvioWebsocketConnector, PartitionConsumer, TopicProducer};
+use crate::{
+    FluvioAdmin, FluvioError, FluvioWebsocketConnector, MultiplePartitionConsumer,
+    PartitionConsumer, TopicProducer,
+};
 
 #[wasm_bindgen]
 pub struct Fluvio {
@@ -40,6 +43,20 @@ impl Fluvio {
                 .map_err(|e| FluvioError::from(e).into());
 
             partition_consumer
+        })
+    }
+
+    #[wasm_bindgen(js_name = allPartitionsConsumer)]
+    pub fn all_partitions_consumer(&self, topic: String) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            let consumer = rc
+                .consumer(PartitionSelectionStrategy::All(topic))
+                .await
+                .map(|consumer| JsValue::from(MultiplePartitionConsumer::from(consumer)))
+                .map_err(|e| FluvioError::from(e).into());
+
+            consumer
         })
     }
 

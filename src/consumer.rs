@@ -1,5 +1,7 @@
 use fluvio::{
-    ConsumerConfig as NativeConsumerConfig, PartitionConsumer as NativePartitionConsumer,
+    ConsumerConfig as NativeConsumerConfig,
+    MultiplePartitionConsumer as NativeMultiplePartitionConsumer,
+    PartitionConsumer as NativePartitionConsumer,
 };
 use js_sys::{Promise, Reflect};
 use std::cell::RefCell;
@@ -171,6 +173,62 @@ impl PartitionConsumer {
 
 impl From<NativePartitionConsumer> for PartitionConsumer {
     fn from(inner: NativePartitionConsumer) -> Self {
+        Self { inner }
+    }
+}
+
+#[wasm_bindgen]
+pub struct MultiplePartitionConsumer {
+    inner: NativeMultiplePartitionConsumer,
+}
+
+#[wasm_bindgen]
+impl MultiplePartitionConsumer {
+    pub async fn stream(
+        self,
+        offset: Offset,
+    ) -> Result<PartitionConsumerStream, wasm_bindgen::JsValue> {
+        Ok(PartitionConsumerStream {
+            inner: Rc::new(RefCell::new(Box::pin(
+                self.inner
+                    .stream(offset.inner)
+                    .await
+                    .map_err(FluvioError::from)?
+                    .map(|result| {
+                        result
+                            .map(|record| record.into())
+                            .map_err(FluvioError::from)
+                    }),
+            ))),
+        })
+    }
+
+    #[wasm_bindgen(js_name = "streamWithConfig")]
+    pub async fn stream_with_config(
+        self,
+        offset: Offset,
+        config: ConsumerConfig,
+    ) -> Result<PartitionConsumerStream, wasm_bindgen::JsValue> {
+        let config: NativeConsumerConfig = config.try_into()?;
+
+        Ok(PartitionConsumerStream {
+            inner: Rc::new(RefCell::new(Box::pin(
+                self.inner
+                    .stream_with_config(offset.inner, config)
+                    .await
+                    .map_err(FluvioError::from)?
+                    .map(|result| {
+                        result
+                            .map(|record| record.into())
+                            .map_err(FluvioError::from)
+                    }),
+            ))),
+        })
+    }
+}
+
+impl From<NativeMultiplePartitionConsumer> for MultiplePartitionConsumer {
+    fn from(inner: NativeMultiplePartitionConsumer) -> Self {
         Self { inner }
     }
 }

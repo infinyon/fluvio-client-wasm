@@ -12,7 +12,7 @@ mod topic;
 pub use crate::fluvio::Fluvio;
 pub use admin::FluvioAdmin;
 use connector::FluvioWebsocketConnector;
-pub use consumer::{PartitionConsumer, PartitionConsumerStream};
+pub use consumer::{MultiplePartitionConsumer, PartitionConsumer, PartitionConsumerStream};
 pub use error::FluvioError;
 pub use offset::Offset;
 pub use producer::TopicProducer;
