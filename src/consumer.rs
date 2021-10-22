@@ -64,10 +64,10 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                 .map_err(|e| format!("Failed to decode SmartStream as a base64 string: {:?}", e))?;
             match smartstream_type.as_deref() {
                 Some("filter") => {
-                    builder.wasm_filter(wasm);
+                    builder.wasm_filter(wasm, Default::default());
                 }
                 Some("map") => {
-                    builder.wasm_map(wasm);
+                    builder.wasm_map(wasm, Default::default());
                 }
                 Some("aggregate") => {
                     let accumulator = smartstream_accumulator
@@ -79,7 +79,7 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                         .transpose()?
                         .unwrap_or_default();
 
-                    builder.wasm_aggregate(wasm, accumulator);
+                    builder.wasm_aggregate(wasm, accumulator, Default::default());
                 }
                 _ => {
                     return Err(
