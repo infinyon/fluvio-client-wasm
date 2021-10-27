@@ -56,9 +56,10 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
             .ok()
             .and_then(|it| it.as_string());
         use std::collections::BTreeMap;
-        let params : BTreeMap<String, String> = Reflect::get(&js, &"accumulator".into())
+        let params: BTreeMap<String, String> = Reflect::get(&js, &"accumulator".into())
             .ok()
-            .and_then(|it| it.into_serde().ok()).unwrap_or(BTreeMap::new());
+            .and_then(|it| it.into_serde().ok())
+            .unwrap_or_default();
 
         // Builder for NativeConsumerConfig
         let mut builder = NativeConsumerConfig::builder();
