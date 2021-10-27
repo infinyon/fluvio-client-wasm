@@ -23,6 +23,7 @@ export type ConsumerConfig = {
     smartstreamType?: SmartStreamType,
     smartstream?: string,
     accumulator?: string,
+    params?: object,
 }
 "#;
 
@@ -54,6 +55,11 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
         let smartstream_accumulator = Reflect::get(&js, &"accumulator".into())
             .ok()
             .and_then(|it| it.as_string());
+        use std::collections::BTreeMap;
+        let params: BTreeMap<String, String> = Reflect::get(&js, &"params".into())
+            .ok()
+            .and_then(|it| it.into_serde().ok())
+            .unwrap_or_default();
 
         // Builder for NativeConsumerConfig
         let mut builder = NativeConsumerConfig::builder();
@@ -66,10 +72,10 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                 .map_err(|e| format!("Failed to decode SmartStream as a base64 string: {:?}", e))?;
             match smartstream_type.as_deref() {
                 Some("filter") => {
-                    builder.wasm_filter(wasm, Default::default());
+                    builder.wasm_filter(wasm, params);
                 }
                 Some("map") => {
-                    builder.wasm_map(wasm, Default::default());
+                    builder.wasm_map(wasm, params);
                 }
                 Some("aggregate") => {
                     let accumulator = smartstream_accumulator
@@ -81,7 +87,7 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                         .transpose()?
                         .unwrap_or_default();
 
-                    builder.wasm_aggregate(wasm, accumulator, Default::default());
+                    builder.wasm_aggregate(wasm, accumulator, params);
                 }
                 _ => {
                     return Err(

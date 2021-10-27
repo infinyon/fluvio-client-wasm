@@ -85,8 +85,8 @@ pub fn generic_of_jsval<T: FromWasmAbi<Abi = u32>>(
     if ctor_name == classname {
         let ptr = Reflect::get(&js, &JsValue::from_str("ptr"))?;
         let ptr_u32: u32 = ptr.as_f64().ok_or(JsValue::NULL)? as u32;
-        let foo = unsafe { T::from_abi(ptr_u32) };
-        Ok(foo)
+        let js_val = unsafe { T::from_abi(ptr_u32) };
+        Ok(js_val)
     } else {
         Err(JsValue::NULL)
     }
