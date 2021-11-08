@@ -23,7 +23,7 @@ tracing = "0.1.29"
 fluvio-future = { version = "0.3.10", features = ["net"] }
 fluvio_ws_stream_wasm = "0.7.0"
 async-trait = { version = "0.1.51"}
-tracing-wasm = "0.2.0"
+tracing-wasm = "0.2.1"
 log = "0.4"
 base64 = "0.13.0"
 
