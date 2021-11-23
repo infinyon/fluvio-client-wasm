@@ -74,7 +74,7 @@ jobs:
         os: [ubuntu-latest]
         node: [ '16' ]
     steps:
-      - uses: AbsaOSS/k3d-action@v1.5.0
+      - uses: AbsaOSS/k3d-action@v2.0.0
         name: "Create fluvio k3d Cluster"
         with:
           cluster-name: "fluvio"
