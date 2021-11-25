@@ -101,6 +101,7 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
         Ok(config)
     }
 }
+use fluvio::dataplane::ErrorCode;
 
 #[wasm_bindgen]
 pub struct PartitionConsumerStream {
