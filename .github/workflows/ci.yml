@@ -49,7 +49,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [ '16' ]
+        node: [ '17' ]
     steps:
       - uses: actions/checkout@v2
       - name: Install Rust stable
