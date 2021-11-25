@@ -72,9 +72,11 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                 .map_err(|e| format!("Failed to decode SmartStream as a base64 string: {:?}", e))?;
             match smartstream_type.as_deref() {
                 Some("filter") => {
+                    #[allow(deprecated)]
                     builder.wasm_filter(wasm, params);
                 }
                 Some("map") => {
+                    #[allow(deprecated)]
                     builder.wasm_map(wasm, params);
                 }
                 Some("aggregate") => {
@@ -87,6 +89,7 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                         .transpose()?
                         .unwrap_or_default();
 
+                    #[allow(deprecated)]
                     builder.wasm_aggregate(wasm, accumulator, params);
                 }
                 _ => {
@@ -101,7 +104,6 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
         Ok(config)
     }
 }
-use fluvio::dataplane::ErrorCode;
 
 #[wasm_bindgen]
 pub struct PartitionConsumerStream {
