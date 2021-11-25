@@ -13,8 +13,6 @@ pub enum FluvioInner {
     Code(fluvio::dataplane::ErrorCode),
 }
 
-
-
 // This is to get the stack for `FluvioError`
 #[wasm_bindgen]
 extern "C" {
@@ -45,14 +43,18 @@ impl FluvioError {
 
 impl From<NativeFluvioError> for FluvioError {
     fn from(inner: NativeFluvioError) -> Self {
-        Self { inner: FluvioInner::Fluvio(inner)}
+        Self {
+            inner: FluvioInner::Fluvio(inner),
+        }
     }
 }
 use fluvio::dataplane::ErrorCode as NativeErrorCode;
 
 impl From<NativeErrorCode> for FluvioError {
     fn from(inner: NativeErrorCode) -> Self {
-        Self { inner: FluvioInner::Code(inner)}
+        Self {
+            inner: FluvioInner::Code(inner),
+        }
     }
 }
 impl From<String> for FluvioError {
@@ -62,7 +64,6 @@ impl From<String> for FluvioError {
         }
     }
 }
-
 
 use std::convert::TryFrom;
 impl TryFrom<JsValue> for FluvioError {
