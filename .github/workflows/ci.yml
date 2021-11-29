@@ -63,6 +63,7 @@ jobs:
           node-version: ${{ matrix.node }}
       - name: Check yarn
         run: |
+          npm install
           yarn install
           yarn build
 
