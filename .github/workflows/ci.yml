@@ -61,8 +61,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-      - name: Install Yarn
-        run: npm install -g yarn
       - name: Check yarn
         run: |
           yarn install
