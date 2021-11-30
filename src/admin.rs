@@ -138,6 +138,7 @@ impl FluvioAdmin {
         &self,
         name: String,
         type_: String,
+        topic: String,
         parameters: &JsValue,
         secrets: &JsValue,
     ) -> Promise {
@@ -154,6 +155,7 @@ impl FluvioAdmin {
         let connector_spec: ManagedConnectorSpec = ManagedConnectorSpec {
             name: name.clone(),
             type_,
+            topic,
             parameters,
             secrets,
             ..Default::default()

@@ -49,7 +49,7 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-latest]
-        node: [ '16' ]
+        node: [ '17' ]
     steps:
       - uses: actions/checkout@v2
       - name: Install Rust stable
@@ -74,7 +74,7 @@ jobs:
         os: [ubuntu-latest]
         node: [ '16' ]
     steps:
-      - uses: AbsaOSS/k3d-action@v1.5.0
+      - uses: AbsaOSS/k3d-action@v2
         name: "Create fluvio k3d Cluster"
         with:
           cluster-name: "fluvio"

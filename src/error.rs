@@ -4,7 +4,13 @@ use wasm_bindgen::prelude::*;
 #[wasm_bindgen]
 #[derive(Debug)]
 pub struct FluvioError {
-    inner: NativeFluvioError,
+    inner: FluvioInner,
+}
+
+#[derive(Debug)]
+pub enum FluvioInner {
+    Fluvio(NativeFluvioError),
+    Code(fluvio::dataplane::ErrorCode),
 }
 
 // This is to get the stack for `FluvioError`
@@ -37,13 +43,24 @@ impl FluvioError {
 
 impl From<NativeFluvioError> for FluvioError {
     fn from(inner: NativeFluvioError) -> Self {
-        Self { inner }
+        Self {
+            inner: FluvioInner::Fluvio(inner),
+        }
+    }
+}
+use fluvio::dataplane::ErrorCode as NativeErrorCode;
+
+impl From<NativeErrorCode> for FluvioError {
+    fn from(inner: NativeErrorCode) -> Self {
+        Self {
+            inner: FluvioInner::Code(inner),
+        }
     }
 }
 impl From<String> for FluvioError {
     fn from(err: String) -> Self {
         Self {
-            inner: NativeFluvioError::Other(err),
+            inner: FluvioInner::Fluvio(NativeFluvioError::Other(err)),
         }
     }
 }
