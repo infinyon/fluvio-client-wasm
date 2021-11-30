@@ -6,4 +6,3 @@ wasm-pack.log
 dist
 .idea/
 node_modules/
-.yarn/
