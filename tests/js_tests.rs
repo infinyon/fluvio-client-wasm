@@ -120,6 +120,7 @@ async fn connector() {
     web_sys::console::time_end_with_label("connector-suite");
 }
 
+/*
 #[wasm_bindgen_test]
 async fn aggreegate() {
     #[wasm_bindgen(module = "/tests/js/aggregate/aggregate.js")]
@@ -160,6 +161,7 @@ async fn aggreegate() {
     web_sys::console::time_end_with_label("smartstream-aggregate-teardown");
     web_sys::console::time_end_with_label("smartstream-aggregate-suite");
 }
+*/
 
 #[wasm_bindgen_test]
 async fn smartstream_map() {
