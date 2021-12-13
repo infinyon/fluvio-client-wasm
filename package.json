@@ -17,7 +17,7 @@
     "@rollup/plugin-typescript": "^8.3.0",
     "@wasm-tool/rollup-plugin-rust": "^1.0.7",
     "@wasm-tool/wasm-pack-plugin": "^1.6.0",
-    "copy-webpack-plugin": "^9.0.1",
+    "copy-webpack-plugin": "^10.1.0",
     "rimraf": "^3.0.0",
     "rollup": "^2.60.1",
     "rollup-plugin-dts": "^4.0",
