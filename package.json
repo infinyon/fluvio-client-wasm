@@ -40,7 +40,7 @@
     "wasm-pack": "^0.10.0",
     "webpack": "^5.64.3",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.5.0"
+    "webpack-dev-server": "^4.7.3"
   },
   "packageManager": "yarn@3.1.1"
 }
