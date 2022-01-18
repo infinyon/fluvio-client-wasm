@@ -1,8 +1,22 @@
 {
   "author": "Infinyon Contributors <team@infiyon.com>",
-  "name": "fluvio-client-wasm",
+  "name": "@fluvio/client-wasm",
   "version": "0.1.0",
+  "description": "WASM bindings for Fluvio distributed stream client",
+  "license": "Apache-2.0",
+  "keywords": [
+    "fluvio",
+    "stream",
+    "wasm",
+    "client"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/infinyon/fluvio-client-wasm.git"
+  },
+  "homepage": "https://fluvio.io",
   "main": "dist/fluvio-client.js",
+  "types": "dist/fluvio-client.d.ts",
   "files": [
     "dist/"
   ],
@@ -26,7 +40,7 @@
     "wasm-pack": "^0.10.0",
     "webpack": "^5.64.3",
     "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.5.0"
+    "webpack-dev-server": "^4.7.3"
   },
   "packageManager": "yarn@3.1.1"
 }

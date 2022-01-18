@@ -1,0 +1,33 @@
+name: Publish
+
+on:
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v[0-9]+(\.[0-9]+)*'
+jobs:
+  publish:
+    name: Publish to npm
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [ '14' ]
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          target: wasm32-unknown-unknown
+      - name: Use Node.js ${{ matrix.node }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node }}
+          registry-url: 'https://registry.npmjs.org'
+      - name: Prepare publish
+        run: npm ci
+      - name: Publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH }}
+        run: npm publish --access public
