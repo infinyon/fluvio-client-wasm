@@ -39,6 +39,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@fluvio/client-wasm@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@fluvio/client-wasm@workspace:."
+  dependencies:
+    "@rollup/plugin-typescript": ^8.3.0
+    "@wasm-tool/rollup-plugin-rust": ^1.0.7
+    "@wasm-tool/wasm-pack-plugin": ^1.6.0
+    copy-webpack-plugin: ^9.0.1
+    rimraf: ^3.0.0
+    rollup: ^2.60.1
+    rollup-plugin-dts: ^4.0
+    tslib: ^2.2.0
+    typescript: ^4.5.2
+    wasm-pack: ^0.10.0
+    webpack: ^5.64.3
+    webpack-cli: ^4.9.1
+    webpack-dev-server: ^4.5.0
+  languageName: unknown
+  linkType: soft
+
 "@gar/promisify@npm:^1.0.1":
   version: 1.1.2
   resolution: "@gar/promisify@npm:1.1.2"
@@ -1494,26 +1514,6 @@ __metadata:
   checksum: 4c172680e8f8c1f78839486e14a43ef82e9decd0e74145f40707cc42e7420506d5ec92d9a11c22bd2c48fb0c384ea05dd30e10dd152fefeec6f2f75282a8b844
   languageName: node
   linkType: hard
-
-"fluvio-client-wasm@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "fluvio-client-wasm@workspace:."
-  dependencies:
-    "@rollup/plugin-typescript": ^8.3.0
-    "@wasm-tool/rollup-plugin-rust": ^1.0.7
-    "@wasm-tool/wasm-pack-plugin": ^1.6.0
-    copy-webpack-plugin: ^9.0.1
-    rimraf: ^3.0.0
-    rollup: ^2.60.1
-    rollup-plugin-dts: ^4.0
-    tslib: ^2.2.0
-    typescript: ^4.5.2
-    wasm-pack: ^0.10.0
-    webpack: ^5.64.3
-    webpack-cli: ^4.9.1
-    webpack-dev-server: ^4.5.0
-  languageName: unknown
-  linkType: soft
 
 "follow-redirects@npm:^1.0.0, follow-redirects@npm:^1.14.0":
   version: 1.14.5
