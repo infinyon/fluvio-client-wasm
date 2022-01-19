@@ -14,11 +14,8 @@ jobs:
       - name: revert changes to yarn.lock
         run: git checkout HEAD^ yarn.lock
       - name: 'Install packages'
-        run: |
-          yarn install || true
-
+        run: yarn install --no-immutable
       - name: 'Autofix yarn for dependabot'
-        # https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
