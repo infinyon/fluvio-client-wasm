@@ -18,7 +18,7 @@ jobs:
         run: git checkout HEAD^ yarn.lock
       - name: 'Install packages'
         run: |
-          yarn install
+          yarn install --mode=update-lockfile || true
       - name: 'Autofix yarn for dependabot'
         # https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
         run: |
