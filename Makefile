@@ -24,5 +24,5 @@ check-fluvio-websocket-proxy:
 	RUST_LOG=debug cargo check --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(PROXY_TARGET)
 
 webpack-dev:
-	npm install
-	npm run webpack-dev
+	yarn install
+	yarn run webpack-dev

@@ -4,6 +4,7 @@ bin/
 pkg/
 wasm-pack.log
 dist
+package-lock.json
 .idea/
 node_modules/
 .yarn/cache/

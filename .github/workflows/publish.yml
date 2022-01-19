@@ -9,9 +9,6 @@ jobs:
   publish:
     name: Publish to npm
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node: [ '14' ]
     steps:
       - uses: actions/checkout@v2
       - name: Install Rust stable
@@ -20,14 +17,30 @@ jobs:
           toolchain: stable
           override: true
           target: wasm32-unknown-unknown
-      - name: Use Node.js ${{ matrix.node }}
-        uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node }}
+          node-version: '16.x'
           registry-url: 'https://registry.npmjs.org'
-      - name: Prepare publish
-        run: npm ci
-      - name: Publish
+      - run: yarn
+      - run: yarn npm publish --access public
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_PUBLISH }}
-        run: npm publish --access public
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+    publish_github_packages:
+    name: Publish to github packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          target: wasm32-unknown-unknown
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+          registry-url: 'https://npm.pkg.github.com'
+      - run: yarn
+      - run: yarn npm publish --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
