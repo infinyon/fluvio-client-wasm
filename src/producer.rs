@@ -21,6 +21,25 @@ impl TopicProducer {
                 .map_err(|e| FluvioError::from(e).into())
         })
     }
+
+    pub fn flush(&self) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            rc.flush()
+                .await
+                .map(|_| JsValue::null()) //
+                .map_err(|e| FluvioError::from(e).into())
+        })
+    }
+
+    #[wasm_bindgen(js_name = clearErrors)]
+    pub fn clear_errors(&self) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            rc.clear_errors().await;
+            Ok(JsValue::null())
+        })
+    }
 }
 
 impl From<NativeTopicProducer> for TopicProducer {

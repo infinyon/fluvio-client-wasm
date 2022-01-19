@@ -53,7 +53,7 @@ async fn ws_handler(req: Request<()>, mut stream: WebSocketConnection) -> TideRe
         tokio::select! {
             ws_next = stream.next() => {
                 if let Some(Ok(Message::Binary(ws_in))) = ws_next {
-                    let _ = fluvio_writer.write(&ws_in).await?;
+                    let _ = fluvio_writer.write_all(&ws_in).await?;
                 } else {
                     break;
                 }
