@@ -13,7 +13,7 @@ jobs:
         with:
           persist-credentials: true
       - name: revert changes to yarn.lock
-        run: git checkout HEAD~1 yarn.lock
+        run: git checkout ${{ github.sha }}~1 yarn.lock
       - name: 'Install packages'
         run: |
           yarn install
