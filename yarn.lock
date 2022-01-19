@@ -5,30 +5,30 @@ __metadata:
   version: 5
   cacheKey: 8
 
-"@babel/code-frame@npm:^7.14.5":
-  version: 7.16.0
-  resolution: "@babel/code-frame@npm:7.16.0"
+"@babel/code-frame@npm:^7.16.0":
+  version: 7.16.7
+  resolution: "@babel/code-frame@npm:7.16.7"
   dependencies:
-    "@babel/highlight": ^7.16.0
-  checksum: 8961d0302ec6b8c2e9751a11e06a17617425359fd1645e4dae56a90a03464c68a0916115100fbcd030961870313f21865d0b85858360a2c68aabdda744393607
+    "@babel/highlight": ^7.16.7
+  checksum: db2f7faa31bc2c9cf63197b481b30ea57147a5fc1a6fab60e5d6c02cdfbf6de8e17b5121f99917b3dabb5eeb572da078312e70697415940383efc140d4e0808b
   languageName: node
   linkType: hard
 
-"@babel/helper-validator-identifier@npm:^7.15.7":
-  version: 7.15.7
-  resolution: "@babel/helper-validator-identifier@npm:7.15.7"
-  checksum: f041c28c531d1add5cc345b25d5df3c29c62bce3205b4d4a93dcd164ccf630350acba252d374fad8f5d8ea526995a215829f27183ba7ce7ce141843bf23068a6
+"@babel/helper-validator-identifier@npm:^7.16.7":
+  version: 7.16.7
+  resolution: "@babel/helper-validator-identifier@npm:7.16.7"
+  checksum: dbb3db9d184343152520a209b5684f5e0ed416109cde82b428ca9c759c29b10c7450657785a8b5c5256aa74acc6da491c1f0cf6b784939f7931ef82982051b69
   languageName: node
   linkType: hard
 
-"@babel/highlight@npm:^7.16.0":
-  version: 7.16.0
-  resolution: "@babel/highlight@npm:7.16.0"
+"@babel/highlight@npm:^7.16.7":
+  version: 7.16.7
+  resolution: "@babel/highlight@npm:7.16.7"
   dependencies:
-    "@babel/helper-validator-identifier": ^7.15.7
+    "@babel/helper-validator-identifier": ^7.16.7
     chalk: ^2.0.0
     js-tokens: ^4.0.0
-  checksum: abf244c48fcff20ec87830e8b99c776f4dcdd9138e63decc195719a94148da35339639e0d8045eb9d1f3e67a39ab90a9c3f5ce2d579fb1a0368d911ddf29b4e5
+  checksum: f7e04e7e03b83c2cca984f4d3e180c9b018784f45d03367e94daf983861229ddc47264045f3b58dfeb0007f9c67bc2a76c4de1693bad90e5394876ef55ece5bb
   languageName: node
   linkType: hard
 
@@ -49,7 +49,7 @@ __metadata:
     copy-webpack-plugin: ^10.2.0
     rimraf: ^3.0.0
     rollup: ^2.64.0
-    rollup-plugin-dts: ^4.0
+    rollup-plugin-dts: ^4.1
     tslib: ^2.2.0
     typescript: ^4.5.4
     wasm-pack: ^0.10.2
@@ -3145,19 +3145,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-dts@npm:^4.0":
-  version: 4.0.1
-  resolution: "rollup-plugin-dts@npm:4.0.1"
+"rollup-plugin-dts@npm:^4.1":
+  version: 4.1.0
+  resolution: "rollup-plugin-dts@npm:4.1.0"
   dependencies:
-    "@babel/code-frame": ^7.14.5
+    "@babel/code-frame": ^7.16.0
     magic-string: ^0.25.7
   peerDependencies:
-    rollup: ^2.56.3
-    typescript: ^4.4.2
+    rollup: ^2.55
+    typescript: ~4.1 || ~4.2 || ~4.3 || ~4.4 || ~4.5
   dependenciesMeta:
     "@babel/code-frame":
       optional: true
-  checksum: e18165c7722909af0227ba0752062eea4fc26e5a465d95c2ad52426e376de57dcf3a966b1e4395a7e8d4f203cb148cd88da85d515332eb87b0f6fbd0f3feb2b7
+  checksum: add2715d4906dccb8bbad63e02668303eee553b68e2ae8c7c686abc5ea7936ef316db43845eb12bf978002f461e43b00ecfe61bd2ffedd6c570e12a289de7c18
   languageName: node
   linkType: hard
 
