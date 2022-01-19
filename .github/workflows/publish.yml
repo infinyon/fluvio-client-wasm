@@ -25,7 +25,7 @@ jobs:
       - run: yarn npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-    publish_github_packages:
+  publish_github_packages:
     name: Publish to github packages
     runs-on: ubuntu-latest
     steps:
