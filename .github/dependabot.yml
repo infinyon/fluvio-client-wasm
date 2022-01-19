@@ -18,3 +18,7 @@ updates:
     schedule:
       interval: "daily"
 
+  - package-ecosystem: "cargo"
+    directory: "fluvio-websocket-proxy/"
+    schedule:
+      interval: "daily"
