@@ -3,9 +3,6 @@ name: dependabot integration
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - 'dependabot/npm_and_yarn/**'
 jobs:
   fix-yarn-berry-integration:
     runs-on: ubuntu-latest
@@ -18,7 +15,8 @@ jobs:
         run: git checkout HEAD^ yarn.lock
       - name: 'Install packages'
         run: |
-          yarn install --mode=update-lockfile || true
+          yarn install || true
+
       - name: 'Autofix yarn for dependabot'
         # https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
         run: |
