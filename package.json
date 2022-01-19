@@ -34,7 +34,7 @@
     "copy-webpack-plugin": "^10.2.0",
     "rimraf": "^3.0.0",
     "rollup": "^2.60.1",
-    "rollup-plugin-dts": "^4.0",
+    "rollup-plugin-dts": "^4.1",
     "tslib": "^2.2.0",
     "typescript": "^4.5.2",
     "wasm-pack": "^0.10.2",
