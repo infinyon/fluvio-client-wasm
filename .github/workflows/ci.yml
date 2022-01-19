@@ -104,13 +104,24 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
+      - name: Cache target in proxy
+        uses: actions/cache@v1
+        id: cache-proxy
+        with:
+          path: ./fluvio-websocket-proxy/target
+          key: ${{ runner.os }}-cargo-target-proxy-${{ hashFiles('fluvio-websocket-proxy/Cargo.lock') }}
       - name: build websocket proxy
         run:
           make build-fluvio-websocket-proxy
-
       - name: Start websocket proxy
         run:
           make run-fluvio-websocket-proxy & disown
+      - name: cache target
+        uses: actions/cache@v1
+        id: cache
+        with:
+          path: ./target
+          key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run tests
         run:
