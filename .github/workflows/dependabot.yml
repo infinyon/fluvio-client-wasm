@@ -2,6 +2,7 @@
 name: dependabot integration
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - 'dependabot/npm_and_yarn/**'
@@ -12,8 +13,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           persist-credentials: true
+          fetch-depth: 2
       - name: revert changes to yarn.lock
-        run: git checkout ${{ github.sha }}~1 yarn.lock
+        run: git checkout HEAD^ yarn.lock
       - name: 'Install packages'
         run: |
           yarn install
