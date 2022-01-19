@@ -1,0 +1,26 @@
+# TODO: revisit once https://github.com/dependabot/dependabot-core/issues/1297 is resolved
+name: dependabot integration
+
+on:
+  push:
+    branches:
+      - 'dependabot/npm_and_yarn/**'
+jobs:
+  fix-yarn-berry-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: hmarr/debug-action@master
+      - uses: actions/checkout@v2
+        with:
+          persist-credentials: true
+      - name: 'Install packages'
+        run: |
+          yarn install
+      - name: 'Autofix yarn for dependabot'
+        # https://github.com/actions/checkout#push-a-commit-using-the-built-in-token
+        run: |
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git add -A
+          git status
+          git diff-index --quiet HEAD || (git commit  --message 'yarn autofix' && git push)
