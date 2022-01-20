@@ -63,9 +63,8 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Check yarn
-        run: |
-          yarn install
-          yarn build
+        run: yarn install
+      - run: yarn pack
 
   smoke_test:
     name: Run tests against fluvio cluster
