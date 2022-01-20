@@ -62,9 +62,10 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
-      - name: Check yarn
+      - name: install yarn packages
         run: yarn install
-      - run: yarn pack
+      - name: try to pack package
+        run: yarn pack
 
   smoke_test:
     name: Run tests against fluvio cluster
