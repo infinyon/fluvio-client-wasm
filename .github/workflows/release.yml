@@ -22,8 +22,8 @@ jobs:
           gh release delete -R infinyon/fluvio-client-wasm $VERSION -y || true
       - name: Create new latest release
         run: |
-        export VERSION=$(cat package.json | jq ".version")
-        gh release create -R infinyon/fluvio-client-wasm $VERSION -p --notes "Published artifacts for $VERSION"
+          export VERSION=$(cat package.json | jq ".version")
+          gh release create -R infinyon/fluvio-client-wasm $VERSION -p --notes "Published artifacts for $VERSION"
 
   publish_release:
     name: create latest release
