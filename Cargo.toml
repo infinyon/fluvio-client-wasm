@@ -14,8 +14,7 @@ unstable = []
 [dependencies]
 wasm-bindgen = { version = "0.2.63", features = ["serde-serialize"] }
 wasm-bindgen-futures = { version = "0.4.28", features = ["futures-core-03-stream"] }
-# TODO: Change to fluvio 0.12.2 once it is released
-fluvio = { git = "https://github.com/infinyon/fluvio", branch = "master", features = ["unstable"] }
+fluvio = { version = "0.12.2", features = ["unstable"] }
 console_log = { version = "0.2", features = ["color"] }
 js-sys = "0.3.51"
 web-sys = {version = "0.3.55" }
@@ -52,3 +51,7 @@ lto = true
 
 [package.metadata.wasm-pack.profile.dev]
 wasm-opt = ['-Os']
+
+# TODO: Change to use crates.io version once it is released
+[patch.crates-io]
+fluvio = { git = "https://github.com/infinyon/fluvio", branch = "master" }
