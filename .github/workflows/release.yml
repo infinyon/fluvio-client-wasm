@@ -1,0 +1,51 @@
+name: Release
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+
+jobs:
+  create_version_release:
+    name: create version release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login GH CLI
+        run: gh auth login --with-token < <(echo ${{ secrets.GITHUB_TOKEN }})
+      - name: Delete old latest release
+        run: |
+          export VERSION=$(cat package.json | jq ".version")
+          gh release delete -R infinyon/fluvio-client-wasm $VERSION -y || true
+      - name: Create new latest release
+        run: |
+        export VERSION=$(cat package.json | jq ".version")
+        gh release create -R infinyon/fluvio-client-wasm $VERSION -p --notes "Published artifacts for $VERSION"
+
+  publish_release:
+    name: create latest release
+    runs-on: ubuntu-latest
+    needs:
+      - create_version_release
+    permissions:
+      contents: write
+    steps:
+      - name: Install Rust stable
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+          target: wasm32-unknown-unknown
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '16.x'
+      - run: yarn install
+      - run: yarn pack --filename fluvio-client-wasm.tar.gz
+      - name: Login GH CLI
+        run: gh auth login --with-token < <(echo ${{ secrets.GITHUB_TOKEN }})
+      - run: |
+          export VERSION=$(cat package.json | jq ".version")
+          gh release upload -R infinyon/fluvio-client-wasm --clobber $VERSION fluvio-client-wasm.tar.gz
