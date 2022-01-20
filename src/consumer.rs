@@ -1,4 +1,7 @@
+use std::collections::BTreeMap;
+
 use fluvio::{
+    consumer::{SmartModuleInvocation, SmartModuleKind},
     ConsumerConfig as NativeConsumerConfig,
     MultiplePartitionConsumer as NativeMultiplePartitionConsumer,
     PartitionConsumer as NativePartitionConsumer,
@@ -55,7 +58,6 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
         let smartstream_accumulator = Reflect::get(&js, &"accumulator".into())
             .ok()
             .and_then(|it| it.as_string());
-        use std::collections::BTreeMap;
         let params: BTreeMap<String, String> = Reflect::get(&js, &"params".into())
             .ok()
             .and_then(|it| it.into_serde().ok())
@@ -70,15 +72,9 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
         if let Some(wasm_base64) = smartstream_base64 {
             let wasm = base64::decode(wasm_base64)
                 .map_err(|e| format!("Failed to decode SmartStream as a base64 string: {:?}", e))?;
-            match smartstream_type.as_deref() {
-                Some("filter") => {
-                    #[allow(deprecated)]
-                    builder.wasm_filter(wasm, params);
-                }
-                Some("map") => {
-                    #[allow(deprecated)]
-                    builder.wasm_map(wasm, params);
-                }
+            let smartmodule = match smartstream_type.as_deref() {
+                Some("filter") => create_smartmodule(wasm, SmartModuleKind::Filter, params),
+                Some("map") => create_smartmodule(wasm, SmartModuleKind::Map, params),
                 Some("aggregate") => {
                     let accumulator = smartstream_accumulator
                         .map(|acc| {
@@ -88,9 +84,7 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                         })
                         .transpose()?
                         .unwrap_or_default();
-
-                    #[allow(deprecated)]
-                    builder.wasm_aggregate(wasm, accumulator, params);
+                    create_smartmodule(wasm, SmartModuleKind::Aggregate { accumulator }, params)
                 }
                 _ => {
                     return Err(
@@ -98,7 +92,9 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                             .to_string(),
                     )
                 }
-            }
+            };
+
+            builder.smartmodule(Some(smartmodule));
         }
         let config = builder.build().map_err(|e| format!("{}", e))?;
         Ok(config)
@@ -239,5 +235,20 @@ impl MultiplePartitionConsumer {
 impl From<NativeMultiplePartitionConsumer> for MultiplePartitionConsumer {
     fn from(inner: NativeMultiplePartitionConsumer) -> Self {
         Self { inner }
+    }
+}
+
+fn create_smartmodule(
+    wasm: Vec<u8>,
+    kind: SmartModuleKind,
+    params: BTreeMap<String, String>,
+) -> SmartModuleInvocation {
+    use fluvio::consumer::SmartModuleInvocationWasm;
+    let wasm = SmartModuleInvocationWasm::AdHoc(wasm);
+
+    SmartModuleInvocation {
+        wasm,
+        kind,
+        params: params.into(),
     }
 }

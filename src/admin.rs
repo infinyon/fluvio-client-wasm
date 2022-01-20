@@ -9,7 +9,6 @@ use wasm_bindgen_futures::future_to_promise;
 
 use fluvio::metadata::connector::ManagedConnectorSpec;
 use fluvio::metadata::partition::PartitionSpec;
-use fluvio::metadata::topic::TopicReplicaParam;
 use fluvio::metadata::topic::TopicSpec;
 use fluvio::FluvioAdmin as NativeFluvioAdmin;
 
@@ -52,7 +51,7 @@ impl FluvioAdmin {
             rc.create(
                 topic_name.clone(),
                 false,
-                TopicSpec::Computed(TopicReplicaParam::new(partition, 1, false)),
+                TopicSpec::new_computed(partition, 1, Some(false)),
             )
             .await
             .map(|_| JsValue::from(topic_name))
@@ -142,14 +141,20 @@ impl FluvioAdmin {
         parameters: &JsValue,
         secrets: &JsValue,
     ) -> Promise {
+        use fluvio::metadata::connector::SecretString;
         let parameters: BTreeMap<String, String> = parameters.into_serde().unwrap_or_else(|e| {
             log::error!("Failed to get parameters from js {:?}", e);
             BTreeMap::new()
         });
-        let secrets: BTreeMap<String, String> = secrets.into_serde().unwrap_or_else(|e| {
-            log::error!("Failed to get parameters from js {:?}", e);
-            BTreeMap::new()
-        });
+        let secrets: BTreeMap<String, SecretString> = secrets
+            .into_serde()
+            .unwrap_or_else(|e| {
+                log::error!("Failed to get parameters from js {:?}", e);
+                BTreeMap::<String, String>::new()
+            })
+            .into_iter()
+            .map(|(key, value)| (key, SecretString::from(value)))
+            .collect();
         log::debug!("PARAMETERS {:?}", parameters);
         log::debug!("secrets {:?}", secrets);
         let connector_spec: ManagedConnectorSpec = ManagedConnectorSpec {
