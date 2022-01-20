@@ -18,11 +18,11 @@ jobs:
         run: gh auth login --with-token < <(echo ${{ secrets.GITHUB_TOKEN }})
       - name: Delete old latest release
         run: |
-          export VERSION=$(cat package.json | jq ".version")
+          export VERSION=v$(cat package.json | jq ".version" | tr -d '"')
           gh release delete -R infinyon/fluvio-client-wasm $VERSION -y || true
       - name: Create new latest release
         run: |
-          export VERSION=$(cat package.json | jq ".version")
+          export VERSION=v$(cat package.json | jq ".version" | tr -d '"')
           gh release create -R infinyon/fluvio-client-wasm $VERSION -p --notes "Published artifacts for $VERSION"
 
   publish_release:
@@ -48,5 +48,5 @@ jobs:
       - name: Login GH CLI
         run: gh auth login --with-token < <(echo ${{ secrets.GITHUB_TOKEN }})
       - run: |
-          export VERSION=$(cat package.json | jq ".version")
+          export VERSION=v$(cat package.json | jq ".version" | tr -d '"')
           gh release upload -R infinyon/fluvio-client-wasm --clobber $VERSION fluvio-client-wasm.tar.gz
