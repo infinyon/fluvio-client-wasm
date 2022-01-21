@@ -1,24 +1,33 @@
 # TODO: revisit once https://github.com/dependabot/dependabot-core/issues/1297 is resolved
 name: dependabot integration
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - 'dependabot/npm_and_yarn/**'
 jobs:
   fix-yarn-berry-integration:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@v2
         with:
-          persist-credentials: true
           fetch-depth: 2
       - name: revert changes to yarn.lock
         run: git checkout HEAD^ yarn.lock
       - name: 'Install packages'
         run: yarn install --no-immutable
+      - name: Login GH CLI
+        run: gh auth login --with-token < <(echo ${{ secrets.GITHUB_TOKEN }})
       - name: 'Autofix yarn for dependabot'
         run: |
           git config user.name github-actions
           git config user.email github-actions@github.com
           git add -A
           git status
-          git diff-index --quiet HEAD || (git commit  --message 'yarn autofix' && git push)
+          git diff-index --quiet HEAD || (git commit  --message 'yarn autofix' && git push) || true
