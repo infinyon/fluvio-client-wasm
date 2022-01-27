@@ -20,8 +20,8 @@ export const test = async () => {
   const consumer = await fluvio.partitionConsumer(topic, 0);
 
   let config = {
-    smartstreamType: "filter",
-    smartstream: filterCode,
+    smartmoduleType: "filter",
+    smartmoduleData: filterCode,
   };
   const fruits = [
     "apple",

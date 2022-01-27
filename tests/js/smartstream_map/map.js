@@ -33,8 +33,8 @@ export const test = async () => {
   const consumer = await fluvio.partitionConsumer(topic, 0);
 
   const config = {
-    smartstreamType: "map",
-    smartstream: mapCode,
+    smartmoduleType: "map",
+    smartmoduleData: mapCode,
   };
   let stream = await consumer.streamWithConfig(Offset.beginning(), config);
 
