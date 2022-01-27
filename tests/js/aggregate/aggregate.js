@@ -1,14 +1,14 @@
-import { Offset, Fluvio } from '../../../../../wasm-bindgen-test';
-import { createUUID } from '../utils.js';
+import { Offset, Fluvio } from "../../../../../wasm-bindgen-test";
+import { createUUID } from "../utils.js";
 const { aggregate } = await import("./aggregate_code.js");
 
 const topic = createUUID();
 var fluvio;
 
 export const setup = async () => {
-  fluvio  = await Fluvio.connect("ws://localhost:3000");
+  fluvio = await Fluvio.connect("ws://localhost:3000");
   const admin = await fluvio.admin();
-  for(let i = 0; i < 3; i++) {
+  for (let i = 0; i < 3; i++) {
     try {
       await admin.createTopic(topic, 1);
       break;
@@ -16,12 +16,12 @@ export const setup = async () => {
       console.error(`${e.message}`);
     }
   }
-}
+};
 
 export const teardown = async () => {
   const admin = await fluvio.admin();
   await admin.deleteTopic(topic);
-}
+};
 
 export const test = async () => {
   const producer = await fluvio.topicProducer(topic);
@@ -34,18 +34,9 @@ export const test = async () => {
     smartstreamType: "aggregate",
     smartstream: aggregate,
   };
-  let stream = await consumer.streamWithConfig(Offset.beginning(), config)
+  let stream = await consumer.streamWithConfig(Offset.beginning(), config);
 
-  const numbers = [
-    "1",
-    "2",
-    "4",
-    "4",
-    "4",
-    "4",
-    "4",
-    "4",
-  ];
+  const numbers = ["1", "2", "4", "4", "4", "4", "4", "4"];
 
   for (const num of numbers) {
     await producer.send(undefined, num);
@@ -55,4 +46,4 @@ export const test = async () => {
     let next = await stream.next();
     console.log(`KEY: ${next.keyString()}, VALUE: ${next.valueString()}`);
   }
-}
+};

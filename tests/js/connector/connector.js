@@ -1,5 +1,5 @@
-import { Offset, Fluvio } from '../../../../../wasm-bindgen-test';
-import { createUUID } from '../utils.js';
+import { Offset, Fluvio } from "../../../../../wasm-bindgen-test";
+import { createUUID } from "../utils.js";
 
 const topic = createUUID();
 const connector_name = topic;
@@ -9,33 +9,31 @@ const max_records = 10;
 var fluvio;
 
 export const setup = async () => {
-  fluvio  = await Fluvio.connect("ws://localhost:3000");
+  fluvio = await Fluvio.connect("ws://localhost:3000");
   const admin = await fluvio.admin();
   console.log(`Starting connector named ${connector_name} on topic ${topic}`);
-  await admin.createConnector(
-    connector_name,
-    connector_type,
-    topic,
-    {
-      count: `${max_records}`, // These must be strings or the rust fails to convert it.
-      timeout: "10",
-    },
-  );
-  for(let i = 0; i < 3; i++) {
+  await admin.createConnector(connector_name, connector_type, topic, {
+    count: `${max_records}`, // These must be strings or the rust fails to convert it.
+    timeout: "10",
+  });
+  for (let i = 0; i < 3; i++) {
     try {
       await admin.createTopic(topic, 1);
       break;
     } catch (e) {
+      try {
+        await admin.deleteTopic(topic);
+      } catch (e) {}
       console.error(`${e.message}`);
     }
   }
-}
+};
 
 export const teardown = async () => {
   const admin = await fluvio.admin();
   await admin.deleteTopic(topic);
   await admin.deleteConnector(connector_name, connector_name);
-}
+};
 
 export const test = async () => {
   const consumer = await fluvio.partitionConsumer(topic, 0);
@@ -43,7 +41,7 @@ export const test = async () => {
 
   let count = 0;
   const userAgent = navigator.userAgent;
-  for(let i = 1; i < max_records; i++) {
+  for (let i = 1; i < max_records; i++) {
     let next = await stream.next();
     let out_record = `${next.valueString()}`;
     console.log(`GOT A RECORD! ${out_record}`);
@@ -52,4 +50,4 @@ export const test = async () => {
       throw `Records do not match! ${expected} != ${out_record}`;
     }
   }
-}
+};

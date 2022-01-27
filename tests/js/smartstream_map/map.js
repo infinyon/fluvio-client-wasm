@@ -1,29 +1,31 @@
-import { Offset, Fluvio } from '../../../../../wasm-bindgen-test';
-import { createUUID } from '../utils.js';
-import  { mapCode } from './map_code.js';
+import { Offset, Fluvio } from "../../../../../wasm-bindgen-test";
+import { createUUID } from "../utils.js";
+import { mapCode } from "./map_code.js";
 
 const topic = createUUID();
 
 var fluvio;
 
 export const setup = async () => {
-  fluvio  = await Fluvio.connect("ws://localhost:3000");
+  fluvio = await Fluvio.connect("ws://localhost:3000");
   const admin = await fluvio.admin();
-  for(let i = 0; i < 3; i++) {
+  for (let i = 0; i < 3; i++) {
     try {
       await admin.createTopic(topic, 1);
       break;
     } catch (e) {
+      try {
+        await admin.deleteTopic(topic);
+      } catch (e) {}
       console.error(`${e.message}`);
     }
   }
-}
+};
 export const teardown = async () => {
   const admin = await fluvio.admin();
   await admin.deleteTopic(topic);
-}
+};
 export const test = async () => {
-
   const producer = await fluvio.topicProducer(topic);
 
   // Set up Consumer using a SmartStream map.
@@ -34,13 +36,9 @@ export const test = async () => {
     smartstreamType: "map",
     smartstream: mapCode,
   };
-  let stream = await consumer.streamWithConfig(Offset.beginning(), config)
+  let stream = await consumer.streamWithConfig(Offset.beginning(), config);
 
-  const mixedFruits = [
-    "apple",
-    "banana",
-    "cranberry",
-  ];
+  const mixedFruits = ["apple", "banana", "cranberry"];
 
   for (const fruit of mixedFruits) {
     await producer.send(undefined, fruit);
@@ -54,4 +52,4 @@ export const test = async () => {
       throw `Records do not match! ${expected} != ${out}`;
     }
   }
-}
+};
