@@ -48,7 +48,7 @@ export const test = async () => {
   ];
 
   for (const num of numbers) {
-    await producer.send("", num);
+    await producer.send(undefined, num);
   }
 
   for (let i = 0; i < numbers.length; i++) {

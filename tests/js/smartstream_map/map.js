@@ -43,7 +43,7 @@ export const test = async () => {
   ];
 
   for (const fruit of mixedFruits) {
-    await producer.send("", fruit);
+    await producer.send(undefined, fruit);
   }
 
   for (let i = 0; i < mixedFruits.length; i++) {
