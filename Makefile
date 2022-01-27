@@ -10,7 +10,7 @@ build-dev:
 	wasm-pack build --dev
 
 test: install-wasm-pack
-	WASM_BINDGEN_TEST_TIMEOUT=600 wasm-pack test --firefox --headless
+	WASM_BINDGEN_TEST_TIMEOUT=150 wasm-pack test --firefox --headless
 
 build-fluvio-websocket-proxy:
 	RUST_LOG=debug cargo build --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(PROXY_TARGET)

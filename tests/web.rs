@@ -35,8 +35,7 @@ async fn base_test() {
     assert!(producer.is_ok());
     let producer = producer.unwrap();
     let producer: TopicProducer = generic_of_jsval(producer, "TopicProducer").unwrap();
-    let _ =
-        wasm_bindgen_futures::JsFuture::from(producer.send("".into(), "value - 0".into())).await;
+    let _ = wasm_bindgen_futures::JsFuture::from(producer.send(None, "value - 0".into())).await;
 
     let fluvio = Fluvio::connect(url).await;
     assert!(fluvio.is_ok());
@@ -54,7 +53,7 @@ async fn base_test() {
     let _ = wasm_bindgen_futures::JsFuture::from(stream.next()).await;
     for i in 1..10_usize {
         let value = format!("value - {:?}", i);
-        let _ = wasm_bindgen_futures::JsFuture::from(producer.send("".into(), value.clone())).await;
+        let _ = wasm_bindgen_futures::JsFuture::from(producer.send(None, value.clone())).await;
 
         let next = wasm_bindgen_futures::JsFuture::from(stream.next()).await;
         assert!(next.is_ok());

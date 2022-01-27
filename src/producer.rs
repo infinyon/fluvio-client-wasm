@@ -12,9 +12,14 @@ pub struct TopicProducer {
 }
 #[wasm_bindgen]
 impl TopicProducer {
-    pub fn send(&self, key: String, value: String) -> Promise {
+    pub fn send(&self, key: Option<String>, value: String) -> Promise {
         let rc = self.inner.clone();
         future_to_promise(async move {
+            use fluvio::RecordKey;
+            let key: RecordKey = match key {
+                Some(key) => key.into(),
+                None => RecordKey::NULL,
+            };
             rc.send(key, value)
                 .await
                 .map(|_| JsValue::null()) //
