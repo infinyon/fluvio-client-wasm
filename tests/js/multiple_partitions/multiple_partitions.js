@@ -23,7 +23,7 @@ export const teardown = async () => {
 
 export const test = async () => {
   const producer = await fluvio.topicProducer(topic);
-  await producer.send(undefined, `count`);
+  await producer.send(null, `count`);
   const offset = Offset.beginning();
 
   const consumer = await fluvio.allPartitionsConsumer(topic);
@@ -34,11 +34,11 @@ export const test = async () => {
   while (count < 100) {
     count++;
     let in_record = `${count}-${userAgent}`;
-    await producer.send(undefined, in_record);
+    await producer.send(null, in_record);
+  }
+  count = 0;
+  while (count < 100) {
     let next = await stream.next();
-    let out_record= `${next.valueString()}`;
-    if (in_record !== out_record) {
-      throw `Records do not match! ${in_record} != ${out_record}`;
-    }
+    count++;
   }
 }

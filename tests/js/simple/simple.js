@@ -24,7 +24,7 @@ export const teardown = async () => {
 export const test = async () => {
   const producer = await fluvio.topicProducer(topic);
   await producer.send("", `count`);
-  const offset = Offset.fromEnd(1);
+  const offset = Offset.beginning();
 
   const consumer = await fluvio.partitionConsumer(topic, 0);
   let stream = await consumer.stream(offset); // this is a work around as Offset is not in scope.
@@ -36,6 +36,11 @@ export const test = async () => {
     count++;
     let in_record = `${count}-${userAgent}`;
     await producer.send("", in_record);
+  }
+  count = 0;
+  while (count < 100) {
+    count++;
+    let in_record = `${count}-${userAgent}`;
     let next = await stream.next();
     let out_record= `${next.valueString()}`;
     if (in_record !== out_record) {

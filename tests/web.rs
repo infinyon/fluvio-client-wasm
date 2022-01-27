@@ -35,8 +35,7 @@ async fn base_test() {
     assert!(producer.is_ok());
     let producer = producer.unwrap();
     let producer: TopicProducer = generic_of_jsval(producer, "TopicProducer").unwrap();
-    let _ =
-        wasm_bindgen_futures::JsFuture::from(producer.send(None, "value - 0".into())).await;
+    let _ = wasm_bindgen_futures::JsFuture::from(producer.send(None, "value - 0".into())).await;
 
     let fluvio = Fluvio::connect(url).await;
     assert!(fluvio.is_ok());
