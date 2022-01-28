@@ -208,7 +208,7 @@ impl FluvioAdmin {
     }
 
     #[wasm_bindgen(js_name = createSmartModule)]
-    pub fn create_smartmodule(&self, name: String, wasm_body_base64: Vec<u8>) -> Promise {
+    pub fn create_smartmodule(&self, name: String, wasm_body_base64: String) -> Promise {
         let rc = self.inner.clone();
         future_to_promise(async move {
             let wasm = base64::decode(wasm_body_base64)

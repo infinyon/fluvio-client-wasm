@@ -20,9 +20,7 @@ export const setup = async () => {
       console.error(`${e.message}`);
     }
   }
-  let utf8Encode = new TextEncoder();
-  let wasm = utf8Encode.encode(mapCode)
-  await admin.createSmartModule(topic, wasm);
+  await admin.createSmartModule(topic, mapCode);
 };
 export const teardown = async () => {
   const admin = await fluvio.admin();
