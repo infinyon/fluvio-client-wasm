@@ -3,6 +3,7 @@ use std::collections::BTreeMap;
 use std::rc::Rc;
 
 use fluvio::metadata::smartmodule::SmartModuleSpec;
+use fluvio::metadata::smartmodule::SmartModuleWasm;
 use js_sys::Array;
 use js_sys::Promise;
 use wasm_bindgen::prelude::*;
@@ -202,6 +203,24 @@ impl FluvioAdmin {
             rc.delete::<ManagedConnectorSpec, String>(connector_name)
                 .await
                 .map(|_| JsValue::NULL)
+                .map_err(|e| FluvioError::from(e).into())
+        })
+    }
+
+    #[wasm_bindgen(js_name = createSmartModule)]
+    pub fn create_smartmodule(&self, name: String, wasm_body_base64: Vec<u8>) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            let wasm = base64::decode(wasm_body_base64)
+                .map_err(|e| format!("Failed to decode SmartModule as a base64 string: {:?}", e))?;
+
+            let smartmodule_spec: SmartModuleSpec = SmartModuleSpec {
+                wasm: SmartModuleWasm::from_binary_payload(wasm),
+                ..Default::default()
+            };
+            rc.create(name.clone(), false, smartmodule_spec)
+                .await
+                .map(|_| JsValue::from(name))
                 .map_err(|e| FluvioError::from(e).into())
         })
     }
