@@ -16,14 +16,16 @@ export const setup = async () => {
     } catch (e) {
       try {
         await admin.deleteTopic(topic);
-      } catch (e) {}
+      } catch (e) { }
       console.error(`${e.message}`);
     }
   }
+  await admin.createSmartModule(topic, mapCode);
 };
 export const teardown = async () => {
   const admin = await fluvio.admin();
   await admin.deleteTopic(topic);
+  await admin.deleteSmartModule(topic);
 };
 export const test = async () => {
   const producer = await fluvio.topicProducer(topic);
@@ -33,8 +35,8 @@ export const test = async () => {
   const consumer = await fluvio.partitionConsumer(topic, 0);
 
   const config = {
-    smartstreamType: "map",
-    smartstream: mapCode,
+    smartmoduleType: "map",
+    smartmoduleData: mapCode,
   };
   let stream = await consumer.streamWithConfig(Offset.beginning(), config);
 
@@ -49,7 +51,25 @@ export const test = async () => {
     let out = next.valueString();
     let expected = mixedFruits[i].toUpperCase();
     if (expected !== out) {
-      throw `Records do not match! ${expected} != ${out}`;
+      throw `Ad-hoc smartmodule: Records do not match! ${expected} != ${out}`;
     }
   }
+  const config2 = {
+    smartmoduleType: "map",
+    smartmoduleName: topic,
+  };
+
+  const consumer2 = await fluvio.partitionConsumer(topic, 0);
+  let stream2 = await consumer2.streamWithConfig(Offset.beginning(), config2);
+  for (let i = 0; i < mixedFruits.length; i++) {
+    let next = await stream2.next();
+    let out = next.valueString();
+    let expected = mixedFruits[i].toUpperCase();
+    if (expected !== out) {
+      throw `Named smartmodule: Records do not match! ${expected} != ${out}`;
+    }
+  }
+
+
+
 };

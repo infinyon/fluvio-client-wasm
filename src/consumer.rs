@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 
 use fluvio::{
-    consumer::{SmartModuleInvocation, SmartModuleKind},
+    consumer::{SmartModuleInvocation, SmartModuleInvocationWasm, SmartModuleKind},
     ConsumerConfig as NativeConsumerConfig,
     MultiplePartitionConsumer as NativeMultiplePartitionConsumer,
     PartitionConsumer as NativePartitionConsumer,
@@ -20,11 +20,12 @@ use std::convert::{TryFrom, TryInto};
 
 #[wasm_bindgen(typescript_custom_section)]
 const CONSUMER_CONFIG_TYPE: &str = r#"
-export type SmartStreamType = "filter" | "map" | "aggregate";
+export type SmartModuleType = "filter" | "map" | "aggregate";
 export type ConsumerConfig = {
     max_bytes?: number,
-    smartstreamType?: SmartStreamType,
-    smartstream?: string,
+    smartmoduleType?: SmartModuleType,
+    smartmoduleName?: string,
+    smartmoduleData?: string,
     accumulator?: string,
     params?: object,
 }
@@ -32,8 +33,8 @@ export type ConsumerConfig = {
 
 #[wasm_bindgen]
 extern "C" {
-    #[wasm_bindgen(typescript_type = "SmartStream")]
-    pub type SmartStream;
+    #[wasm_bindgen(typescript_type = "SmartModuleType")]
+    pub type SmartModuleType;
     #[wasm_bindgen(typescript_type = "ConsumerConfig")]
     pub type ConsumerConfig;
 }
@@ -47,15 +48,19 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
             .and_then(|it| it.as_f64())
             .map(|it| it.round() as i32);
 
-        let smartstream_type = Reflect::get(&js, &"smartstreamType".into())
+        let smartmodule_type = Reflect::get(&js, &"smartmoduleType".into())
             .ok()
             .and_then(|it| it.as_string());
 
-        let smartstream_base64 = Reflect::get(&js, &"smartstream".into())
+        let smartmodule_base64_gzip = Reflect::get(&js, &"smartmoduleData".into())
             .ok()
             .and_then(|it| it.as_string());
 
-        let smartstream_accumulator = Reflect::get(&js, &"accumulator".into())
+        let smartmodule_name = Reflect::get(&js, &"smartmoduleName".into())
+            .ok()
+            .and_then(|it| it.as_string());
+
+        let smartmodule_accumulator = Reflect::get(&js, &"accumulator".into())
             .ok()
             .and_then(|it| it.as_string());
         let params: BTreeMap<String, String> = Reflect::get(&js, &"params".into())
@@ -69,14 +74,20 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
             builder.max_bytes(max_bytes);
         }
 
-        if let Some(wasm_base64) = smartstream_base64 {
-            let wasm = base64::decode(wasm_base64)
-                .map_err(|e| format!("Failed to decode SmartStream as a base64 string: {:?}", e))?;
-            let smartmodule = match smartstream_type.as_deref() {
-                Some("filter") => create_smartmodule(wasm, SmartModuleKind::Filter, params),
-                Some("map") => create_smartmodule(wasm, SmartModuleKind::Map, params),
+        if let Some(sm_name) = smartmodule_name {
+            let smartmodule = match smartmodule_type.as_deref() {
+                Some("filter") => create_smartmodule(
+                    SmartModuleInvocationWasm::Predefined(sm_name),
+                    SmartModuleKind::Filter,
+                    params,
+                ),
+                Some("map") => create_smartmodule(
+                    SmartModuleInvocationWasm::Predefined(sm_name),
+                    SmartModuleKind::Map,
+                    params,
+                ),
                 Some("aggregate") => {
-                    let accumulator = smartstream_accumulator
+                    let accumulator = smartmodule_accumulator
                         .map(|acc| {
                             base64::decode(acc).map_err(|e| {
                                 format!("Failed to decode Accumulator as a base64 string: {:?}", e)
@@ -84,11 +95,52 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                         })
                         .transpose()?
                         .unwrap_or_default();
-                    create_smartmodule(wasm, SmartModuleKind::Aggregate { accumulator }, params)
+                    create_smartmodule(
+                        SmartModuleInvocationWasm::Predefined(sm_name),
+                        SmartModuleKind::Aggregate { accumulator },
+                        params,
+                    )
                 }
                 _ => {
                     return Err(
-                        "smartstreamType is required and must be 'filter', 'map', or 'aggregate'"
+                        "smartmoduleType is required and must be 'filter', 'map', or 'aggregate'"
+                            .to_string(),
+                    )
+                }
+            };
+            builder.smartmodule(Some(smartmodule));
+        } else if let Some(wasm_base64) = smartmodule_base64_gzip {
+            let wasm = base64::decode(wasm_base64)
+                .map_err(|e| format!("Failed to decode SmartModule as a base64 string: {:?}", e))?;
+            let smartmodule = match smartmodule_type.as_deref() {
+                Some("filter") => create_smartmodule(
+                    SmartModuleInvocationWasm::AdHoc(wasm),
+                    SmartModuleKind::Filter,
+                    params,
+                ),
+                Some("map") => create_smartmodule(
+                    SmartModuleInvocationWasm::AdHoc(wasm),
+                    SmartModuleKind::Map,
+                    params,
+                ),
+                Some("aggregate") => {
+                    let accumulator = smartmodule_accumulator
+                        .map(|acc| {
+                            base64::decode(acc).map_err(|e| {
+                                format!("Failed to decode Accumulator as a base64 string: {:?}", e)
+                            })
+                        })
+                        .transpose()?
+                        .unwrap_or_default();
+                    create_smartmodule(
+                        SmartModuleInvocationWasm::AdHoc(wasm),
+                        SmartModuleKind::Aggregate { accumulator },
+                        params,
+                    )
+                }
+                _ => {
+                    return Err(
+                        "smartmoduleType is required and must be 'filter', 'map', or 'aggregate'"
                             .to_string(),
                     )
                 }
@@ -239,13 +291,10 @@ impl From<NativeMultiplePartitionConsumer> for MultiplePartitionConsumer {
 }
 
 fn create_smartmodule(
-    wasm: Vec<u8>,
+    wasm: SmartModuleInvocationWasm,
     kind: SmartModuleKind,
     params: BTreeMap<String, String>,
 ) -> SmartModuleInvocation {
-    use fluvio::consumer::SmartModuleInvocationWasm;
-    let wasm = SmartModuleInvocationWasm::AdHoc(wasm);
-
     SmartModuleInvocation {
         wasm,
         kind,

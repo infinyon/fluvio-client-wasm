@@ -31,8 +31,8 @@ export const test = async () => {
   const consumer = await fluvio.partitionConsumer(topic, 0);
 
   const config = {
-    smartstreamType: "aggregate",
-    smartstream: aggregate,
+    smartmoduleType: "aggregate",
+    smartmoduleData: aggregate,
   };
   let stream = await consumer.streamWithConfig(Offset.beginning(), config);
 
