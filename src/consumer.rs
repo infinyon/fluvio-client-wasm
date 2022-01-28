@@ -52,7 +52,7 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
             .ok()
             .and_then(|it| it.as_string());
 
-        let smartmodule_base64 = Reflect::get(&js, &"smartmoduleData".into())
+        let smartmodule_base64_gzip = Reflect::get(&js, &"smartmoduleData".into())
             .ok()
             .and_then(|it| it.as_string());
 
@@ -109,7 +109,7 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                 }
             };
             builder.smartmodule(Some(smartmodule));
-        } else if let Some(wasm_base64) = smartmodule_base64 {
+        } else if let Some(wasm_base64) = smartmodule_base64_gzip {
             let wasm = base64::decode(wasm_base64)
                 .map_err(|e| format!("Failed to decode SmartModule as a base64 string: {:?}", e))?;
             let smartmodule = match smartmodule_type.as_deref() {

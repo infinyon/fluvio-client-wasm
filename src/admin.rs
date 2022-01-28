@@ -2,6 +2,7 @@ use std::cell::RefCell;
 use std::collections::BTreeMap;
 use std::rc::Rc;
 
+use fluvio::metadata::smartmodule::SmartModuleSpec;
 use js_sys::Array;
 use js_sys::Promise;
 use wasm_bindgen::prelude::*;
@@ -199,6 +200,37 @@ impl FluvioAdmin {
         let rc = self.inner.clone();
         future_to_promise(async move {
             rc.delete::<ManagedConnectorSpec, String>(connector_name)
+                .await
+                .map(|_| JsValue::NULL)
+                .map_err(|e| FluvioError::from(e).into())
+        })
+    }
+
+    #[wasm_bindgen(js_name = listSmartModule)]
+    pub fn list_smartmodules(&mut self) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            let topic_list = rc
+                .list::<SmartModuleSpec, _>(vec![])
+                .await
+                .map(|topic_list| {
+                    JsValue::from(
+                        topic_list
+                            .into_iter()
+                            .map(|smartmodule| JsValue::from(smartmodule.name))
+                            .collect::<Array>(),
+                    )
+                })
+                .map_err(|e| FluvioError::from(e).into());
+            topic_list
+        })
+    }
+
+    #[wasm_bindgen(js_name = deleteSmartModule)]
+    pub fn delete_smartmodule(&self, connector_name: String) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            rc.delete::<SmartModuleSpec, String>(connector_name)
                 .await
                 .map(|_| JsValue::NULL)
                 .map_err(|e| FluvioError::from(e).into())
