@@ -747,9 +747,9 @@ dependencies = [
 
 [[package]]
 name = "fluvio"
-version = "0.12.1"
+version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8a9cc5a24260a81514edc90e3afd78e26746a14ac7078961ec3b337d50d5768b"
+checksum = "9a83499f4ebc10463d8a6d866aaad7ebdf63313c70df1d04167d2c3ca922c2f5"
 dependencies = [
  "async-channel",
  "async-lock",
@@ -770,6 +770,7 @@ dependencies = [
  "fluvio-spu-schema",
  "fluvio-types",
  "futures-util",
+ "instant",
  "once_cell",
  "pin-project-lite 0.2.7",
  "semver 1.0.4",
@@ -1330,9 +1331,9 @@ dependencies = [
 
 [[package]]
 name = "instant"
-version = "0.1.10"
+version = "0.1.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "bee0328b1209d157ef001c94dd85b4f8f64139adb0eac2659f4b08382b2f474d"
+checksum = "7a5bbe824c507c5da5956355e86a746d82e0e1464f65d862cc5e71da70e94b2c"
 dependencies = [
  "cfg-if",
  "js-sys",
