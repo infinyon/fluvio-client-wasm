@@ -3,7 +3,10 @@ name: CI
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - staging
+      - trying
   pull_request:
     branches: [ main ]
 
@@ -126,3 +129,11 @@ jobs:
       - name: Run tests
         run:
           make test
+  done:
+    name: Done
+    needs: [smoke_test, check_fmt, check_yarn]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/staging'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Done
+        run: echo Done
