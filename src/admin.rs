@@ -12,6 +12,7 @@ use wasm_bindgen_futures::future_to_promise;
 use fluvio::metadata::connector::ManagedConnectorSpec;
 use fluvio::metadata::partition::PartitionSpec;
 use fluvio::metadata::topic::TopicSpec;
+use fluvio::tableformat::TableFormatSpec;
 use fluvio::FluvioAdmin as NativeFluvioAdmin;
 
 use crate::partition::PartitionMetadata;
@@ -250,6 +251,37 @@ impl FluvioAdmin {
         let rc = self.inner.clone();
         future_to_promise(async move {
             rc.delete::<SmartModuleSpec, String>(sm_name)
+                .await
+                .map(|_| JsValue::NULL)
+                .map_err(|e| FluvioError::from(e).into())
+        })
+    }
+
+    #[wasm_bindgen(js_name = listTableFormat)]
+    pub fn list_table_format(&mut self) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            let table_format_list = rc
+                .list::<TableFormatSpec, _>(vec![])
+                .await
+                .map(|table_format_list| {
+                    JsValue::from(
+                        table_format_list
+                            .into_iter()
+                            .map(|table_format| JsValue::from(table_format.name))
+                            .collect::<Array>(),
+                    )
+                })
+                .map_err(|e| FluvioError::from(e).into());
+            table_format_list
+        })
+    }
+
+    #[wasm_bindgen(js_name = deleteTableFormat)]
+    pub fn delete_table_format(&self, tf_name: String) -> Promise {
+        let rc = self.inner.clone();
+        future_to_promise(async move {
+            rc.delete::<TableFormatSpec, String>(tf_name)
                 .await
                 .map(|_| JsValue::NULL)
                 .map_err(|e| FluvioError::from(e).into())
