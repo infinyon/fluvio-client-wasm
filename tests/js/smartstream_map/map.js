@@ -14,9 +14,6 @@ export const setup = async () => {
       await admin.createTopic(topic, 1);
       break;
     } catch (e) {
-      try {
-        await admin.deleteTopic(topic);
-      } catch (e) { }
       console.error(`${e.message}`);
     }
   }

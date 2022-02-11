@@ -89,7 +89,7 @@ jobs:
         with:
           cluster-type: k3d
           version: latest
-          rust-log: debug
+          rust-log: info
       - name: Check Fluvio Installation
         run: |
           fluvio version
