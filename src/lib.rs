@@ -7,6 +7,8 @@ mod offset;
 mod partition;
 mod producer;
 mod record;
+mod smartmodule;
+mod tableformat;
 mod topic;
 
 pub use crate::fluvio::Fluvio;

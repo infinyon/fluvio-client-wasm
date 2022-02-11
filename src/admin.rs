@@ -11,11 +11,13 @@ use wasm_bindgen_futures::future_to_promise;
 
 use fluvio::metadata::connector::ManagedConnectorSpec;
 use fluvio::metadata::partition::PartitionSpec;
+use fluvio::metadata::tableformat::TableFormatSpec;
 use fluvio::metadata::topic::TopicSpec;
-use fluvio::tableformat::TableFormatSpec;
 use fluvio::FluvioAdmin as NativeFluvioAdmin;
 
 use crate::partition::PartitionMetadata;
+use crate::smartmodule::SmartModuleMetadata;
+use crate::tableformat::TableFormatMetadata;
 use crate::topic::TopicMetadata;
 use crate::FluvioError;
 
@@ -237,7 +239,9 @@ impl FluvioAdmin {
                     JsValue::from(
                         smartmodule_list
                             .into_iter()
-                            .map(|smartmodule| JsValue::from(smartmodule.name))
+                            .map(|smartmodule| {
+                                JsValue::from(SmartModuleMetadata::from(smartmodule))
+                            })
                             .collect::<Array>(),
                     )
                 })
@@ -268,7 +272,9 @@ impl FluvioAdmin {
                     JsValue::from(
                         table_format_list
                             .into_iter()
-                            .map(|table_format| JsValue::from(table_format.name))
+                            .map(|table_format| {
+                                JsValue::from(TableFormatMetadata::from(table_format))
+                            })
                             .collect::<Array>(),
                     )
                 })
