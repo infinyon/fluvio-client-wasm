@@ -97,6 +97,7 @@ jobs:
           sleep 3
           echo foo | fluvio produce foobar
           fluvio consume foobar -o 0 -d
+          fluvio topic delete foobar;
       - uses: actions/checkout@v2
       - name: Install Rust stable
         uses: actions-rs/toolchain@v1
