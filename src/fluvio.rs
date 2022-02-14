@@ -1,7 +1,6 @@
 use std::rc::Rc;
 
-use js_sys::Promise;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::future_to_promise;
 
 use fluvio::{config::FluvioConfig, Fluvio as NativeFluvio, PartitionSelectionStrategy};
@@ -11,6 +10,22 @@ use crate::{
     PartitionConsumer, TopicProducer,
 };
 
+// Workaround for Typescript type annotations on async function returns.
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(typescript_type = "Promise<TopicProducer>")]
+    pub type PromiseTopicProducer;
+
+    #[wasm_bindgen(typescript_type = "Promise<PartitionConsumer>")]
+    pub type PromisePartitionConsumer;
+
+    #[wasm_bindgen(typescript_type = "Promise<MultiplePartitionConsumer>")]
+    pub type PromiseMultiplePartitionConsumer;
+
+    #[wasm_bindgen(typescript_type = "Promise<FluvioAdmin>")]
+    pub type PromiseFluvioAdmin;
+}
+
 #[wasm_bindgen]
 pub struct Fluvio {
     inner: Rc<NativeFluvio>,
@@ -18,48 +33,51 @@ pub struct Fluvio {
 
 #[wasm_bindgen]
 impl Fluvio {
+    /// Creates a new topic producer.
     #[wasm_bindgen(js_name = topicProducer)]
-    pub fn topic_producer(&self, topic: String) -> Promise {
+    pub fn topic_producer(&self, topic: String) -> PromiseTopicProducer {
         let rc = self.inner.clone();
 
-        future_to_promise(async move {
-            let topic_producer = rc
-                .topic_producer(topic)
+        let promise = future_to_promise(async move {
+            rc.topic_producer(topic)
                 .await
                 .map(|producer| JsValue::from(TopicProducer::from(producer)))
-                .map_err(|e| FluvioError::from(e).into());
+                .map_err(|e| (FluvioError::from(e).into()))
+        });
 
-            topic_producer
-        })
+        // WARNING: this does not validate the return type. Check carefully.
+        promise.unchecked_into::<PromiseTopicProducer>()
     }
+
+    /// Creates a new partition consumer
     #[wasm_bindgen(js_name = partitionConsumer)]
-    pub fn partition_consumer(&self, topic: String, partition: i32) -> Promise {
+    pub fn partition_consumer(&self, topic: String, partition: i32) -> PromisePartitionConsumer {
         let rc = self.inner.clone();
-        future_to_promise(async move {
-            let partition_consumer = rc
-                .partition_consumer(topic, partition)
+        let promise = future_to_promise(async move {
+            rc.partition_consumer(topic, partition)
                 .await
                 .map(|consumer| JsValue::from(PartitionConsumer::from(consumer)))
-                .map_err(|e| FluvioError::from(e).into());
-
-            partition_consumer
-        })
+                .map_err(|e| FluvioError::from(e).into())
+        });
+        // WARNING: this does not validate the return type. Check carefully.
+        promise.unchecked_into::<PromisePartitionConsumer>()
     }
 
+    /// Creates a multiple partition consumer
     #[wasm_bindgen(js_name = allPartitionsConsumer)]
-    pub fn all_partitions_consumer(&self, topic: String) -> Promise {
+    pub fn all_partitions_consumer(&self, topic: String) -> PromiseMultiplePartitionConsumer {
         let rc = self.inner.clone();
-        future_to_promise(async move {
-            let consumer = rc
-                .consumer(PartitionSelectionStrategy::All(topic))
+        let promise = future_to_promise(async move {
+            rc.consumer(PartitionSelectionStrategy::All(topic))
                 .await
                 .map(|consumer| JsValue::from(MultiplePartitionConsumer::from(consumer)))
-                .map_err(|e| FluvioError::from(e).into());
-
-            consumer
-        })
+                .map_err(|e| FluvioError::from(e).into())
+        });
+        // WARNING: this does not validate the return type. Check carefully.
+        promise.unchecked_into::<PromiseMultiplePartitionConsumer>()
     }
 
+    /// Connects to fluvio server
     pub async fn connect(addr: String) -> Result<Fluvio, wasm_bindgen::JsValue> {
         Self::setup_debugging(false);
 
@@ -76,15 +94,18 @@ impl Fluvio {
         Ok(Self { inner })
     }
 
-    pub fn admin(&self) -> Promise {
+    /// Creates fluvio admin instance
+    pub fn admin(&self) -> PromiseFluvioAdmin {
         let rc = self.inner.clone();
-        future_to_promise(async move {
+        let promise = future_to_promise(async move {
             let admin = JsValue::from(FluvioAdmin::from(rc.admin().await));
 
             Ok(admin)
-        })
+        });
+        promise.unchecked_into::<PromiseFluvioAdmin>()
     }
 
+    /// enable debug logging
     #[wasm_bindgen(js_name = setupDebugging)]
     pub fn setup_debugging(verbose_debugging: bool) {
         console_error_panic_hook::set_once();

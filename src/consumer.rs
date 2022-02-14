@@ -6,13 +6,13 @@ use fluvio::{
     MultiplePartitionConsumer as NativeMultiplePartitionConsumer,
     PartitionConsumer as NativePartitionConsumer,
 };
-use js_sys::{Promise, Reflect};
+use js_sys::Reflect;
 use std::cell::RefCell;
 use std::pin::Pin;
 use std::rc::Rc;
 use tokio_stream::Stream;
 use tokio_stream::StreamExt;
-use wasm_bindgen::prelude::*;
+use wasm_bindgen::{prelude::*, JsCast};
 use wasm_bindgen_futures::future_to_promise;
 
 use crate::{FluvioError, Offset, Record};
@@ -37,6 +37,10 @@ extern "C" {
     pub type SmartModuleType;
     #[wasm_bindgen(typescript_type = "ConsumerConfig")]
     pub type ConsumerConfig;
+
+    #[wasm_bindgen(typescript_type = "Promise<Record>")]
+    pub type PromiseNextRecord;
+
 }
 
 impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
@@ -161,15 +165,17 @@ pub struct PartitionConsumerStream {
 
 #[wasm_bindgen]
 impl PartitionConsumerStream {
-    pub fn next(&self) -> Promise {
+    /// consume next record
+    pub fn next(&self) -> PromiseNextRecord {
         let rc = self.inner.clone();
-        future_to_promise(async move {
+        let promise = future_to_promise(async move {
             match rc.borrow_mut().next().await.transpose() {
                 Ok(Some(val)) => Ok(val.into()),
                 Ok(None) => Err(FluvioError::from("No value".to_string()).into()),
                 Err(e) => Err(e.into()),
             }
-        })
+        });
+        promise.unchecked_into()
     }
 }
 impl PartitionConsumerStream {
