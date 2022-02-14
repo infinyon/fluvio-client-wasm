@@ -7,6 +7,7 @@ use fluvio::metadata::smartmodule::SmartModuleWasm;
 use js_sys::Array;
 use js_sys::Promise;
 use wasm_bindgen::prelude::*;
+use wasm_bindgen::JsCast;
 use wasm_bindgen_futures::future_to_promise;
 
 use fluvio::metadata::connector::ManagedConnectorSpec;
@@ -24,18 +25,37 @@ use crate::FluvioError;
 #[cfg(feature = "unstable")]
 use fluvio::metadata::{objects::Metadata, store::MetadataStoreObject};
 
+// Workaround for Typescript type annotations on async function returns.
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(typescript_type = "Promise<Vec<TopicMetadata>")]
+    pub type PromiseTopicList;
+
+    #[wasm_bindgen(typescript_type = "Promise<Vec<PartitionMetadata>")]
+    pub type PromisePartitionList;
+
+    #[wasm_bindgen(typescript_type = "Promise<Vec<String>")]
+    pub type PromiseConnectorList;
+
+    #[wasm_bindgen(typescript_type = "Promise<Vec<SmartModuleMetadata>")]
+    pub type PromiseSmartModuleList;
+
+    #[wasm_bindgen(typescript_type = "Promise<Vec<TableFormatMetadata>")]
+    pub type PromiseTableFormatList;
+}
+
 #[wasm_bindgen]
 pub struct FluvioAdmin {
     inner: Rc<NativeFluvioAdmin>,
 }
 #[wasm_bindgen]
 impl FluvioAdmin {
+    /// List topics
     #[wasm_bindgen(js_name = listTopics)]
-    pub fn list_topics(&mut self) -> Promise {
+    pub fn list_topics(&mut self) -> PromiseTopicList {
         let rc = self.inner.clone();
-        future_to_promise(async move {
-            let topic_list = rc
-                .list::<TopicSpec, _>(vec![])
+        let promise = future_to_promise(async move {
+            rc.list::<TopicSpec, _>(vec![])
                 .await
                 .map(|topic_list| {
                     JsValue::from(
@@ -45,10 +65,13 @@ impl FluvioAdmin {
                             .collect::<Array>(),
                     )
                 })
-                .map_err(|e| FluvioError::from(e).into());
-            topic_list
-        })
+                .map_err(|e| FluvioError::from(e).into())
+        });
+        // WARNING: this does not validate the return type. Check carefully.
+        promise.unchecked_into::<PromiseTopicList>()
     }
+
+    /// Create a new topic with the given name and partitions
     #[wasm_bindgen(js_name = createTopic)]
     pub fn create_topic(&self, topic_name: String, partition: i32) -> Promise {
         let rc = self.inner.clone();
@@ -64,6 +87,7 @@ impl FluvioAdmin {
         })
     }
 
+    /// Delete a topic
     #[wasm_bindgen(js_name = deleteTopic)]
     pub fn delete_topic(&self, topic_name: String) -> Promise {
         let rc = self.inner.clone();
@@ -75,12 +99,12 @@ impl FluvioAdmin {
         })
     }
 
+    /// List all partitions
     #[wasm_bindgen(js_name = listPartitions)]
-    pub fn list_partitions(&mut self) -> Promise {
+    pub fn list_partitions(&mut self) -> PromisePartitionList {
         let rc = self.inner.clone();
-        future_to_promise(async move {
-            let partition_list = rc
-                .list::<PartitionSpec, _>(vec![])
+        let promise = future_to_promise(async move {
+            rc.list::<PartitionSpec, _>(vec![])
                 .await
                 .map(|partition_list| {
                     JsValue::from(
@@ -90,11 +114,13 @@ impl FluvioAdmin {
                             .collect::<Array>(),
                     )
                 })
-                .map_err(|e| FluvioError::from(e).into());
-            partition_list
-        })
+                .map_err(|e| FluvioError::from(e).into())
+        });
+        // WARNING: this does not validate the return type. Check carefully.
+        promise.unchecked_into::<PromisePartitionList>()
     }
 
+    /// Watch topic updates
     #[wasm_bindgen(js_name = watchTopics)]
     pub fn watch_topics(&mut self) -> AsyncTopicStream {
         use tokio_stream::StreamExt;
@@ -116,6 +142,7 @@ impl FluvioAdmin {
         }
     }
 
+    /// Watch partition updates
     #[wasm_bindgen(js_name = watchPartitions)]
     pub fn watch_partitions(&mut self) -> AsyncPartitionStream {
         use tokio_stream::StreamExt;
@@ -137,6 +164,7 @@ impl FluvioAdmin {
         }
     }
 
+    //// Create a managed connector with the given configurations
     #[wasm_bindgen(js_name = createConnector)]
     pub fn create_connector(
         &self,
@@ -179,12 +207,12 @@ impl FluvioAdmin {
         })
     }
 
+    /// List connectors
     #[wasm_bindgen(js_name = listConnectors)]
-    pub fn list_connectors(&mut self) -> Promise {
+    pub fn list_connectors(&mut self) -> PromiseConnectorList {
         let rc = self.inner.clone();
-        future_to_promise(async move {
-            let topic_list = rc
-                .list::<ManagedConnectorSpec, _>(vec![])
+        let promise = future_to_promise(async move {
+            rc.list::<ManagedConnectorSpec, _>(vec![])
                 .await
                 .map(|topic_list| {
                     JsValue::from(
@@ -194,11 +222,13 @@ impl FluvioAdmin {
                             .collect::<Array>(),
                     )
                 })
-                .map_err(|e| FluvioError::from(e).into());
-            topic_list
-        })
+                .map_err(|e| FluvioError::from(e).into())
+        });
+        // WARNING: this does not validate the return type. Check carefully.
+        promise.unchecked_into()
     }
 
+    /// Delete a connector
     #[wasm_bindgen(js_name = deleteConnector)]
     pub fn delete_connector(&self, connector_name: String) -> Promise {
         let rc = self.inner.clone();
@@ -210,6 +240,7 @@ impl FluvioAdmin {
         })
     }
 
+    /// Create a smartmodule
     #[wasm_bindgen(js_name = createSmartModule)]
     pub fn create_smartmodule(&self, name: String, wasm_body_base64: String) -> Promise {
         let rc = self.inner.clone();
@@ -228,12 +259,12 @@ impl FluvioAdmin {
         })
     }
 
+    /// List smartmodules
     #[wasm_bindgen(js_name = listSmartModule)]
-    pub fn list_smartmodules(&mut self) -> Promise {
+    pub fn list_smartmodules(&mut self) -> PromiseSmartModuleList {
         let rc = self.inner.clone();
-        future_to_promise(async move {
-            let smartmodule_list = rc
-                .list::<SmartModuleSpec, _>(vec![])
+        let promise = future_to_promise(async move {
+            rc.list::<SmartModuleSpec, _>(vec![])
                 .await
                 .map(|smartmodule_list| {
                     JsValue::from(
@@ -245,11 +276,12 @@ impl FluvioAdmin {
                             .collect::<Array>(),
                     )
                 })
-                .map_err(|e| FluvioError::from(e).into());
-            smartmodule_list
-        })
+                .map_err(|e| FluvioError::from(e).into())
+        });
+        promise.unchecked_into()
     }
 
+    /// Delete a smartmodule
     #[wasm_bindgen(js_name = deleteSmartModule)]
     pub fn delete_smartmodule(&self, sm_name: String) -> Promise {
         let rc = self.inner.clone();
@@ -261,12 +293,12 @@ impl FluvioAdmin {
         })
     }
 
+    /// List table formats
     #[wasm_bindgen(js_name = listTableFormat)]
-    pub fn list_table_format(&mut self) -> Promise {
+    pub fn list_table_format(&mut self) -> PromiseTableFormatList {
         let rc = self.inner.clone();
-        future_to_promise(async move {
-            let table_format_list = rc
-                .list::<TableFormatSpec, _>(vec![])
+        let promise = future_to_promise(async move {
+            rc.list::<TableFormatSpec, _>(vec![])
                 .await
                 .map(|table_format_list| {
                     JsValue::from(
@@ -278,11 +310,12 @@ impl FluvioAdmin {
                             .collect::<Array>(),
                     )
                 })
-                .map_err(|e| FluvioError::from(e).into());
-            table_format_list
-        })
+                .map_err(|e| FluvioError::from(e).into())
+        });
+        promise.unchecked_into()
     }
 
+    /// Delete a table format
     #[wasm_bindgen(js_name = deleteTableFormat)]
     pub fn delete_table_format(&self, tf_name: String) -> Promise {
         let rc = self.inner.clone();

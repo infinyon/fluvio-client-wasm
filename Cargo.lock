@@ -526,6 +526,7 @@ dependencies = [
  "fluvio_ws_stream_wasm",
  "js-sys",
  "log",
+ "thiserror",
  "tokio-stream",
  "tracing",
  "tracing-wasm",

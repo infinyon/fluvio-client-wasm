@@ -6,6 +6,7 @@ extern crate wasm_bindgen_test;
 use fluvio_client_wasm::FluvioAdmin;
 use fluvio_client_wasm::PartitionConsumer;
 use fluvio_client_wasm::TopicProducer;
+use js_sys::Promise;
 use wasm_bindgen_test::*;
 
 wasm_bindgen_test_configure!(run_in_browser);
@@ -24,14 +25,20 @@ async fn base_test() {
     let fluvio = Fluvio::connect(url.clone()).await;
     assert!(fluvio.is_ok());
     let fluvio = fluvio.unwrap();
-    let admin = wasm_bindgen_futures::JsFuture::from(fluvio.admin()).await;
+    let admin =
+        wasm_bindgen_futures::JsFuture::from(fluvio.admin().unchecked_into::<Promise>()).await;
     assert!(admin.is_ok());
     let admin = admin.unwrap();
     let admin: FluvioAdmin = generic_of_jsval(admin, "FluvioAdmin").unwrap();
     let topic = "my-integration-test".to_string();
     let _ = wasm_bindgen_futures::JsFuture::from(admin.create_topic(topic.clone(), 1)).await;
 
-    let producer = wasm_bindgen_futures::JsFuture::from(fluvio.topic_producer(topic.clone())).await;
+    let producer = wasm_bindgen_futures::JsFuture::from(
+        fluvio
+            .topic_producer(topic.clone())
+            .unchecked_into::<Promise>(),
+    )
+    .await;
     assert!(producer.is_ok());
     let producer = producer.unwrap();
     let producer: TopicProducer = generic_of_jsval(producer, "TopicProducer").unwrap();
@@ -41,8 +48,12 @@ async fn base_test() {
     assert!(fluvio.is_ok());
     let fluvio = fluvio.unwrap();
 
-    let consumer =
-        wasm_bindgen_futures::JsFuture::from(fluvio.partition_consumer(topic.clone(), 0)).await;
+    let consumer = wasm_bindgen_futures::JsFuture::from(
+        fluvio
+            .partition_consumer(topic.clone(), 0)
+            .unchecked_into::<Promise>(),
+    )
+    .await;
     assert!(consumer.is_ok());
     let consumer = consumer.unwrap();
     let consumer: PartitionConsumer = generic_of_jsval(consumer, "PartitionConsumer").unwrap();
@@ -50,12 +61,13 @@ async fn base_test() {
     let stream = consumer.stream(Offset::beginning()).await;
     assert!(stream.is_ok());
     let stream = stream.unwrap();
-    let _ = wasm_bindgen_futures::JsFuture::from(stream.next()).await;
+    let _ = wasm_bindgen_futures::JsFuture::from(stream.next().unchecked_into::<Promise>()).await;
     for i in 1..10_usize {
         let value = format!("value - {:?}", i);
         let _ = wasm_bindgen_futures::JsFuture::from(producer.send(None, value.clone())).await;
 
-        let next = wasm_bindgen_futures::JsFuture::from(stream.next()).await;
+        let next =
+            wasm_bindgen_futures::JsFuture::from(stream.next().unchecked_into::<Promise>()).await;
         assert!(next.is_ok());
         let next = next.unwrap();
 

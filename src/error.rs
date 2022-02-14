@@ -7,9 +7,11 @@ pub struct FluvioError {
     inner: FluvioInner,
 }
 
-#[derive(Debug)]
+#[derive(Debug, thiserror::Error)]
 pub enum FluvioInner {
+    #[error(transparent)]
     Fluvio(NativeFluvioError),
+    #[error("Fluvio dataplane error code: {0}")]
     Code(fluvio::dataplane::ErrorCode),
 }
 
@@ -27,9 +29,14 @@ extern "C" {
 #[wasm_bindgen]
 impl FluvioError {
     #[wasm_bindgen(getter)]
-    pub fn message(&self) -> String {
+    pub fn debug_message(&self) -> String {
         format!("{:?}", self.inner)
     }
+
+    pub fn message(&self) -> String {
+        format!("{}", self.inner)
+    }
+
     #[wasm_bindgen(getter)]
     pub fn name(&self) -> String {
         "FluvioError".to_string()
