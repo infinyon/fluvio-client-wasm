@@ -28,19 +28,19 @@ use fluvio::metadata::{objects::Metadata, store::MetadataStoreObject};
 // Workaround for Typescript type annotations on async function returns.
 #[wasm_bindgen]
 extern "C" {
-    #[wasm_bindgen(typescript_type = "Promise<Vec<TopicMetadata>")]
+    #[wasm_bindgen(typescript_type = "Promise<TopicMetadata[]>")]
     pub type PromiseTopicList;
 
-    #[wasm_bindgen(typescript_type = "Promise<Vec<PartitionMetadata>")]
+    #[wasm_bindgen(typescript_type = "Promise<PartitionMetadata[]>")]
     pub type PromisePartitionList;
 
-    #[wasm_bindgen(typescript_type = "Promise<Vec<String>")]
+    #[wasm_bindgen(typescript_type = "Promise<string[]>")]
     pub type PromiseConnectorList;
 
-    #[wasm_bindgen(typescript_type = "Promise<Vec<SmartModuleMetadata>")]
+    #[wasm_bindgen(typescript_type = "Promise<SmartModuleMetadata[]>")]
     pub type PromiseSmartModuleList;
 
-    #[wasm_bindgen(typescript_type = "Promise<Vec<TableFormatMetadata>")]
+    #[wasm_bindgen(typescript_type = "Promise<TableFormatMetadata[]>")]
     pub type PromiseTableFormatList;
 }
 
