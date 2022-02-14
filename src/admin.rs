@@ -278,7 +278,8 @@ impl FluvioAdmin {
                 })
                 .map_err(|e| FluvioError::from(e).into())
         });
-        promise.unchecked_into()
+        // WARNING: this does not validate the return type. Check carefully.
+        promise.unchecked_into::<PromiseSmartModuleList>()
     }
 
     /// Delete a smartmodule
@@ -312,7 +313,8 @@ impl FluvioAdmin {
                 })
                 .map_err(|e| FluvioError::from(e).into())
         });
-        promise.unchecked_into()
+        // WARNING: this does not validate the return type. Check carefully.
+        promise.unchecked_into::<PromiseTableFormatList>()
     }
 
     /// Delete a table format
