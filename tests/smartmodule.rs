@@ -95,7 +95,7 @@ async fn smartstream_map() {
     web_sys::console::time_end_with_label("smartstream-map-teardown");
     web_sys::console::time_end_with_label("smartstream-map-suite");
 }
-
+/*
 #[wasm_bindgen_test]
 async fn smartstream_filter() {
     #[wasm_bindgen(module = "/tests/js/smartstream_filter/smartstream_filter.js")]
@@ -136,3 +136,4 @@ async fn smartstream_filter() {
     web_sys::console::time_end_with_label("smartstream-filter-teardown");
     web_sys::console::time_end_with_label("smartstream-filter-suite");
 }
+*/
