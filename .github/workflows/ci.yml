@@ -97,6 +97,7 @@ jobs:
           sleep 3
           echo foo | fluvio produce foobar
           fluvio consume foobar -o 0 -d
+          fluvio topic delete foobar;
       - uses: actions/checkout@v2
       - name: Install Rust stable
         uses: actions-rs/toolchain@v1
@@ -127,8 +128,11 @@ jobs:
           key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Run tests
-        run:
-          make test
+        uses: nick-invision/retry@v2
+        with:
+          timeout_minutes: 3
+          max_attempts: 5
+          command: make test
       - name: Run diagnostics
         if: ${{ !success() }}
         timeout-minutes: 5
