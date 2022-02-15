@@ -9,7 +9,7 @@ export const setup = async () => {
   const admin = await fluvio.admin();
   for (let i = 0; i < 3; i++) {
     try {
-      await admin.createTopic(topic, 5);
+      await admin.createTopic(topic, 3);
       break;
     } catch (e) {
       console.error(`${e.message}`);
