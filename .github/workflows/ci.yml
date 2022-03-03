@@ -25,7 +25,7 @@ jobs:
         os: [ubuntu-latest]
         node: [ '16' ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Rust stable
         uses: actions-rs/toolchain@v1
         with:
@@ -54,7 +54,7 @@ jobs:
         os: [ubuntu-latest]
         node: [ '17' ]
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Rust stable
         uses: actions-rs/toolchain@v1
         with:
@@ -98,7 +98,7 @@ jobs:
           echo foo | fluvio produce foobar
           fluvio consume foobar -o 0 -d
           fluvio topic delete foobar;
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install Rust stable
         uses: actions-rs/toolchain@v1
         with:
