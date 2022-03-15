@@ -747,9 +747,9 @@ dependencies = [
 
 [[package]]
 name = "fluvio"
-version = "0.12.5"
+version = "0.12.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "681efc83857ac16895312c3b21d1d3685ab356d3aeee7591589f295444f4cfe5"
+checksum = "b4648f1bbfaa578b3465aacdddfcd8c4056b62d1e62c973b588fa15e760e0bc0"
 dependencies = [
  "async-channel",
  "async-lock",
@@ -762,6 +762,7 @@ dependencies = [
  "derive_builder",
  "dirs",
  "event-listener",
+ "fluvio-compression",
  "fluvio-dataplane-protocol",
  "fluvio-future",
  "fluvio-protocol",
@@ -784,10 +785,23 @@ dependencies = [
 ]
 
 [[package]]
-name = "fluvio-controlplane-metadata"
-version = "0.13.1"
+name = "fluvio-compression"
+version = "0.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61c238786baddfd253b920ab424d1ca25df5bafd9c3064bb5bd9de52f32e64b0"
+checksum = "87d2d3118b07832a7f6603e58cd28a39676689719fd2f171c693c36452be5cbc"
+dependencies = [
+ "flate2",
+ "lz4_flex",
+ "serde",
+ "snap",
+ "thiserror",
+]
+
+[[package]]
+name = "fluvio-controlplane-metadata"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "72dbdc5fcaec2716d38f7695c3fb7a10d22f922b0b71d517f40cf9b83e4f1ffd"
 dependencies = [
  "async-trait",
  "base64",
@@ -803,15 +817,16 @@ dependencies = [
 
 [[package]]
 name = "fluvio-dataplane-protocol"
-version = "0.9.0"
+version = "0.10.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "27c944623492841a4c767662756cda5582e7dd73efc500e7b0fa47d1133bc566"
+checksum = "5b608e8f4a6c3d28ff15981ebe185b20da6131982f2ff560a4efc90285896fda"
 dependencies = [
  "bytes",
  "cfg-if",
  "content_inspector",
  "crc32c",
  "eyre",
+ "fluvio-compression",
  "fluvio-future",
  "fluvio-protocol",
  "flv-util",
@@ -872,9 +887,9 @@ dependencies = [
 
 [[package]]
 name = "fluvio-sc-schema"
-version = "0.12.2"
+version = "0.12.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a2403f17f8f1640c112f6e4cf0b5114a3f03bb1639082a26d84d4f7b85c9e4cb"
+checksum = "ca9e57f6a220fc36558f70da894021d183dc8d54c9012cdd33dcfb90daa57f20"
 dependencies = [
  "fluvio-controlplane-metadata",
  "fluvio-dataplane-protocol",
@@ -912,15 +927,14 @@ dependencies = [
 
 [[package]]
 name = "fluvio-spu-schema"
-version = "0.9.1"
+version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e29bc078df0da8f25779945b6de2d5e0ee7d43943cb801cda5cb8a4ae179d5eb"
+checksum = "d272bb19941dc300c76b65a7952fc70dd7b277f1f98651f3c47dceb7f2bc6c81"
 dependencies = [
  "bytes",
  "flate2",
  "fluvio-dataplane-protocol",
  "fluvio-protocol",
- "fluvio-types",
  "log",
  "serde",
  "static_assertions",
@@ -1393,6 +1407,15 @@ checksum = "51b9bbe6c47d51fc3e1a9b945965946b4c44142ab8792c50835a980d362c2710"
 dependencies = [
  "cfg-if",
  "value-bag",
+]
+
+[[package]]
+name = "lz4_flex"
+version = "0.9.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42c51df9d8d4842336c835df1d85ed447c4813baa237d033d95128bf5552ad8a"
+dependencies = [
+ "twox-hash",
 ]
 
 [[package]]
@@ -1986,6 +2009,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "fe0f37c9e8f3c5a4a66ad655a93c74daac4ad00c441533bf5c6e7990bb42604e"
 
 [[package]]
+name = "snap"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "45456094d1983e2ee2a18fdfebce3189fa451699d0502cb8e3b49dba5ba41451"
+
+[[package]]
 name = "socket2"
 version = "0.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2105,18 +2134,18 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "1.0.26"
+version = "1.0.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "93119e4feac1cbe6c798c34d3a53ea0026b0b1de6a120deef895137c0529bfe2"
+checksum = "854babe52e4df1653706b98fcfc05843010039b406875930a70e4d9644e5c417"
 dependencies = [
  "thiserror-impl",
 ]
 
 [[package]]
 name = "thiserror-impl"
-version = "1.0.26"
+version = "1.0.30"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "060d69a0afe7796bf42e9e2ff91f5ee691fb15c53d38b4b62a9a53eb23164745"
+checksum = "aa32fd3f627f367fe16f893e2597ae3c05020f8bba2666a4e6ea73d377e5714b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -2320,6 +2349,16 @@ dependencies = [
  "thiserror",
  "url",
  "utf-8",
+]
+
+[[package]]
+name = "twox-hash"
+version = "1.6.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4ee73e6e4924fe940354b8d4d98cad5231175d615cd855b758adc658c0aac6a0"
+dependencies = [
+ "cfg-if",
+ "static_assertions",
 ]
 
 [[package]]
