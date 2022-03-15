@@ -89,15 +89,6 @@ jobs:
           cluster-type: k3d
           version: latest
           rust-log: info
-      - name: Check Fluvio Installation
-        run: |
-          fluvio version
-          fluvio topic list
-          fluvio topic create foobar
-          sleep 3
-          echo foo | fluvio produce foobar
-          fluvio consume foobar -o 0 -d
-          fluvio topic delete foobar;
       - uses: actions/checkout@v3
       - name: Install Rust stable
         uses: actions-rs/toolchain@v1
@@ -117,6 +108,15 @@ jobs:
       - name: build websocket proxy
         run:
           make build-fluvio-websocket-proxy
+      - name: Check Fluvio Installation
+        run: |
+          fluvio version
+          fluvio topic list
+          fluvio topic create foobar
+          sleep 3
+          echo foo | fluvio produce foobar
+          fluvio consume foobar -o 0 -d
+          fluvio topic delete foobar;
       - name: Start websocket proxy
         run:
           make run-fluvio-websocket-proxy & disown
@@ -126,7 +126,6 @@ jobs:
         with:
           path: ./target
           key: ${{ runner.os }}-cargo-target-${{ hashFiles('**/Cargo.lock') }}
-
       - name: Run tests
         uses: nick-invision/retry@v2
         with:
