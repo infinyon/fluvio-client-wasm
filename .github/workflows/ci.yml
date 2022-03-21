@@ -100,7 +100,7 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
       - name: Cache target in proxy
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         id: cache-proxy
         with:
           path: ./fluvio-websocket-proxy/target
@@ -121,7 +121,7 @@ jobs:
         run:
           make run-fluvio-websocket-proxy & disown
       - name: cache target
-        uses: actions/cache@v2.1.7
+        uses: actions/cache@v3
         id: cache
         with:
           path: ./target
