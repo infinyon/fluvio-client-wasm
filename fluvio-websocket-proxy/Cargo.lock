@@ -786,9 +786,9 @@ dependencies = [
 
 [[package]]
 name = "fluvio-compression"
-version = "0.1.0"
+version = "0.1.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87d2d3118b07832a7f6603e58cd28a39676689719fd2f171c693c36452be5cbc"
+checksum = "1b2a11336f28be7bee0841da61f619bb410366c53b427cefe02f77e2d5cce7a7"
 dependencies = [
  "flate2",
  "lz4_flex",
