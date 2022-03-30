@@ -22,7 +22,16 @@ export const teardown = async () => {
 };
 
 export const test = async () => {
-  const producer = await fluvio.topicProducer(topic);
+  const compression = "snappy";
+  const lingerTime = 50;
+  const batchSize = 2048;
+  const config = {
+    lingerTime,
+    batchSize,
+    compression,
+  };
+
+  const producer = await fluvio.topicProducerWithConfig(topic, config);
   await producer.send("", `count`);
   const offset = Offset.beginning();
 
