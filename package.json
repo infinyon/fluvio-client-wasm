@@ -1,7 +1,7 @@
 {
-  "author": "Infinyon Contributors <team@infiyon.com>",
+  "author": "Infinyon Contributors <team@infinyon.com>",
   "name": "@fluvio/client-wasm",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "WASM bindings for Fluvio distributed stream client",
   "license": "Apache-2.0",
   "keywords": [
