@@ -104,7 +104,7 @@ pub enum JsLevel {
     Warn = "Warn",
     Info = "Info",
     Debug = "Debug",
-    Trace = "Trace"
+    Trace = "Trace",
 }
 
 impl Into<Option<Level>> for JsLevel {
@@ -115,7 +115,7 @@ impl Into<Option<Level>> for JsLevel {
             Self::Info => Some(Level::Info),
             Self::Debug => Some(Level::Debug),
             Self::Trace => Some(Level::Trace),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -134,7 +134,8 @@ impl Fluvio {
         let promise = future_to_promise(async move {
             info!("Producing topic: {:#?}", &topic);
 
-            let result = rc.topic_producer(&topic)
+            let result = rc
+                .topic_producer(&topic)
                 .await
                 .map(|producer| JsValue::from(TopicProducer::from(producer)))
                 .map_err(|e| (FluvioError::from(e).into()))
