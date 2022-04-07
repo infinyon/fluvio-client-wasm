@@ -15,7 +15,8 @@ use crate::{
     PartitionConsumer, TopicProducer,
 };
 
-use wasm_bindgen::convert::FromWasmAbi;
+use log::info;
+use web_sys::console::log_1;
 
 #[wasm_bindgen(typescript_custom_section)]
 const PRODUCER_CONFIG_TYPE: &str = r#"
@@ -100,12 +101,10 @@ pub struct Fluvio {
 #[wasm_bindgen]
 #[derive(Debug)]
 pub enum JsLevel {
-    None = "None",
     Error = "Error",
     Warn = "Warn",
     Info = "Info",
     Debug = "Debug",
-    Verbose = "Debug",
     Trace = "Trace"
 }
 
@@ -132,14 +131,15 @@ impl Fluvio {
         let rc = self.inner.clone();
 
         let promise = future_to_promise(async move {
-            rc.topic_producer(topic)
+            let result = rc.topic_producer(&topic)
                 .await
                 .map(|producer| JsValue::from(TopicProducer::from(producer)))
-                .map_err(|e| (FluvioError::from(e).into()))
-        });
+                .map_err(|e| (FluvioError::from(e).into()));
 
-        use log::info;
-        info!("TEST TEST");
+            info!("Produced topic: {:#?}", topic);
+
+            result
+        });
 
         use web_sys::console::log_1;
         log_1(&"Connected to fluvio server".into());
@@ -230,39 +230,35 @@ impl Fluvio {
         promise.unchecked_into::<PromiseFluvioAdmin>()
     }
 
-    fn setup_debugging_base(level: Level) {
-        use std::sync::Once;
-        static START: Once = Once::new();
-        START.call_once(|| {
-            tracing_wasm::set_as_global_default();
-            use log::Level;
-            console_log::init_with_level(level).expect("error initializing log");
-        });
-    }
-
     /// enable debug logging
     #[wasm_bindgen(js_name = setupDebugging)]
-    pub fn setup_debugging(level: JsLevel) {
+    pub fn setup_debugging(enable_tracing_wasm: bool, level: JsLevel) {
         console_error_panic_hook::set_once();
 
-        let text = format!("Debug level: {:#?}", level);
-        use web_sys::console::log_1;
-        log_1(&text.into());
+        let msg = format!("Debug level: {:#?}", level);
+        log_1(&msg.into());
 
-        let level: Level = match level {
-            JsLevel::Error => Level::Error,
-            JsLevel::Warn => Level::Warn,
-            JsLevel::Info => Level::Info,
-            JsLevel::Debug => Level::Debug,
-            JsLevel::Verbose => Level::Debug,
-            JsLevel::Trace => Level::Trace,
-            _ => panic!("Invalid debug level!")
-        };
         use std::sync::Once;
         static START: Once = Once::new();
         START.call_once(|| {
-            tracing_wasm::set_as_global_default();
-            use log::Level;
+            if enable_tracing_wasm {
+                tracing_wasm::set_as_global_default();
+            }
+
+            let level: Level = match level {
+                JsLevel::Error => Level::Error,
+                JsLevel::Warn => Level::Warn,
+                JsLevel::Info => Level::Info,
+                JsLevel::Debug => Level::Debug,
+                JsLevel::Trace => Level::Trace,
+                _ => {
+                    return;
+                }
+            };
+
+            let msg = format!("Effective debug level: {:#?}", level);
+            log_1(&msg.into());
+
             console_log::init_with_level(level).expect("error initializing log");
         });
     }
