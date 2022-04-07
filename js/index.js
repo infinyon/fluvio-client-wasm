@@ -7,9 +7,7 @@ import("../pkg").then(async fluvioWasm => {
       await Fluvio.setupDebugging(false, 'Info');
       const fluvio = await Fluvio.connect("ws://localhost:3000");
       const admin = await fluvio.admin();
-      console.log(`Creating topic ${topic}`);
       await admin.createTopic(topic, 1);
-      console.log(`Created topic ${topic}`);
 
       const producer = await fluvio.topicProducer(topic);
       await producer.send("", `count`);

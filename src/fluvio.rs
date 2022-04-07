@@ -15,7 +15,7 @@ use crate::{
     PartitionConsumer, TopicProducer,
 };
 
-use log::info;
+use log::{info, Level};
 use web_sys::console::log_1;
 
 #[wasm_bindgen(typescript_custom_section)]
@@ -108,8 +108,6 @@ pub enum JsLevel {
     Trace = "Trace"
 }
 
-use log::Level;
-
 impl Into<Level> for JsLevel {
     fn into(self) -> Level {
         match self {
@@ -123,6 +121,10 @@ impl Into<Level> for JsLevel {
     }
 }
 
+fn type_of<T>(_: &T) {
+    info!("Type of {}", std::any::type_name::<T>())
+}
+
 #[wasm_bindgen]
 impl Fluvio {
     /// Creates a new topic producer.
@@ -131,18 +133,21 @@ impl Fluvio {
         let rc = self.inner.clone();
 
         let promise = future_to_promise(async move {
+            info!("Producing topic: {:#?}", &topic);
+
             let result = rc.topic_producer(&topic)
                 .await
                 .map(|producer| JsValue::from(TopicProducer::from(producer)))
-                .map_err(|e| (FluvioError::from(e).into()));
+                .map_err(|e| (FluvioError::from(e).into()))
+                .and_then(|r| {
+                    info!("Produced topic: {:#?}", &topic);
+                    Ok(r)
+                });
 
-            info!("Produced topic: {:#?}", topic);
+            type_of(&result);
 
             result
         });
-
-        use web_sys::console::log_1;
-        log_1(&"Connected to fluvio server".into());
 
         // WARNING: this does not validate the return type. Check carefully.
         promise.unchecked_into::<PromiseTopicProducer>()
@@ -204,6 +209,8 @@ impl Fluvio {
 
         let config = FluvioConfig::new(addr.clone());
 
+        let addr_str = addr.to_string();
+
         let inner = Rc::new(
             NativeFluvio::connect_with_connector(
                 Box::new(FluvioWebsocketConnector::new(addr, None)),
@@ -213,8 +220,7 @@ impl Fluvio {
             .map_err(FluvioError::from)?,
         );
 
-        use log::info;
-        info!("Connected to fluvio server");
+        info!("Connected to fluvio server at {}", addr_str);
 
         Ok(Self { inner })
     }
