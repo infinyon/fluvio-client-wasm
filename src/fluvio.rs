@@ -15,6 +15,8 @@ use crate::{
     PartitionConsumer, TopicProducer,
 };
 
+use wasm_bindgen::convert::FromWasmAbi;
+
 #[wasm_bindgen(typescript_custom_section)]
 const PRODUCER_CONFIG_TYPE: &str = r#"
 export type CompressionAlgorithm = "none" | "gzip" | "snappy" | "lz4";
@@ -96,6 +98,33 @@ pub struct Fluvio {
 }
 
 #[wasm_bindgen]
+#[derive(Debug)]
+pub enum JsLevel {
+    None = "None",
+    Error = "Error",
+    Warn = "Warn",
+    Info = "Info",
+    Debug = "Debug",
+    Verbose = "Debug",
+    Trace = "Trace"
+}
+
+use log::Level;
+
+impl Into<Level> for JsLevel {
+    fn into(self) -> Level {
+        match self {
+            Self::Error => Level::Error,
+            Self::Warn => Level::Warn,
+            Self::Info => Level::Info,
+            Self::Debug => Level::Debug,
+            Self::Trace => Level::Trace,
+            _ => Level::Error
+        }
+    }
+}
+
+#[wasm_bindgen]
 impl Fluvio {
     /// Creates a new topic producer.
     #[wasm_bindgen(js_name = topicProducer)]
@@ -108,6 +137,12 @@ impl Fluvio {
                 .map(|producer| JsValue::from(TopicProducer::from(producer)))
                 .map_err(|e| (FluvioError::from(e).into()))
         });
+
+        use log::info;
+        info!("TEST TEST");
+
+        use web_sys::console::log_1;
+        log_1(&"Connected to fluvio server".into());
 
         // WARNING: this does not validate the return type. Check carefully.
         promise.unchecked_into::<PromiseTopicProducer>()
@@ -164,7 +199,8 @@ impl Fluvio {
 
     /// Connects to fluvio server
     pub async fn connect(addr: String) -> Result<Fluvio, wasm_bindgen::JsValue> {
-        Self::setup_debugging(false);
+        //Self::setup_debugging(false, JsLevel::Debug);
+        console_error_panic_hook::set_once();
 
         let config = FluvioConfig::new(addr.clone());
 
@@ -176,6 +212,10 @@ impl Fluvio {
             .await
             .map_err(FluvioError::from)?,
         );
+
+        use log::info;
+        info!("Connected to fluvio server");
+
         Ok(Self { inner })
     }
 
@@ -190,18 +230,40 @@ impl Fluvio {
         promise.unchecked_into::<PromiseFluvioAdmin>()
     }
 
+    fn setup_debugging_base(level: Level) {
+        use std::sync::Once;
+        static START: Once = Once::new();
+        START.call_once(|| {
+            tracing_wasm::set_as_global_default();
+            use log::Level;
+            console_log::init_with_level(level).expect("error initializing log");
+        });
+    }
+
     /// enable debug logging
     #[wasm_bindgen(js_name = setupDebugging)]
-    pub fn setup_debugging(verbose_debugging: bool) {
+    pub fn setup_debugging(level: JsLevel) {
         console_error_panic_hook::set_once();
-        if verbose_debugging {
-            use std::sync::Once;
-            static START: Once = Once::new();
-            START.call_once(|| {
-                tracing_wasm::set_as_global_default();
-                use log::Level;
-                console_log::init_with_level(Level::Debug).expect("error initializing log");
-            });
-        }
+
+        let text = format!("Debug level: {:#?}", level);
+        use web_sys::console::log_1;
+        log_1(&text.into());
+
+        let level: Level = match level {
+            JsLevel::Error => Level::Error,
+            JsLevel::Warn => Level::Warn,
+            JsLevel::Info => Level::Info,
+            JsLevel::Debug => Level::Debug,
+            JsLevel::Verbose => Level::Debug,
+            JsLevel::Trace => Level::Trace,
+            _ => panic!("Invalid debug level!")
+        };
+        use std::sync::Once;
+        static START: Once = Once::new();
+        START.call_once(|| {
+            tracing_wasm::set_as_global_default();
+            use log::Level;
+            console_log::init_with_level(level).expect("error initializing log");
+        });
     }
 }

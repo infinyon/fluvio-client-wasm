@@ -4,7 +4,8 @@ import("../pkg").then(async fluvioWasm => {
   while (true) {
     let topic = createUUID();
     try {
-      const fluvio = await Fluvio.connect("ws://localhost:3000")
+      await Fluvio.setupDebugging('Error');
+      const fluvio = await Fluvio.connect("ws://localhost:3000");
       const admin = await fluvio.admin();
       console.log(`Creating topic ${topic}`);
       await admin.createTopic(topic, 1);
