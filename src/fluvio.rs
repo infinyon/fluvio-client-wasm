@@ -16,7 +16,6 @@ use crate::{
 };
 
 use log::{info, Level};
-use web_sys::console::log_1;
 
 #[wasm_bindgen(typescript_custom_section)]
 const PRODUCER_CONFIG_TYPE: &str = r#"
@@ -108,15 +107,15 @@ pub enum JsLevel {
     Trace = "Trace"
 }
 
-impl Into<Level> for JsLevel {
-    fn into(self) -> Level {
+impl Into<Option<Level>> for JsLevel {
+    fn into(self) -> Option<Level> {
         match self {
-            Self::Error => Level::Error,
-            Self::Warn => Level::Warn,
-            Self::Info => Level::Info,
-            Self::Debug => Level::Debug,
-            Self::Trace => Level::Trace,
-            _ => Level::Error
+            Self::Error => Some(Level::Error),
+            Self::Warn => Some(Level::Warn),
+            Self::Info => Some(Level::Info),
+            Self::Debug => Some(Level::Debug),
+            Self::Trace => Some(Level::Trace),
+            _ => None
         }
     }
 }
@@ -241,9 +240,6 @@ impl Fluvio {
     pub fn setup_debugging(enable_tracing_wasm: bool, level: JsLevel) {
         console_error_panic_hook::set_once();
 
-        let msg = format!("Debug level: {:#?}", level);
-        log_1(&msg.into());
-
         use std::sync::Once;
         static START: Once = Once::new();
         START.call_once(|| {
@@ -251,21 +247,11 @@ impl Fluvio {
                 tracing_wasm::set_as_global_default();
             }
 
-            let level: Level = match level {
-                JsLevel::Error => Level::Error,
-                JsLevel::Warn => Level::Warn,
-                JsLevel::Info => Level::Info,
-                JsLevel::Debug => Level::Debug,
-                JsLevel::Trace => Level::Trace,
-                _ => {
-                    return;
-                }
-            };
+            let level_opt: Option<Level> = level.into();
 
-            let msg = format!("Effective debug level: {:#?}", level);
-            log_1(&msg.into());
-
-            console_log::init_with_level(level).expect("error initializing log");
+            if level_opt.is_some() {
+                console_log::init_with_level(level_opt.unwrap()).expect("error initializing log");
+            }
         });
     }
 }
