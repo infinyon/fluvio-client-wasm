@@ -12,7 +12,7 @@ default = ["unstable"]
 unstable = []
 
 [dependencies]
-wasm-bindgen = { version = "0.2.63", features = ["serde-serialize"] }
+wasm-bindgen = { version = "0.2.80", features = ["serde-serialize"] }
 wasm-bindgen-futures = { version = "0.4.28", features = ["futures-core-03-stream"] }
 fluvio = { version = "0.12", features = ["unstable"] }
 console_log = { version = "0.2", features = ["color"] }
