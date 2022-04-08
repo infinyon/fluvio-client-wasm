@@ -97,7 +97,7 @@ pub struct Fluvio {
     inner: Rc<NativeFluvio>,
 }
 
-#[wasm_bindgen(typescript_type = "string | undefined sdfsdfsd")]
+#[wasm_bindgen(typescript_type = "None | Error | Warn | Info | Debug | Trace")]
 #[derive(Debug, Copy, Clone)]
 pub enum JsLevel {
     None = "None",
