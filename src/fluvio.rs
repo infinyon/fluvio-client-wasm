@@ -137,9 +137,9 @@ impl Fluvio {
                 .await
                 .map(|producer| JsValue::from(TopicProducer::from(producer)))
                 .map_err(|e| (FluvioError::from(e).into()))
-                .and_then(|r| {
+                .map(|r| {
                     info!("Produced topic: {:#?}", &topic);
-                    Ok(r)
+                    r
                 })
         });
 
