@@ -97,9 +97,10 @@ pub struct Fluvio {
     inner: Rc<NativeFluvio>,
 }
 
-#[wasm_bindgen]
-#[derive(Debug)]
+#[wasm_bindgen(typescript_type = "string | undefined sdfsdfsd")]
+#[derive(Debug, Copy, Clone)]
 pub enum JsLevel {
+    None = "None",
     Error = "Error",
     Warn = "Warn",
     Info = "Info",
@@ -107,21 +108,19 @@ pub enum JsLevel {
     Trace = "Trace",
 }
 
-impl Into<Option<Level>> for JsLevel {
-    fn into(self) -> Option<Level> {
+impl TryInto<Level> for JsLevel {
+    type Error = JsValue;
+
+    fn try_into(self) -> Result<Level, <Self as TryInto<Level>>::Error> {
         match self {
-            Self::Error => Some(Level::Error),
-            Self::Warn => Some(Level::Warn),
-            Self::Info => Some(Level::Info),
-            Self::Debug => Some(Level::Debug),
-            Self::Trace => Some(Level::Trace),
-            _ => None,
+            Self::Error => Ok(Level::Error),
+            Self::Warn => Ok(Level::Warn),
+            Self::Info => Ok(Level::Info),
+            Self::Debug => Ok(Level::Debug),
+            Self::Trace => Ok(Level::Trace),
+            _ => Err(JsValue::from_str("Wrong string given as JsLevel.")),
         }
     }
-}
-
-fn type_of<T>(_: &T) {
-    info!("Type of {}", std::any::type_name::<T>())
 }
 
 #[wasm_bindgen]
@@ -134,19 +133,14 @@ impl Fluvio {
         let promise = future_to_promise(async move {
             info!("Producing topic: {:#?}", &topic);
 
-            let result = rc
-                .topic_producer(&topic)
+            rc.topic_producer(&topic)
                 .await
                 .map(|producer| JsValue::from(TopicProducer::from(producer)))
                 .map_err(|e| (FluvioError::from(e).into()))
                 .and_then(|r| {
                     info!("Produced topic: {:#?}", &topic);
                     Ok(r)
-                });
-
-            type_of(&result);
-
-            result
+                })
         });
 
         // WARNING: this does not validate the return type. Check carefully.
@@ -204,8 +198,7 @@ impl Fluvio {
 
     /// Connects to fluvio server
     pub async fn connect(addr: String) -> Result<Fluvio, wasm_bindgen::JsValue> {
-        //Self::setup_debugging(false, JsLevel::Debug);
-        console_error_panic_hook::set_once();
+        Self::setup_debugging(false, None);
 
         let config = FluvioConfig::new(addr.clone());
 
@@ -236,23 +229,43 @@ impl Fluvio {
         promise.unchecked_into::<PromiseFluvioAdmin>()
     }
 
+    fn enable_tracing_wasm(enable: bool) {
+        if enable {
+            tracing_wasm::set_as_global_default();
+        }
+    }
+
     /// enable debug logging
     #[wasm_bindgen(js_name = setupDebugging)]
-    pub fn setup_debugging(enable_tracing_wasm: bool, level: JsLevel) {
+    pub fn setup_debugging(
+        enable_tracing_wasm: bool,
+        level: Option<JsLevel>,
+    ) -> Result<JsLevel, <JsLevel as TryInto<Level>>::Error> {
         console_error_panic_hook::set_once();
 
         use std::sync::Once;
         static START: Once = Once::new();
-        START.call_once(|| {
-            if enable_tracing_wasm {
-                tracing_wasm::set_as_global_default();
-            }
 
-            let level_opt: Option<Level> = level.into();
+        if level.is_some() {
+            let level = level.unwrap();
 
-            if level_opt.is_some() {
-                console_log::init_with_level(level_opt.unwrap()).expect("error initializing log");
-            }
-        });
+            let result = level;
+
+            let level: Level = level.try_into()?;
+
+            START.call_once(|| {
+                Self::enable_tracing_wasm(enable_tracing_wasm);
+
+                console_log::init_with_level(level).expect("error initializing log");
+            });
+
+            Ok(result)
+        } else {
+            START.call_once(|| {
+                Self::enable_tracing_wasm(enable_tracing_wasm);
+            });
+
+            Ok(JsLevel::None)
+        }
     }
 }
