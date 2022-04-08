@@ -97,10 +97,10 @@ pub struct Fluvio {
     inner: Rc<NativeFluvio>,
 }
 
-#[wasm_bindgen(typescript_type = "None | Error | Warn | Info | Debug | Trace")]
+#[wasm_bindgen(typescript_type = "Error | Warn | Info | Debug | Trace")]
 #[derive(Debug, Copy, Clone)]
 pub enum JsLevel {
-    None = "None",
+    None = "None", // only used as return to indicate that the function succeeded without using the logging level
     Error = "Error",
     Warn = "Warn",
     Info = "Info",
@@ -118,7 +118,7 @@ impl TryInto<Level> for JsLevel {
             Self::Info => Ok(Level::Info),
             Self::Debug => Ok(Level::Debug),
             Self::Trace => Ok(Level::Trace),
-            _ => Err(JsValue::from_str("Wrong string given as JsLevel.")),
+            _ => Err(JsValue::from_str("The level string should be Error | Warn | Info | Debug | Trace")),
         }
     }
 }
@@ -131,14 +131,14 @@ impl Fluvio {
         let rc = self.inner.clone();
 
         let promise = future_to_promise(async move {
-            info!("Producing topic: {:#?}", &topic);
+            info!("Creating producer for topic {}", topic);
 
             rc.topic_producer(&topic)
                 .await
                 .map(|producer| JsValue::from(TopicProducer::from(producer)))
                 .map_err(|e| (FluvioError::from(e).into()))
                 .map(|r| {
-                    info!("Produced topic: {:#?}", &topic);
+                    info!("Created producer for topic {}", topic);
                     r
                 })
         });
