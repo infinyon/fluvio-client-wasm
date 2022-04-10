@@ -97,10 +97,13 @@ pub struct Fluvio {
     inner: Rc<NativeFluvio>,
 }
 
-#[wasm_bindgen(typescript_type = "Error | Warn | Info | Debug | Trace")]
+#[allow(clippy::manual_non_exhaustive)]
+#[wasm_bindgen(typescript_type = "'Error' | 'Warn' | 'Info' | 'Debug' | 'Trace'")]
 #[derive(Debug, Copy, Clone)]
 pub enum JsLevel {
-    None = "None", // only used as return to indicate that the function succeeded without using the logging level
+    // None is only used as return,
+    // to indicate that the function succeeded without using the logging level.
+    None = "None",
     Error = "Error",
     Warn = "Warn",
     Info = "Info",
@@ -118,7 +121,9 @@ impl TryInto<Level> for JsLevel {
             Self::Info => Ok(Level::Info),
             Self::Debug => Ok(Level::Debug),
             Self::Trace => Ok(Level::Trace),
-            _ => Err(JsValue::from_str("The level string should be Error | Warn | Info | Debug | Trace")),
+            _ => Err(JsValue::from_str(
+                "The level string should be Error | Warn | Info | Debug | Trace",
+            )),
         }
     }
 }
@@ -135,12 +140,11 @@ impl Fluvio {
 
             rc.topic_producer(&topic)
                 .await
-                .map(|producer| JsValue::from(TopicProducer::from(producer)))
-                .map_err(|e| (FluvioError::from(e).into()))
-                .map(|r| {
+                .map(|producer| {
                     info!("Created producer for topic {}", topic);
-                    r
+                    JsValue::from(TopicProducer::from(producer))
                 })
+                .map_err(|e| (FluvioError::from(e).into()))
         });
 
         // WARNING: this does not validate the return type. Check carefully.
@@ -198,7 +202,7 @@ impl Fluvio {
 
     /// Connects to fluvio server
     pub async fn connect(addr: String) -> Result<Fluvio, wasm_bindgen::JsValue> {
-        Self::setup_debugging(false, None);
+        let _ = Self::setup_debugging(false, None);
 
         let config = FluvioConfig::new(addr.clone());
 
@@ -246,9 +250,7 @@ impl Fluvio {
         use std::sync::Once;
         static START: Once = Once::new();
 
-        if level.is_some() {
-            let level = level.unwrap();
-
+        if let Some(level) = level {
             let result = level;
 
             let level: Level = level.try_into()?;
