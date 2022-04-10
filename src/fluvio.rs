@@ -15,7 +15,7 @@ use crate::{
     PartitionConsumer, TopicProducer,
 };
 
-use log::{info, Level};
+use log::{debug, Level};
 
 #[wasm_bindgen(typescript_custom_section)]
 const PRODUCER_CONFIG_TYPE: &str = r#"
@@ -136,12 +136,12 @@ impl Fluvio {
         let rc = self.inner.clone();
 
         let promise = future_to_promise(async move {
-            info!("Creating producer for topic {}", topic);
+            debug!("Creating producer for topic {}", topic);
 
             rc.topic_producer(&topic)
                 .await
                 .map(|producer| {
-                    info!("Created producer for topic {}", topic);
+                    debug!("Created producer for topic {}", topic);
                     JsValue::from(TopicProducer::from(producer))
                 })
                 .map_err(|e| (FluvioError::from(e).into()))
@@ -217,7 +217,7 @@ impl Fluvio {
             .map_err(FluvioError::from)?,
         );
 
-        info!("Connected to fluvio server at {}", addr_str);
+        debug!("Connected to fluvio server at {}", addr_str);
 
         Ok(Self { inner })
     }
