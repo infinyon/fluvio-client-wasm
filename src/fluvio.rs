@@ -15,7 +15,7 @@ use crate::{
     PartitionConsumer, TopicProducer,
 };
 
-use log::{debug, Level};
+use log::{debug, info, Level};
 
 #[wasm_bindgen(typescript_custom_section)]
 const PRODUCER_CONFIG_TYPE: &str = r#"
@@ -217,7 +217,7 @@ impl Fluvio {
             .map_err(FluvioError::from)?,
         );
 
-        debug!("Connected to fluvio server at {}", addr_str);
+        info!("Connected to fluvio server at {}", addr_str);
 
         Ok(Self { inner })
     }
