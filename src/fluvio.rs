@@ -15,6 +15,8 @@ use crate::{
     PartitionConsumer, TopicProducer,
 };
 
+use log::{debug, info, Level};
+
 #[wasm_bindgen(typescript_custom_section)]
 const PRODUCER_CONFIG_TYPE: &str = r#"
 export type CompressionAlgorithm = "none" | "gzip" | "snappy" | "lz4";
@@ -95,6 +97,37 @@ pub struct Fluvio {
     inner: Rc<NativeFluvio>,
 }
 
+#[allow(clippy::manual_non_exhaustive)]
+#[wasm_bindgen(typescript_type = "'Error' | 'Warn' | 'Info' | 'Debug' | 'Trace'")]
+#[derive(Debug, Copy, Clone)]
+pub enum JsLevel {
+    // None is only used as return,
+    // to indicate that the function succeeded without using the logging level.
+    None = "None",
+    Error = "Error",
+    Warn = "Warn",
+    Info = "Info",
+    Debug = "Debug",
+    Trace = "Trace",
+}
+
+impl TryInto<Level> for JsLevel {
+    type Error = JsValue;
+
+    fn try_into(self) -> Result<Level, <Self as TryInto<Level>>::Error> {
+        match self {
+            Self::Error => Ok(Level::Error),
+            Self::Warn => Ok(Level::Warn),
+            Self::Info => Ok(Level::Info),
+            Self::Debug => Ok(Level::Debug),
+            Self::Trace => Ok(Level::Trace),
+            _ => Err(JsValue::from_str(
+                "The level string should be Error | Warn | Info | Debug | Trace",
+            )),
+        }
+    }
+}
+
 #[wasm_bindgen]
 impl Fluvio {
     /// Creates a new topic producer.
@@ -103,9 +136,14 @@ impl Fluvio {
         let rc = self.inner.clone();
 
         let promise = future_to_promise(async move {
-            rc.topic_producer(topic)
+            debug!("Creating producer for topic {}", topic);
+
+            rc.topic_producer(&topic)
                 .await
-                .map(|producer| JsValue::from(TopicProducer::from(producer)))
+                .map(|producer| {
+                    debug!("Created producer for topic {}", topic);
+                    JsValue::from(TopicProducer::from(producer))
+                })
                 .map_err(|e| (FluvioError::from(e).into()))
         });
 
@@ -164,9 +202,11 @@ impl Fluvio {
 
     /// Connects to fluvio server
     pub async fn connect(addr: String) -> Result<Fluvio, wasm_bindgen::JsValue> {
-        Self::setup_debugging(false);
+        let _ = Self::setup_debugging(false, None);
 
         let config = FluvioConfig::new(addr.clone());
+
+        let addr_str = addr.to_string();
 
         let inner = Rc::new(
             NativeFluvio::connect_with_connector(
@@ -176,6 +216,9 @@ impl Fluvio {
             .await
             .map_err(FluvioError::from)?,
         );
+
+        info!("Connected to fluvio server at {}", addr_str);
+
         Ok(Self { inner })
     }
 
@@ -190,18 +233,41 @@ impl Fluvio {
         promise.unchecked_into::<PromiseFluvioAdmin>()
     }
 
+    fn enable_tracing_wasm(enable: bool) {
+        if enable {
+            tracing_wasm::set_as_global_default();
+        }
+    }
+
     /// enable debug logging
     #[wasm_bindgen(js_name = setupDebugging)]
-    pub fn setup_debugging(verbose_debugging: bool) {
+    pub fn setup_debugging(
+        enable_tracing_wasm: bool,
+        level: Option<JsLevel>,
+    ) -> Result<JsLevel, <JsLevel as TryInto<Level>>::Error> {
         console_error_panic_hook::set_once();
-        if verbose_debugging {
-            use std::sync::Once;
-            static START: Once = Once::new();
+
+        use std::sync::Once;
+        static START: Once = Once::new();
+
+        if let Some(level) = level {
+            let result = level;
+
+            let level: Level = level.try_into()?;
+
             START.call_once(|| {
-                tracing_wasm::set_as_global_default();
-                use log::Level;
-                console_log::init_with_level(Level::Debug).expect("error initializing log");
+                Self::enable_tracing_wasm(enable_tracing_wasm);
+
+                console_log::init_with_level(level).expect("error initializing log");
             });
+
+            Ok(result)
+        } else {
+            START.call_once(|| {
+                Self::enable_tracing_wasm(enable_tracing_wasm);
+            });
+
+            Ok(JsLevel::None)
         }
     }
 }
