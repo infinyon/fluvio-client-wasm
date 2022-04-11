@@ -42,7 +42,7 @@ wee_alloc = { version = "0.4.5" }
 thiserror = "1.0.30"
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.28"
+wasm-bindgen-test = "0.3.30"
 
 # https://rustwasm.github.io/docs/book/reference/code-size.html#optimizing-builds-for-code-size
 [profile.release]
