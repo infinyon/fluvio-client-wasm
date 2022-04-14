@@ -477,9 +477,9 @@ dependencies = [
 
 [[package]]
 name = "fluvio"
-version = "0.12.7"
+version = "0.12.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "05ecc8a147a0d8514ede660cdce600b0f53ed2dabd7051c909241eec96aff642"
+checksum = "9573442e6bfe6219dd9c42857ac2900370f714e836670baa917fe1eaab2b40a2"
 dependencies = [
  "async-channel",
  "async-lock",
@@ -709,14 +709,13 @@ dependencies = [
 
 [[package]]
 name = "fluvio-types"
-version = "0.3.1"
+version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b821d2da73550d8b9b7d6f4c95e8f3f5612584c564000e61bce053177ae5fd7b"
+checksum = "b6ccf8635c710fe2d8c56d35cabcc787a63374c7074a232e68d33b519f03577e"
 dependencies = [
  "event-listener",
  "thiserror",
  "tracing",
- "tracing-futures",
 ]
 
 [[package]]
@@ -1576,16 +1575,6 @@ checksum = "03cfcb51380632a72d3111cb8d3447a8d908e577d31beeac006f836383d29a23"
 dependencies = [
  "lazy_static",
  "valuable",
-]
-
-[[package]]
-name = "tracing-futures"
-version = "0.2.5"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "97d095ae15e245a057c8e8451bab9b3ee1e1f68e9ba2b4fbc18d0ac5237835f2"
-dependencies = [
- "pin-project",
- "tracing",
 ]
 
 [[package]]
