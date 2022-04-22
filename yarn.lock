@@ -50,7 +50,7 @@ __metadata:
     rimraf: ^3.0.0
     rollup: ^2.70.2
     rollup-plugin-dts: ^4.2
-    tslib: ^2.2.0
+    tslib: ^2.4.0
     typescript: ^4.6.3
     wasm-pack: ^0.10.1
     webpack: ^5.72.0
@@ -3479,10 +3479,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.2.0":
-  version: 2.3.1
-  resolution: "tslib@npm:2.3.1"
-  checksum: de17a98d4614481f7fcb5cd53ffc1aaf8654313be0291e1bfaee4b4bb31a20494b7d218ff2e15017883e8ea9626599b3b0e0229c18383ba9dce89da2adf15cb9
+"tslib@npm:^2.4.0":
+  version: 2.4.0
+  resolution: "tslib@npm:2.4.0"
+  checksum: 8c4aa6a3c5a754bf76aefc38026134180c053b7bd2f81338cb5e5ebf96fefa0f417bff221592bf801077f5bf990562f6264fecbc42cd3309b33872cb6fc3b113
   languageName: node
   linkType: hard
 
