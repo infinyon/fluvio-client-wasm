@@ -2,8 +2,10 @@ use async_trait::async_trait;
 use fluvio_future::net::{
     BoxReadConnection, BoxWriteConnection, ConnectionFd, DomainConnector, TcpDomainConnector,
 };
-use fluvio_ws_stream_wasm::WsMeta;
+
+use futures_util::io::AsyncReadExt;
 use std::io::Error as IoError;
+use ws_stream_wasm::WsMeta;
 #[derive(Clone, Default)]
 pub struct FluvioWebsocketConnector {
     url: String,
@@ -35,12 +37,11 @@ impl TcpDomainConnector for FluvioWebsocketConnector {
         let (mut _ws, wsstream) = WsMeta::connect(url.clone(), None)
             .await
             .map_err(|e| IoError::new(std::io::ErrorKind::Other, e))?;
-        let wsstream_clone = wsstream.clone();
-        Ok((
-            Box::new(wsstream.into_io()),
-            Box::new(wsstream_clone.into_io()),
-            url,
-        ))
+
+        let wsstream_io = wsstream.into_io();
+        let (stream, sink) = wsstream_io.split();
+
+        Ok((Box::new(sink), Box::new(stream), url))
     }
 
     fn new_domain(&self, domain: String) -> DomainConnector {
