@@ -524,7 +524,7 @@ dependencies = [
  "console_log",
  "fluvio",
  "fluvio-future",
- "fluvio_ws_stream_wasm",
+ "futures-util",
  "js-sys",
  "log",
  "thiserror",
@@ -536,6 +536,7 @@ dependencies = [
  "wasm-bindgen-test",
  "web-sys",
  "wee_alloc",
+ "ws_stream_wasm",
 ]
 
 [[package]]
@@ -1833,3 +1834,21 @@ name = "winapi-x86_64-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
+
+[[package]]
+name = "ws_stream_wasm"
+version = "0.7.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "47ca1ab42f5afed7fc332b22b6e932ca5414b209465412c8cdf0ad23bc0de645"
+dependencies = [
+ "async_io_stream",
+ "futures",
+ "js-sys",
+ "pharos",
+ "rustc_version 0.4.0",
+ "send_wrapper",
+ "thiserror",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
+]
