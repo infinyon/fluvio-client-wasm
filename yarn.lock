@@ -48,7 +48,7 @@ __metadata:
     "@wasm-tool/wasm-pack-plugin": ^1.6.0
     copy-webpack-plugin: ^10.2.4
     rimraf: ^3.0.0
-    rollup: ^2.70.2
+    rollup: ^2.71.1
     rollup-plugin-dts: ^4.2
     tslib: ^2.4.0
     typescript: ^4.6.4
@@ -3001,9 +3001,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.70.2":
-  version: 2.70.2
-  resolution: "rollup@npm:2.70.2"
+"rollup@npm:^2.71.1":
+  version: 2.71.1
+  resolution: "rollup@npm:2.71.1"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -3011,7 +3011,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: eb04eb9b87b30517308cb41018d57a23976f42b269c3229e4124746d3136a77aa16ba8b891a3fa571931dd72419eea40642a334835fe4f33161fea30d0b803f7
+  checksum: fe2b2fda7bf53c86e970f3b026b784c00e2237089b802755b3e43725db88f5d1869c1f81f8c5257e9b68b0fd1840dcbd3897d2f19768cce97a37c70e1a563dce
   languageName: node
   linkType: hard
 
