@@ -33,12 +33,14 @@ async fn simple() {
         .map_err(FluvioError::try_from)
         .expect("Setup failed");
     web_sys::console::time_end_with_label("simple-setup");
+    web_sys::console::profile_0();
     web_sys::console::time_with_label("simple-test");
     test()
         .await
         .map_err(FluvioError::try_from)
         .expect("Test failed");
     web_sys::console::time_end_with_label("simple-test");
+    web_sys::console::profile_end_0();
     web_sys::console::time_with_label("simple-teardown");
     teardown()
         .await

@@ -1,5 +1,9 @@
 [build]
 target = "wasm32-unknown-unknown"
 
+[target.'cfg(target_arch = "wasm32")']
+runner = 'wasm-bindgen-test-runner'
+
+
 [profile.release]
 lto = true
