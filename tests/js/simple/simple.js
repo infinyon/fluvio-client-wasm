@@ -2,6 +2,7 @@ import { Offset, Fluvio } from "../../../../../wasm-bindgen-test";
 import { createUUID } from "../utils.js";
 
 const topic = createUUID();
+const NUMB_RECORDS = 100;
 
 var fluvio;
 export const setup = async () => {
@@ -41,13 +42,13 @@ export const test = async () => {
 
   let count = 0;
   const userAgent = navigator.userAgent;
-  while (count < 100) {
+  while (count < NUMB_RECORDS) {
     count++;
     let in_record = `${count}-${userAgent}`;
     await producer.send("", in_record);
   }
   count = 0;
-  while (count < 100) {
+  while (count < NUMB_RECORDS) {
     count++;
     let in_record = `${count}-${userAgent}`;
     let next = await stream.next();

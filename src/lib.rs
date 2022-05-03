@@ -20,11 +20,6 @@ pub use offset::Offset;
 pub use producer::TopicProducer;
 pub use record::Record;
 
-// When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
-// allocator.
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 use js_sys::Reflect;
 use wasm_bindgen::convert::FromWasmAbi;
 use wasm_bindgen::JsValue;

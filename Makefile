@@ -11,6 +11,8 @@ build-dev:
 
 test: install-wasm-pack
 	WASM_BINDGEN_TEST_TIMEOUT=30 wasm-pack test --firefox --headless
+	# Using cargo test with wasm-bindgen-test-runner allows to run specific tests
+	#NO_HEADLESS=1 GECKODRIVER=$(which geckodriver) cargo test js_tests::simple
 
 build-fluvio-websocket-proxy:
 	RUST_LOG=debug cargo build --manifest-path ./fluvio-websocket-proxy/Cargo.toml --target $(PROXY_TARGET)
