@@ -943,9 +943,8 @@ dependencies = [
 
 [[package]]
 name = "fluvio-types"
-version = "0.3.5"
+version = "0.3.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e95329875ec5d41c23626e6c527c78744faa9aea9430207a999863b43359363"
 dependencies = [
  "event-listener",
  "thiserror",
