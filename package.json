@@ -28,12 +28,12 @@
     "test": "cargo test && wasm-pack test --headless"
   },
   "devDependencies": {
-    "@rollup/plugin-typescript": "^8.3.2",
+    "@rollup/plugin-typescript": "^8.3.3",
     "@wasm-tool/rollup-plugin-rust": "^1.0.7",
     "@wasm-tool/wasm-pack-plugin": "^1.6.0",
     "copy-webpack-plugin": "^11.0.0",
     "rimraf": "^3.0.0",
-    "rollup": "^2.74.0",
+    "rollup": "^2.75.7",
     "rollup-plugin-dts": "^4.2",
     "tslib": "^2.4.0",
     "typescript": "^4.7.2",
