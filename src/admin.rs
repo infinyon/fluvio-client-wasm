@@ -359,6 +359,7 @@ macro_rules! impl_stream {
 
         #[wasm_bindgen]
         impl $stream {
+            #[allow(clippy::await_holding_refcell_ref)]
             pub fn next(&mut self) -> Promise {
                 use tokio_stream::StreamExt;
 
