@@ -55,7 +55,7 @@ __metadata:
     wasm-pack: ^0.10.1
     webpack: ^5.72.1
     webpack-cli: ^4.9.2
-    webpack-dev-server: ^4.9.0
+    webpack-dev-server: ^4.9.1
   languageName: unknown
   linkType: soft
 
@@ -3157,14 +3157,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sockjs@npm:^0.3.21":
-  version: 0.3.21
-  resolution: "sockjs@npm:0.3.21"
+"sockjs@npm:^0.3.24":
+  version: 0.3.24
+  resolution: "sockjs@npm:0.3.24"
   dependencies:
     faye-websocket: ^0.11.3
-    uuid: ^3.4.0
+    uuid: ^8.3.2
     websocket-driver: ^0.7.4
-  checksum: 9614e5dded95d38c08c42bba3505638801d0e88d9fec03dc1ae37296286ad5c31dff503b8c81a11e573bd0bea76b295db93d4f00cc336e749bc89f9f7cc7e6c9
+  checksum: 355309b48d2c4e9755349daa29cea1c0d9ee23e49b983841c6bf7a20276b00d3c02343f9f33f26d2ee8b261a5a02961b52a25c8da88b2538c5b68d3071b4934c
   languageName: node
   linkType: hard
 
@@ -3502,12 +3502,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uuid@npm:^3.4.0":
-  version: 3.4.0
-  resolution: "uuid@npm:3.4.0"
+"uuid@npm:^8.3.2":
+  version: 8.3.2
+  resolution: "uuid@npm:8.3.2"
   bin:
-    uuid: ./bin/uuid
-  checksum: 58de2feed61c59060b40f8203c0e4ed7fd6f99d42534a499f1741218a1dd0c129f4aa1de797bcf822c8ea5da7e4137aa3673431a96dae729047f7aca7b27866f
+    uuid: dist/bin/uuid
+  checksum: 5575a8a75c13120e2f10e6ddc801b2c7ed7d8f3c8ac22c7ed0c7b2ba6383ec0abda88c905085d630e251719e0777045ae3236f04c812184b7c765f63a70e58df
   languageName: node
   linkType: hard
 
@@ -3606,9 +3606,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"webpack-dev-server@npm:^4.9.0":
-  version: 4.9.0
-  resolution: "webpack-dev-server@npm:4.9.0"
+"webpack-dev-server@npm:^4.9.1":
+  version: 4.9.1
+  resolution: "webpack-dev-server@npm:4.9.1"
   dependencies:
     "@types/bonjour": ^3.5.9
     "@types/connect-history-api-fallback": ^1.3.5
@@ -3634,7 +3634,7 @@ __metadata:
     schema-utils: ^4.0.0
     selfsigned: ^2.0.1
     serve-index: ^1.9.1
-    sockjs: ^0.3.21
+    sockjs: ^0.3.24
     spdy: ^4.0.2
     webpack-dev-middleware: ^5.3.1
     ws: ^8.4.2
@@ -3645,7 +3645,7 @@ __metadata:
       optional: true
   bin:
     webpack-dev-server: bin/webpack-dev-server.js
-  checksum: 3ee3fc9650ede7be37440d404fea2420310f3fb6dfdcfdb71b1d9e4675b04f05843832c9be68ecd4bd4e8e2c960e5d9da299990bd29d05702edfd013fef9e8c8
+  checksum: da1b71d45ed52d6f6de3378e925964f489db84393232e8e6880d1a9cecc6c329206e7b36fb32ce8b3b413b20bb7e032ede8a7060368d3cf61b9c64e2e825e697
   languageName: node
   linkType: hard
 
