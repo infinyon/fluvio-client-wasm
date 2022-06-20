@@ -20,7 +20,7 @@ use std::convert::{TryFrom, TryInto};
 
 #[wasm_bindgen(typescript_custom_section)]
 const CONSUMER_CONFIG_TYPE: &str = r#"
-export type SmartModuleType = "filter" | "map" | "aggregate" | "array_map";
+export type SmartModuleType = "filter" | "map" | "aggregate" | "array_map" | "filter_map";
 export type ConsumerConfig = {
     max_bytes?: number,
     smartmoduleType?: SmartModuleType,
@@ -107,7 +107,7 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                 }
                 _ => {
                     return Err(
-                        "smartmoduleType is required and must be 'filter', 'map', 'array_map', or 'aggregate'"
+                        "smartmoduleType is required and must be 'filter', 'filter_map', 'map', 'array_map', or 'aggregate'"
                             .to_string(),
                     )
                 }
@@ -130,6 +130,11 @@ impl TryFrom<ConsumerConfig> for NativeConsumerConfig {
                 Some("array_map") => create_smartmodule(
                     SmartModuleInvocationWasm::AdHoc(wasm),
                     SmartModuleKind::ArrayMap,
+                    params,
+                ),
+                Some("filter_map") => create_smartmodule(
+                    SmartModuleInvocationWasm::AdHoc(wasm),
+                    SmartModuleKind::FilterMap,
                     params,
                 ),
                 Some("aggregate") => {
