@@ -166,6 +166,7 @@ pub struct PartitionConsumerStream {
 #[wasm_bindgen]
 impl PartitionConsumerStream {
     /// consume next record
+    #[allow(clippy::await_holding_refcell_ref)]
     pub fn next(&self) -> PromiseNextRecord {
         let rc = self.inner.clone();
         let promise = future_to_promise(async move {
@@ -179,6 +180,7 @@ impl PartitionConsumerStream {
     }
 }
 impl PartitionConsumerStream {
+    #[allow(clippy::await_holding_refcell_ref)]
     pub async fn next_val(&self) -> Option<Result<Record, FluvioError>> {
         self.inner.borrow_mut().next().await
     }
