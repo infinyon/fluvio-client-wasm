@@ -37,7 +37,7 @@ console_error_panic_hook = { version = "0.1.7" }
 thiserror = "1.0.31"
 
 [dev-dependencies]
-wasm-bindgen-test = "0.3.30"
+wasm-bindgen-test = "0.3.31"
 
 # https://rustwasm.github.io/docs/book/reference/code-size.html#optimizing-builds-for-code-size
 [profile.release]
