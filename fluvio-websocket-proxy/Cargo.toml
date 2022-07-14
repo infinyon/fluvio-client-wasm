@@ -15,4 +15,4 @@ env_logger = "0.9.0"
 async-std = { version = "1.12.0", features = ["attributes"] }
 tokio = { version = "1.19.2", features = ["macros"] }
 fluvio-future = { version = "0.3.18", features = ["net"] }
-fluvio = "0.12"
+fluvio = "0.13"
