@@ -14,7 +14,7 @@ export const setup = async () => {
   console.log(`Starting connector named ${connector_name} on topic ${topic}`);
   await admin.createConnector(connector_name, connector_type, topic, {
     count: `${max_records}`, // These must be strings or the rust fails to convert it.
-    timeout: "10",
+    timeout: "10ms",
   });
   for (let i = 0; i < 3; i++) {
     try {

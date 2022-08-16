@@ -14,13 +14,13 @@ unstable = []
 [dependencies]
 wasm-bindgen = { version = "0.2.81", features = ["serde-serialize"] }
 wasm-bindgen-futures = { version = "0.4.31", features = ["futures-core-03-stream"] }
-fluvio = { version = "0.12", features = ["unstable"] }
+fluvio = { version = "0.13", features = ["unstable"] }
 console_log = { version = "0.2", features = ["color"] }
 js-sys = "0.3.58"
 web-sys = {version = "0.3.58" }
 tokio-stream = "0.1.9"
 tracing = "0.1.34"
-fluvio-future = { version = "0.3.18", features = ["net"] }
+fluvio-future = { version = "0.4", features = ["net"] }
 ws_stream_wasm = "0.7.3"
 async-trait = { version = "0.1.56"}
 tracing-wasm = "0.2.1"

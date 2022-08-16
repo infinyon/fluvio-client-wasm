@@ -12,9 +12,10 @@ extern "C" {
     pub fn createUUID() -> String;
 }
 
+/*
 #[wasm_bindgen_test]
-async fn simple() {
-    #[wasm_bindgen(module = "/tests/js/simple/simple.js")]
+async fn smartstream_filter() {
+    #[wasm_bindgen(module = "/tests/js/smartstream_filter/smartstream_filter.js")]
     extern "C" {
 
         #[wasm_bindgen(catch)]
@@ -26,35 +27,38 @@ async fn simple() {
         #[wasm_bindgen(catch)]
         pub async fn teardown() -> Result<JsValue, JsValue>;
     }
-    web_sys::console::time_with_label("simple-suite");
-    web_sys::console::time_with_label("simple-setup");
+    #[wasm_bindgen(module = "/tests/js/smartstream_filter/smartstream_filter_code.js")]
+    extern "C" {
+        type MarkerForWasmBindgen;
+    }
+
+    web_sys::console::time_with_label("smartstream-filter-suite");
+    web_sys::console::time_with_label("smartstream-filter-setup");
     setup()
         .await
         .map_err(FluvioError::try_from)
         .expect("Setup failed");
-    web_sys::console::time_end_with_label("simple-setup");
-    web_sys::console::profile_0();
-    web_sys::console::time_with_label("simple-test");
+    web_sys::console::time_end_with_label("smartstream-filter-setup");
+    web_sys::console::time_with_label("smartstream-filter-test");
     test()
         .await
         .map_err(FluvioError::try_from)
         .expect("Test failed");
-    web_sys::console::time_end_with_label("simple-test");
-    web_sys::console::profile_end_0();
-    web_sys::console::time_with_label("simple-teardown");
+    web_sys::console::time_end_with_label("smartstream-filter-test");
+    web_sys::console::time_with_label("smartstream-filter-teardown");
     teardown()
         .await
         .map_err(FluvioError::try_from)
         .expect("Teardown failed");
-    web_sys::console::time_end_with_label("simple-teardown");
-    web_sys::console::time_end_with_label("simple-suite");
+    web_sys::console::time_end_with_label("smartstream-filter-teardown");
+    web_sys::console::time_end_with_label("smartstream-filter-suite");
 }
+*/
 
 #[wasm_bindgen_test]
-async fn multiple_partitions() {
-    #[wasm_bindgen(module = "/tests/js/multiple_partitions/multiple_partitions.js")]
+async fn filter_map() {
+    #[wasm_bindgen(module = "/tests/js/filter_map/filter_map.js")]
     extern "C" {
-
         #[wasm_bindgen(catch)]
         pub async fn setup() -> Result<JsValue, JsValue>;
 
@@ -64,24 +68,33 @@ async fn multiple_partitions() {
         #[wasm_bindgen(catch)]
         pub async fn teardown() -> Result<JsValue, JsValue>;
     }
-    web_sys::console::time_with_label("multiple-partitions-suite");
-    web_sys::console::time_with_label("multiple-partitions-setup");
+
+    #[wasm_bindgen(module = "/tests/js/filter_map/filter_map_code.js")]
+    extern "C" {
+        static FILTER_MAP: String;
+    }
+    web_sys::console::time_with_label("filter-map-suite");
+
+    web_sys::console::time_with_label("filter-map-setup");
     setup()
         .await
         .map_err(FluvioError::try_from)
         .expect("Setup failed");
-    web_sys::console::time_end_with_label("multiple-partitions-setup");
-    web_sys::console::time_with_label("multiple-partitions-test");
+    web_sys::console::time_end_with_label("filter-map-setup");
+
+    web_sys::console::time_with_label("filter-map-test");
     test()
         .await
         .map_err(FluvioError::try_from)
         .expect("Test failed");
-    web_sys::console::time_end_with_label("multiple-partitions-test");
-    web_sys::console::time_with_label("multiple-partitions-teardown");
+    web_sys::console::time_end_with_label("filter-map-test");
+
+    web_sys::console::time_with_label("filter-map-teardown");
     teardown()
         .await
         .map_err(FluvioError::try_from)
         .expect("Teardown failed");
-    web_sys::console::time_end_with_label("multiple-partitions-teardown");
-    web_sys::console::time_end_with_label("multiple-partitions-suite");
+    web_sys::console::time_end_with_label("filter-map-teardown");
+
+    web_sys::console::time_end_with_label("filter-map-suite");
 }

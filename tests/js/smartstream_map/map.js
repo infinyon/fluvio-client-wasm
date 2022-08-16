@@ -1,6 +1,6 @@
 import { Offset, Fluvio } from "../../../../../wasm-bindgen-test";
 import { createUUID } from "../utils.js";
-import { mapCode } from "./map_code.js";
+import { MAP_CODE } from "./map_code.js";
 
 const topic = createUUID();
 
@@ -9,20 +9,14 @@ var fluvio;
 export const setup = async () => {
   fluvio = await Fluvio.connect("ws://localhost:3000");
   const admin = await fluvio.admin();
-  for (let i = 0; i < 3; i++) {
-    try {
-      await admin.createTopic(topic, 1);
-      break;
-    } catch (e) {
-      console.error(`${e.message}`);
-    }
-  }
-  await admin.createSmartModule(topic, mapCode);
+  admin.createTopic(topic, 1);
+
+  // await admin.createSmartModule(topic, MAP_CODE);
 };
 export const teardown = async () => {
   const admin = await fluvio.admin();
   await admin.deleteTopic(topic);
-  await admin.deleteSmartModule(topic);
+  // await admin.deleteSmartModule(topic);
 };
 export const test = async () => {
   const producer = await fluvio.topicProducer(topic);
@@ -33,13 +27,14 @@ export const test = async () => {
 
   const config = {
     smartmoduleType: "map",
-    smartmoduleData: mapCode,
+    smartmoduleData: MAP_CODE,
   };
   let stream = await consumer.streamWithConfig(Offset.beginning(), config);
 
   const mixedFruits = ["apple", "banana", "cranberry"];
 
   for (const fruit of mixedFruits) {
+    console.log(`producing ${fruit}`);
     await producer.send(undefined, fruit);
   }
 
@@ -51,6 +46,7 @@ export const test = async () => {
       throw `Ad-hoc smartmodule: Records do not match! ${expected} != ${out}`;
     }
   }
+  /*
   const config2 = {
     smartmoduleType: "map",
     smartmoduleName: topic,
@@ -66,7 +62,6 @@ export const test = async () => {
       throw `Named smartmodule: Records do not match! ${expected} != ${out}`;
     }
   }
-
-
+  */
 
 };
