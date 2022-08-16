@@ -501,7 +501,7 @@ dependencies = [
  "derive_builder",
  "dirs",
  "event-listener",
- "fluvio-compression 0.2.0",
+ "fluvio-compression",
  "fluvio-dataplane-protocol",
  "fluvio-future 0.4.1",
  "fluvio-protocol",
@@ -531,7 +531,7 @@ dependencies = [
  "console_error_panic_hook",
  "console_log",
  "fluvio",
- "fluvio-future 0.3.18",
+ "fluvio-future 0.4.1",
  "futures-util",
  "js-sys",
  "log",
@@ -544,19 +544,6 @@ dependencies = [
  "wasm-bindgen-test",
  "web-sys",
  "ws_stream_wasm",
-]
-
-[[package]]
-name = "fluvio-compression"
-version = "0.1.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b2a11336f28be7bee0841da61f619bb410366c53b427cefe02f77e2d5cce7a7"
-dependencies = [
- "flate2",
- "lz4_flex",
- "serde",
- "snap",
- "thiserror",
 ]
 
 [[package]]
@@ -593,9 +580,9 @@ dependencies = [
 
 [[package]]
 name = "fluvio-dataplane-protocol"
-version = "0.11.1"
+version = "0.11.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1fbea89b47f14d209504903a86788c7013907a69167de56e35caa80e131aef0f"
+checksum = "a691755125a8211290191dc46f6a2c07898d891c00c4e09ebbad735908afa35a"
 dependencies = [
  "bytes",
  "cfg-if",
@@ -603,8 +590,8 @@ dependencies = [
  "content_inspector",
  "crc32c",
  "eyre",
- "fluvio-compression 0.1.1",
- "fluvio-future 0.3.18",
+ "fluvio-compression",
+ "fluvio-future 0.4.1",
  "fluvio-protocol",
  "fluvio-types",
  "flv-util",
@@ -621,12 +608,7 @@ version = "0.3.18"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1e2d1fad8e412d44c516add2349a34f6d71d9279b108c8e012325ab17fcbf982"
 dependencies = [
- "async-net",
- "async-trait",
- "cfg-if",
  "fluvio-wasm-timer",
- "futures-lite",
- "futures-util",
  "log",
  "thiserror",
  "tracing",
@@ -658,12 +640,12 @@ dependencies = [
 
 [[package]]
 name = "fluvio-protocol"
-version = "0.7.7"
+version = "0.7.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c875b24392b835610a0e8c620d11e696014bd106f48a9759bbd080bd1f25d4dd"
+checksum = "6a5fa561c1628d40bdde2fbde33cb1ce4597386a3f943b45b09703bc3534cf2d"
 dependencies = [
  "bytes",
- "fluvio-future 0.3.18",
+ "fluvio-future 0.4.1",
  "fluvio-protocol-derive",
  "tokio-util",
  "tracing",
@@ -751,9 +733,9 @@ dependencies = [
 
 [[package]]
 name = "fluvio-types"
-version = "0.3.7"
+version = "0.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5417d908546297c524804167a0a8714db6512117d1b0fa52cf434e7bfc1577df"
+checksum = "9a675cf4a60aa0bff6f5d9d2c3c5201fc5a214cbb9e9d7f0127c7792314714bf"
 dependencies = [
  "event-listener",
  "thiserror",
