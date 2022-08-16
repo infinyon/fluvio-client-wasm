@@ -1,6 +1,6 @@
 import { Offset, Fluvio } from "../../../../../wasm-bindgen-test"
 import { createUUID } from "../utils.js";
-const { filter_map } = await import("./filter_map_code.js");
+const { FILTER_MAP as filter_map } = await import("./filter_map_code.js");
 
 const topic = createUUID();
 

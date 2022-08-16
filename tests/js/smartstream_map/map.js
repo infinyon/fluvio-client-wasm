@@ -1,6 +1,6 @@
 import { Offset, Fluvio } from "../../../../../wasm-bindgen-test";
 import { createUUID } from "../utils.js";
-import { mapCode } from "./map_code.js";
+import { MAP_CODE as mapCode } from "./map_code.js";
 
 const topic = createUUID();
 
