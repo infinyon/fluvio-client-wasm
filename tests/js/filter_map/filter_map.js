@@ -1,6 +1,6 @@
 import { Offset, Fluvio } from "../../../../../wasm-bindgen-test"
 import { createUUID } from "../utils.js";
-const { FILTER_MAP as filter_map } = await import("./filter_map_code.js");
+const { FILTER_MAP } = await import("./filter_map_code.js");
 
 const topic = createUUID();
 
@@ -30,7 +30,7 @@ export const test = async () => {
     const consumer = await fluvio.allPartitionsConsumer(topic);
     const config = {
         smartmoduleType: "filter_map",
-        smartmoduleData: filter_map,
+        smartmoduleData: FILTER_MAP,
     };
     let stream = await consumer.streamWithConfig(Offset.beginning(), config);
 

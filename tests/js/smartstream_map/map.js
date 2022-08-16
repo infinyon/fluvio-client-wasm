@@ -1,6 +1,6 @@
 import { Offset, Fluvio } from "../../../../../wasm-bindgen-test";
 import { createUUID } from "../utils.js";
-import { MAP_CODE as mapCode } from "./map_code.js";
+import { MAP_CODE } from "./map_code.js";
 
 const topic = createUUID();
 
@@ -17,7 +17,7 @@ export const setup = async () => {
       console.error(`${e.message}`);
     }
   }
-  await admin.createSmartModule(topic, mapCode);
+  await admin.createSmartModule(topic, MAP_CODE);
 };
 export const teardown = async () => {
   const admin = await fluvio.admin();
@@ -33,7 +33,7 @@ export const test = async () => {
 
   const config = {
     smartmoduleType: "map",
-    smartmoduleData: mapCode,
+    smartmoduleData: MAP_CODE,
   };
   let stream = await consumer.streamWithConfig(Offset.beginning(), config);
 
