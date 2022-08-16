@@ -71,7 +71,7 @@ async fn smartstream_map() {
     }
     #[wasm_bindgen(module = "/tests/js/smartstream_map/map_code.js")]
     extern "C" {
-        static mapCode: String;
+        static MAP_CODE: String;
     }
 
     web_sys::console::time_with_label("smartstream-map-suite");
@@ -154,7 +154,7 @@ async fn array_map() {
 
     #[wasm_bindgen(module = "/tests/js/array_map/array_map_code.js")]
     extern "C" {
-        static array_map: String;
+        static ARRAY_MAP: String;
     }
     web_sys::console::time_with_label("array-map-suite");
 
@@ -198,7 +198,7 @@ async fn filter_map() {
 
     #[wasm_bindgen(module = "/tests/js/filter_map/filter_map_code.js")]
     extern "C" {
-        static filter_map: String;
+        static FILTER_MAP: String;
     }
     web_sys::console::time_with_label("filter-map-suite");
 

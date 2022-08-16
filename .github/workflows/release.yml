@@ -23,7 +23,7 @@ jobs:
       - name: Create new latest release
         run: |
           export VERSION=v$(cat package.json | jq ".version" | tr -d '"')
-          gh release create -R infinyon/fluvio-client-wasm $VERSION -p --notes "Published artifacts for $VERSION"
+          gh release create -R infinyon/fluvio-client-wasm $VERSION --notes "Published artifacts for $VERSION"
 
   publish_release:
     name: create latest release
