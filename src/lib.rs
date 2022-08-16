@@ -3,6 +3,7 @@ mod connector;
 mod consumer;
 mod error;
 mod fluvio;
+#[allow(clippy::drop_non_drop)]
 mod offset;
 mod partition;
 mod producer;
