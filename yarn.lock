@@ -43,7 +43,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@fluvio/client-wasm@workspace:."
   dependencies:
-    "@rollup/plugin-typescript": ^8.3.4
+    "@rollup/plugin-typescript": ^8.4.0
     "@wasm-tool/rollup-plugin-rust": ^1.0.7
     "@wasm-tool/wasm-pack-plugin": ^1.6.0
     copy-webpack-plugin: ^11.0.0
@@ -120,9 +120,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rollup/plugin-typescript@npm:^8.3.4":
-  version: 8.3.4
-  resolution: "@rollup/plugin-typescript@npm:8.3.4"
+"@rollup/plugin-typescript@npm:^8.4.0":
+  version: 8.4.0
+  resolution: "@rollup/plugin-typescript@npm:8.4.0"
   dependencies:
     "@rollup/pluginutils": ^3.1.0
     resolve: ^1.17.0
@@ -133,7 +133,7 @@ __metadata:
   peerDependenciesMeta:
     tslib:
       optional: true
-  checksum: 3a86664a1c8a00d715bd61fb3b2d739e1a3eb8c7a8e695a2ac9846e0d93872e8db0aa5695f952635bdbea8f1a5c79bdb643ce0d0eaa244e6cbfadce3f50ab8d9
+  checksum: 1236b9b6fa4d368fc34514ec388b2584a443797bf081bf861a40476267d6c3cdbb3edf5659b6e0030e99e15b25f464664e7301ffeeabf661b3d81738320ee64e
   languageName: node
   linkType: hard
 
