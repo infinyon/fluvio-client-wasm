@@ -270,4 +270,12 @@ impl Fluvio {
             Ok(JsLevel::None)
         }
     }
+
+    /// Retrieves the underlying Fluvio `platform_version`
+    ///
+    /// Refer: https://docs.rs/fluvio/latest/fluvio/struct.Fluvio.html#method.platform_version
+    #[wasm_bindgen(js_name = platformVersion)]
+    pub fn platform_version(&self) -> String {
+        self.inner.platform_version().to_string()
+    }
 }

@@ -7,6 +7,7 @@ import("../pkg").then(async fluvioWasm => {
       Fluvio.setupDebugging(false, 'Debug');
       const fluvio = await Fluvio.connect("ws://localhost:3000");
       const admin = await fluvio.admin();
+      console.log(`Using Fluvio Cluster Version: ${fluvio.platformVersion()}`);
       await admin.createTopic(topic, 1);
 
       const producer = await fluvio.topicProducer(topic);
