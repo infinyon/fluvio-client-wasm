@@ -32,6 +32,7 @@ export const test = async () => {
     compression,
   };
 
+  console.log(`Using Fluvio Cluster Version: ${fluvio.platformVersion()}`);
   const producer = await fluvio.topicProducerWithConfig(topic, config);
   await producer.send("", `count`);
   const offset = Offset.beginning();
