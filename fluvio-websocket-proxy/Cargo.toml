@@ -11,7 +11,7 @@ tide-websockets = "0.4.0"
 tide = { version = "0.16.0", default-features = false, features = ["h1-server"] }
 serde = "1.0.145"
 
-env_logger = "0.9.0"
+env_logger = "0.9.3"
 async-std = { version = "1.12.0", features = ["attributes"] }
 tokio = { version = "1.21.1", features = ["macros"] }
 fluvio-future = { version = "0.4.2", features = ["net"] }
