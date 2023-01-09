@@ -26,7 +26,7 @@ async-trait = { version = "0.1.57"}
 tracing-wasm = "0.2.1"
 futures-util = { version = "0.3", features = ["io"]}
 log = "0.4"
-base64 = "0.13.0"
+base64 = "0.21.0"
 
 # The `console_error_panic_hook` crate provides better debugging of panics by
 # logging them with `console.error`. This is great for development, but requires
