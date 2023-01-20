@@ -839,9 +839,9 @@ dependencies = [
 
 [[package]]
 name = "fluvio-future"
-version = "0.4.2"
+version = "0.4.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "87c637d55360a7a105c387b7cc04d19c5f1532366cade02e6b258f06835a65e1"
+checksum = "37174044230084d1cfd7c02f194c5ec127bb8bc17c76f0cd74e943f2fe86ec34"
 dependencies = [
  "async-net",
  "async-trait",
@@ -981,7 +981,7 @@ dependencies = [
  "async-std",
  "env_logger",
  "fluvio",
- "fluvio-future 0.4.2",
+ "fluvio-future 0.4.5",
  "serde",
  "tide",
  "tide-websockets",
