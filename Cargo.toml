@@ -22,7 +22,7 @@ tokio-stream = "0.1.10"
 tracing = "0.1.34"
 fluvio-future = { version = "0.4", features = ["net"] }
 ws_stream_wasm = "0.7.3"
-async-trait = { version = "0.1.57"}
+async-trait = { version = "0.1.64"}
 tracing-wasm = "0.2.1"
 futures-util = { version = "0.3", features = ["io"]}
 log = "0.4"
